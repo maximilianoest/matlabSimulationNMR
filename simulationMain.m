@@ -3,6 +3,7 @@ clearvars -except trajectoryX trajectoryY trajectoryZ ...
     simulationConfiguration
 
 %% Initialize system
+
 addpath(genpath('library'));
 addpath(genpath('txtFiles'));
 addpath(genpath('scripts'));
@@ -13,23 +14,24 @@ configuration = readConfigurationFile('configMain.txt');
 logMessage('System initialized. Dependendencies were added',logFilePath)
 
 %% Analyse data set
+
 analyseFileNameAndCreateVariablesInBaseWorkspace(configuration ...
     ,logFilePath);
 dataFilePath = sprintf('%s%s%s',dataDirectory,filesep,fileName);
 checkIfFileExists(dataFilePath,logFilePath);
 
 %% Load Data
-% 
-% if ~configuration.dataLoaded
-%     logMessage('Start loading data.', path2LogFile);
-%     [trajectoryX,trajectoryY,trajectoryZ,simulationConfiguration] = ...
-%         loadTrajectoriesAndSimConfig(path2File);
-%     logMessage('Loading data finished',path2LogFile)
-% else
-%     logMessage('Data was already loaded in run before.',path2LogFile)
-% end
 
- 
+if ~configuration.dataLoaded
+    logMessage('Start loading data.',dataFilePath);
+    [trajectoryX,trajectoryY,trajectoryZ,simulationConfiguration] = ...
+        loadTrajectoriesAndSimConfig(dataFilePath);
+    logMessage('Loading data finished',dataFilePath)
+else
+    logMessage('Data was already loaded in run before.',dataFilePath)
+end
+
+
 % logMessage(sprintf('     The system has %i hydrogen atoms.' ...
 %     ,size(trajectoryX,1)),path2LogFile,false);
 % 

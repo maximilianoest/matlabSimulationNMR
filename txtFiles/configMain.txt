@@ -6,3 +6,4 @@ dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 scriptFileToRun=orientationDependency_lipidWater_longSimulationTime
 
 printToCommandWindow=1
+dataLoaded=0
