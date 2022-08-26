@@ -1,6 +1,6 @@
 fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime125ns
 
-dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/PLPC/
+dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
 scriptFileToRun=orientationDependency_lipidWater_longSimulationTime
@@ -9,5 +9,6 @@ printToCommandWindow=1
 dataLoaded=1
 
 fractionForLags=1
-
+nearestNeighbours=3000
 mainMagneticField=3
+atomsToCalculate=100
