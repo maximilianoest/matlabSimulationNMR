@@ -1,0 +1,5 @@
+firstValue=1
+secondValue=asdf
+thirdValue=
+fourthValue=1;2;3;4;5
+

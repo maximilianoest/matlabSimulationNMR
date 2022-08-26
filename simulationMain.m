@@ -1,0 +1,93 @@
+clc
+clearvars -except trajectoryX trajectoryY trajectoryZ ...
+    simulationConfiguration
+
+
+addpath(genpath('library'));
+addpath(genpath('txtFiles'));
+addpath(genpath('scripts'));
+configuration = readConfigurationFile('configMain.txt');
+[dataDirectory,resultsFileSavingPath,logFilePath] = ...
+    setUpDependenciesBasedOn(configuration);
+a = 'ASDF'
+
+% 
+
+% deleteLogFile(path2LogFile);
+% logMessage('Starting Script to validate scaling rates.' ...
+%     ,path2LogFile);
+% printLineBreakToLogFile(path2LogFile);
+% [path2Data,path2Save,path2ConstantsFile,path2LogFile] = ...
+%     setUpDependenciesBasedOnConfiguration(configuration);
+% 
+% %% Analyse file name for simulation
+% fileName = configuration.fileName;
+% simulationDate = getSimulationDateFromFileName(fileName);
+% whichLipid = getLipidNameFromFileName(fileName);
+% waterModel = getWaterModelFromFileName(fileName);
+% formOfLayer = getFormOfLayerFromFileName(fileName);
+% waterMoleculesCount = getWaterMoleculesCountFromFileName(fileName);
+% constituent = getConstituentFromFileName(fileName);
+% composingMode = getComposingModeFromFileName(fileName);
+% samplingFrequency = getSamplingFrequencyFromFileName(fileName);
+% simTime = getSimulationTimeFromFileName(fileName);
+% 
+% if configuration.runOnServer
+%     path2File = sprintf('%s%s/%s.mat',path2Data,whichLipid,fileName);
+% else
+%     path2File = sprintf('%s%s.mat',path2Data,fileName);
+% end
+% 
+% if ~exist(path2File,'file')
+%     logMessage(sprintf('FILE: %s CANNOT BE FOUND!',path2File) ...
+%         ,path2LogFile, false);
+%     error('File cannot be found. See log file.');
+% else
+%     logMessage(sprintf('File: %s exists and will be loaded.',path2File) ...
+%         ,path2LogFile, false);
+% end
+% 
+% logMessage(sprintf(['Data is simulated with the following ' ...
+%     'information: \n' ...
+%     '    GROMACS Simulation Date: %s \n' ...
+%     '    Lipid that is simulated: %s \n' ...
+%     '    Used Water Model: %s \n' ...
+%     '    Layer Form: %s \n' ...
+%     '    Number of Water Molecules: %s \n' ...
+%     '    Constituent of Simulation: %s \n' ...
+%     '    Composing mode in postprocessing: %s \n' ...
+%     '    Basic Sampling Frequency(changes during sim): %.3f ps \n' ...
+%     '    Simulation Time: %s ns\n'],simulationDate,whichLipid,waterModel ...
+%     ,formOfLayer,waterMoleculesCount,constituent,composingMode ...
+%     ,samplingFrequency,simTime),path2LogFile,false);
+% 
+% logMessage(sprintf(['The following directories are used: \n' ...
+%     '    Path of Data: %s \n' ...
+%     '    Path of File: %s \n' ...
+%     '    Path where data is saved: %s \n' ...
+%     '    Path to Log File: %s \n'],path2Data,path2File,path2Save ...
+%     ,path2LogFile),path2LogFile,false);
+% logMessage('System was set up.',path2LogFile);
+% 
+% %% Load data
+% if ~configuration.dataLoaded
+%     logMessage('Start loading data.', path2LogFile);
+%     [trajectoryX,trajectoryY,trajectoryZ,simulationConfiguration] = ...
+%         loadTrajectoriesAndSimConfig(path2File);
+%     logMessage('Loading data finished',path2LogFile)
+% else
+%     logMessage('Data was already loaded in run before.',path2LogFile)
+% end
+% 
+% logMessage(sprintf('     The system has %i hydrogen atoms.' ...
+%     ,size(trajectoryX,1)),path2LogFile,false);
+% 
+% %% Define constants
+% logMessage('Defining constants.',path2LogFile,false);
+% constants = readConstantsFile(path2ConstantsFile);
+% 
+% dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
+%     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
+%     /(constants.nanoMeter^6);
+% omega0 = constants.gyromagneticRatioOfHydrogenAtom ...
+%     *configuration.mainMagneticField;
