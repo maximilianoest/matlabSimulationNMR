@@ -1,6 +1,8 @@
 function analyseFileNameAndCreateVariablesInBaseWorkspace(configuration ...
     ,logFilePath)
 
+constants = readConstantsFile('constants.txt');
+
 fileName = configuration.fileName;
 saveVariableToBaseWorkspace(fileName)
 
@@ -25,11 +27,15 @@ saveVariableToBaseWorkspace(constituent);
 composingMode = getComposingModeFromFileName(fileName);
 saveVariableToBaseWorkspace(composingMode);
 
-samplingFrequency = getSamplingFrequencyFromFileName(fileName);
-saveVariableToBaseWorkspace(samplingFrequency);
+timeBetweenTimeStepsInPs = getSamplingFrequencyFromFileName(fileName);
+saveVariableToBaseWorkspace(timeBetweenTimeStepsInPs);
+timeBetweenTimeStepsInS = timeBetweenTimeStepsInPs * constants.picoSecond;
+saveVariableToBaseWorkspace(timeBetweenTimeStepsInS);
 
-simulationTime = getSimulationTimeFromFileName(fileName);
-saveVariableToBaseWorkspace(simulationTime);
+simulationTimeInNs = getSimulationTimeFromFileName(fileName);
+saveVariableToBaseWorkspace(simulationTimeInNs);
+simulationTimeInS = str2double(simulationTimeInNs)*constants.nanoSecond;
+saveVariableToBaseWorkspace(simulationTimeInS);
 
 logMessage(sprintf(['Data was simulated with the following ' ...
     'information: \n' ...
@@ -40,9 +46,9 @@ logMessage(sprintf(['Data was simulated with the following ' ...
     '    Number of Water Molecules: %s \n' ...
     '    Constituent of Simulation: %s \n' ...
     '    Composing mode in postprocessing: %s \n' ...
-    '    Basic Sampling Frequency(changes during sim): %.3f ps \n' ...
+    '    Time between two time steps: %.3f ps \n' ...
     '    Simulation Time: %s ns\n'],simulationDate,whichLipid,waterModel ...
     ,formOfLayer,waterMoleculesCount,constituent,composingMode ...
-    ,samplingFrequency,simulationTime),logFilePath,false);
+    ,timeBetweenTimeStepsInPs,simulationTimeInNs),logFilePath,false);
 
 end

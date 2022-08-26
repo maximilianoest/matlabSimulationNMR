@@ -2,9 +2,9 @@ function [dataDirectory,resultsFileSavingPath,logFilePath] = ...
     setUpDependenciesBasedOn(configuration)
 
 fileName = configuration.fileName;
-lipidName = getLipidNameFromFileName(fileName);
+whichLipid = getLipidNameFromFileName(fileName);
 constituent = getConstituentFromFileName(fileName);
-combinedName = [lipidName constituent];
+combinedName = [whichLipid constituent];
 
 startingDate = datestr(date,'yyyymmdd');
 
@@ -13,6 +13,7 @@ if runningOnServer()
 else
     dataDirectory = configuration.dataDirectoryOnLocalMachine;
 end
+dataDirectory = sprintf('%s%s%s',dataDirectory,whichLipid,filesep);
 
 resultsDirectory = sprintf('%s%s%s%s%s%s',pwd,filesep, ...
     'RESULTS',filesep,configuration.scriptFileToRun,filesep);
@@ -32,6 +33,6 @@ logMessage(sprintf(['The following directories are used: \n' ...
     '    File name is: %s \n' ...
     '    Results will be saved under: %s \n' ...
     '    Log file path: %s \n'],dataDirectory,fileName ...
-    ,resultsFileSavingPath,logFilePath),logFilePath,false);
+    ,resultsFileSavingPath,logFilePath),logFilePath);
 
 end
