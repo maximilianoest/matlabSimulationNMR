@@ -4,3 +4,5 @@ dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/PLPC/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
 scriptFileToRun=orientationDependency_lipidWater_longSimulationTime
+
+printToCommandWindow=1
