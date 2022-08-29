@@ -6,8 +6,8 @@ constants = readConstantsFile('constants.txt');
 fileName = configuration.fileName;
 saveVariableToBaseWorkspace(fileName)
 
-simulationDate = getSimulationDateFromFileName(fileName);
-saveVariableToBaseWorkspace(simulationDate);
+gromacsSimulationDate = getSimulationDateFromFileName(fileName);
+saveVariableToBaseWorkspace(gromacsSimulationDate);
 
 whichLipid = getLipidNameFromFileName(fileName);
 saveVariableToBaseWorkspace(whichLipid);
@@ -27,15 +27,15 @@ saveVariableToBaseWorkspace(constituent);
 composingMode = getComposingModeFromFileName(fileName);
 saveVariableToBaseWorkspace(composingMode);
 
-timeBetweenTimeStepsInPs = getSamplingFrequencyFromFileName(fileName);
-saveVariableToBaseWorkspace(timeBetweenTimeStepsInPs);
-timeBetweenTimeStepsInS = timeBetweenTimeStepsInPs * constants.picoSecond;
-saveVariableToBaseWorkspace(timeBetweenTimeStepsInS);
+deltaTInPs = getSamplingFrequencyFromFileName(fileName);
+saveVariableToBaseWorkspace(deltaTInPs);
+deltaTInS = deltaTInPs * constants.picoSecond;
+saveVariableToBaseWorkspace(deltaTInS);
 
-simulationTimeInNs = getSimulationTimeFromFileName(fileName);
-saveVariableToBaseWorkspace(simulationTimeInNs);
-simulationTimeInS = str2double(simulationTimeInNs)*constants.nanoSecond;
-saveVariableToBaseWorkspace(simulationTimeInS);
+simulationDurationInNs = getSimulationTimeFromFileName(fileName);
+saveVariableToBaseWorkspace(simulationDurationInNs);
+simulationDurationInS = str2double(simulationDurationInNs)*constants.nanoSecond;
+saveVariableToBaseWorkspace(simulationDurationInS);
 
 logMessage(sprintf(['Data was simulated with the following ' ...
     'information: \n' ...
@@ -47,8 +47,8 @@ logMessage(sprintf(['Data was simulated with the following ' ...
     '    Constituent of Simulation: %s \n' ...
     '    Composing mode in postprocessing: %s \n' ...
     '    Time between two time steps: %.3f ps \n' ...
-    '    Simulation Time: %s ns\n'],simulationDate,whichLipid,waterModel ...
+    '    Simulation Time: %s ns\n'],gromacsSimulationDate,whichLipid,waterModel ...
     ,formOfLayer,waterMoleculesCount,constituent,composingMode ...
-    ,timeBetweenTimeStepsInPs,simulationTimeInNs),logFilePath,false);
+    ,deltaTInPs,simulationDurationInNs),logFilePath,false);
 
 end

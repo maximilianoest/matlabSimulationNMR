@@ -8,6 +8,7 @@ addpath(genpath('library'));
 addpath(genpath('txtFiles'));
 addpath(genpath('scripts'));
 configuration = readConfigurationFile('configMain.txt');
+matlabSimulationDate = datestr(date,'yyyymmdd');
 [dataDirectory,resultsFileSavingPath,logFilePath] = ...
     setUpDependenciesBasedOn(configuration);
 logMessage('System initialized. Dependendencies were added',logFilePath)
@@ -46,16 +47,15 @@ omega0 = constants.gyromagneticRatioOfHydrogenAtom ...
 logMessage('Defining simulation parameters.',logFilePath,true);
 [numberOfHs,timeSteps] = size(trajectoryX);
 logMessage(sprintf(['    Found %d hydrogen atoms at %d time ' ...
-    'steps of %.3d s'],numberOfHs,timeSteps,timeBetweenTimeStepsInS) ...
+    'steps of %.3d s'],numberOfHs,timeSteps,deltaTInS) ...
     ,logFilePath,false);
 
 atomsToCalculate = configuration.atomsToCalculate;
-startDateOfSimulation = datestr(now,'yyyymmdd');
 logMessage(sprintf('    Calculate %i atoms',atomsToCalculate) ...
     ,logFilePath,false);
 
 %% Starting external script
-orientationDependency_lipidWater_longSimulationTime
+run(configuration.scriptFileToRun)
 
 
 
