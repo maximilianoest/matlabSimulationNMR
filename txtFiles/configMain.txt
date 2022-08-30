@@ -6,13 +6,13 @@ dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 scriptFileToRun=orientationDependency_lipidWater_longSimulationTime
 
 printToCommandWindow=1
-dataLoaded=1
-savingIntervall=1
+dataLoaded=0
+savingIntervall=5
 
 fractionForLags=1
-nearestNeighbours=3000
+nearestNeighbours=5000
 mainMagneticField=3
 atomsToCalculate=100
 
-fibreAnglesTheta=0
-fibreAnglesPhi=0
+fibreAnglesTheta=0;90
+fibreAnglesPhi=0;90
