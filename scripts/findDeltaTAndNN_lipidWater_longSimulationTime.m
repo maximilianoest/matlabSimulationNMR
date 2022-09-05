@@ -4,6 +4,13 @@
 % atoms in the water molecules, the trajectories of these molecules will
 % reach across the whole water part of the lipid model. Therefore it won't
 % be usefull to determine the location dependency here.
+% Additionally, the angles theta and phi are both set to 0°, because there
+% is much more variation in location dependent correlation functions than
+% in angle dependent correlation function. Additionally the angle
+% dependency in lipid water is small compared to solid lipid, why the
+% angles won't have  a too high influence.
+% Furthermore, a look on the NN dependency will be made with different
+% cases for nearest neighbours.
 
 logMessage(sprintf('Starting the external script: %s.m', mfilename) ...
     ,logFilePath,true);
@@ -38,7 +45,8 @@ atomCounter = 1;
 calculatedAtomIndices = zeros(1,atomsToCalculate);
 calculationSteps = fibreAnglesThetaCount*fibreAnglesPhiCount;
 
-randomSequenceOfAtoms = randperm(numberOfHs);
+load('matFiles\randomSequenceOfAtoms.mat');
+randomSequenceOfAtoms(1:15)
 
 nearestNeighboursIDs = zeros(1,nearestNeighbours);
 nearestNeighbourDistancesPow3 = zeros(nearestNeighbours,timeSteps ...

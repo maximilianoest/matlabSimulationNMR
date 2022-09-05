@@ -1,12 +1,10 @@
-clc
-clearvars -except trajectoryX trajectoryY trajectoryZ ...
-    simulationConfiguration
 
 %% Initialize system
 
 addpath(genpath('library'));
 addpath(genpath('txtFiles'));
 addpath(genpath('scripts'));
+addpath(genpath('matFiles'));
 configuration = readConfigurationFile('configMain.txt');
 matlabSimulationDate = datestr(date,'yyyymmdd');
 [dataDirectory,resultsFileSavingPath,logFilePath] = ...
