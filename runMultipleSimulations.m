@@ -1,6 +1,6 @@
 clc; clear all; close all;
 addpath(genpath('library'));
-configurationFilePath = 'txtFiles\configMain.txt';
+configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
 
 lipids.PLPC.fileNamesToAnalyse = [...
     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime50ns" ...
