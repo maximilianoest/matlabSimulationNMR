@@ -11,8 +11,9 @@ savingIntervall=5
 
 fractionForLags=1
 nearestNeighbours=10
+nearestNeighbourCases=7000;5000;3000;2000;1000;700;500
 mainMagneticField=3
-atomsToCalculate=3
+atomsToCalculate=200
 
 fibreAnglesTheta=0;90
 fibreAnglesPhi=0

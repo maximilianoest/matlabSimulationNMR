@@ -8,5 +8,7 @@ Following information is important:
 - all set up parameters can be adjusted in the configMain.txt
 - other scripts can be added to the scripts directory to simulate other 
     parameters.
+- nearestNeigbours is used if one case for NN should be used and 
+    nearestNeighbourCases is used if multiple NN cases should be considered
 
 

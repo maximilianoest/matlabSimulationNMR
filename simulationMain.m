@@ -1,4 +1,11 @@
 
+
+if ~exist('lipids') 
+    clearvars -except trajectoryX trajectoryY trajectoryZ ...
+        simulationConfiguration lipids whichLipid newFileName
+end
+
+
 %% Initialize system
 
 addpath(genpath('library'));
@@ -22,7 +29,7 @@ checkIfFileExists(dataFilePath,logFilePath);
 
 if ~configuration.dataLoaded
     logMessage('Start loading data.',dataFilePath);
-    [trajectoryX,trajectoryY,trajectoryZ,simulationConfiguration] = ...
+    [trajectoryX,trajectoryY,trajectoryZ,gromacsSimulationConfiguration] = ...
         loadTrajectoriesAndSimConfig(dataFilePath);
     logMessage('Loading data finished',dataFilePath)
 else
