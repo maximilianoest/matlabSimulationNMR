@@ -14,8 +14,6 @@
 
 logMessage(sprintf('Starting the external script: %s.m', mfilename) ...
     ,logFilePath,true);
-logMessage('Clearing varibles that wont be overwritten',logFilePath,false);
-
 
 %% simulation specific information
 
@@ -44,7 +42,7 @@ atomCounter = 1;
 calculatedAtomIndices = zeros(1,atomsToCalculate);
 calculationSteps = fibreAnglesThetaCount*fibreAnglesPhiCount;
 
-load('matFiles\randomSequenceOfAtoms.mat');
+load(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep));
 randomSequenceOfAtoms(1:15)
 
 nearestNeighboursIDs = zeros(1,max(nearestNeighbourCases));
