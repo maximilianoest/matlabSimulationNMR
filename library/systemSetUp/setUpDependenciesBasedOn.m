@@ -21,10 +21,10 @@ if ~isfolder(resultsDirectory)
     mkdir(resultsDirectory);
 end
 
-resultsFileSavingPath = sprintf('%s%s_Results_%s.mat',resultsDirectory ...
-    ,startingDate,combinedName);
-logFilePath = sprintf('%s%s_LogFile_%s.txt',resultsDirectory ...
-    ,startingDate,combinedName); 
+resultsFileSavingPath = sprintf('%s%s_Results_%s_%s.mat' ...
+    ,resultsDirectory,startingDate,combinedName,fileName);
+logFilePath = sprintf('%s%s_LogFile_%s_%s.txt',resultsDirectory ...
+    ,startingDate,combinedName,fileName); 
 
 createNewLogFileAndRenameOldOne(logFilePath);
 
