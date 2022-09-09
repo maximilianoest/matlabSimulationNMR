@@ -1,3 +1,4 @@
 RESULTS/
 *.asv
 LOCALMACHINE_runMultipleSimulations.m
+LOCALMACHINE_configMain.txt
