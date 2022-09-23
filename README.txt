@@ -10,5 +10,8 @@ Following information is important:
     parameters.
 - nearestNeigbours is used if one case for NN should be used and 
     nearestNeighbourCases is used if multiple NN cases should be considered
+- in some files a RESULTS directory is used. This directory will not be 
+    shipped with a github clone but can be found on the server and must be
+    downloaded separately.
 
 
