@@ -25,9 +25,9 @@ for nearestNeighboursCase = fieldnames( ...
             shortenedCorrFuncFirstOrder = squeeze(avgCorrFuncFirstOrder_theta_phi(thetaNr,phiNr,1:lags))';
             shortenedCorrFuncSecondOrder = squeeze(avgCorrFuncSecondOrder_theta_phi(thetaNr,phiNr,1:lags))';
             
-            offsetReducedCorrFuncZerothOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncZerothOrder - mean(shortenedCorrFuncZerothOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
-            offsetReducedCorrFuncFirstOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncFirstOrder - mean(shortenedCorrFuncFirstOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
-            offsetReducedCorrFuncSecondOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncSecondOrder - mean(shortenedCorrFuncSecondOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
+            offsetReducedCorrFuncZerothOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncZerothOrder; % - mean(shortenedCorrFuncZerothOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
+            offsetReducedCorrFuncFirstOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncFirstOrder; % - mean(shortenedCorrFuncFirstOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
+            offsetReducedCorrFuncSecondOrder_theta_phi(thetaNr,phiNr,:) = shortenedCorrFuncSecondOrder; % - mean(shortenedCorrFuncSecondOrder(round(offsetReductionRegion(1)*end):round(offsetReductionRegion(2)*end))); %#ok<AGROW>
         end
     end
     postProcessedCorrFuncZerothOrder_theta_phi.(nearestNeighboursCase{1}) = offsetReducedCorrFuncZerothOrder_theta_phi;
