@@ -1,9 +1,11 @@
 %% script start
 % some information:
 % due to the long simulation time and the fast movement of the hydrogen
-% atoms in the water molecules, the trajectories of these molecules will
-% reach across the whole water part of the lipid model. Therefore it won't
-% be usefull to determine the location dependency here.
+% atoms of the water molecules, the trajectories of these molecules will
+% reach across the whole water part of the model. Therefore it won't
+% be usefull to determine the location dependency at this point. For that
+% the simulation time has to be reduced drastically, which will be made in
+% upcoming simulations
 
 logMessage(sprintf('Starting the external script: %s.m', mfilename) ...
     ,logFilePath,true);
@@ -21,7 +23,7 @@ nearestNeighbours = getNumberOfNearestNeighbourNumber(configuration ...
     ,numberOfHs,logFilePath);
 
 [fibreAnglesTheta,fibreAnglesThetaCount,fibreAnglesPhi ...
-    ,fibreAnglesPhiCount] = getThetaAndPhiFromConfiguration( ...o
+    ,fibreAnglesPhiCount] = getThetaAndPhiFromConfiguration( ...
     configuration,logFilePath);
 
 %% Preallocation
