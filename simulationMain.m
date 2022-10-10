@@ -48,6 +48,10 @@ atomsToCalculate = configuration.atomsToCalculate;
 logMessage(sprintf('    Will calculate %i atoms',atomsToCalculate) ...
     ,logFilePath,false);
 
+averagingRegionForSpectralDensity = ...
+    getValuesFromStringEnumeration( ...
+    configuration.averagingRegionForSpectralDensity,';','numeric');
+
 %% Try prallocation first and then load data
 % If implemented, the first part of the scriptFileToRun is executed. In the
 % try block the scriptFileToRun is executed. If the arrays are preallocated

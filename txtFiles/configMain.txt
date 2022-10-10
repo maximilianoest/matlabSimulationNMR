@@ -8,6 +8,7 @@ scriptFileToRun=validateMethodsForComplexCorrFunc
 printToCommandWindow=1
 dataLoaded=0
 savingIntervall=1
+averagingRegionForSpectralDensity=0.98;1
 
 fractionForLags=1
 nearestNeighbours=3000
