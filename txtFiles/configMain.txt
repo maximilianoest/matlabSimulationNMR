@@ -15,7 +15,7 @@ nearestNeighbours=3000
 nearestNeighbourCases=100;40;30
 
 mainMagneticField=3
-atomsToCalculate=3
+atomsToCalculate=25
 
 fibreAnglesTheta=0;90
 fibreAnglesPhi=0
