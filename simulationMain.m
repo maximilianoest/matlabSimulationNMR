@@ -1,10 +1,3 @@
-clear all; close all; clc;
-
-if ~exist('lipids') 
-    clearvars -except trajectoryX trajectoryY trajectoryZ ...
-        simulationConfiguration lipids whichLipid newFileName
-end
-
 
 %% Initialize system
 

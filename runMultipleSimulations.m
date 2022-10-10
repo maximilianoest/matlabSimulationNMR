@@ -1,37 +1,97 @@
 clc; clear all; close all;
 addpath(genpath('library'));
-configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
+createNewDataSetsFromOthers();
 
-lipids.PLPC.fileNamesToAnalyse = [...
-    "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime50ns" ...
+global configurationFilePath;
+global lipids;
+global lipidToAnalyse;
+global newFileName;
+global scriptsToRun;
+global nearestNeighboursCases;
+global scriptNr;
+
+scriptsToRun = ["validateMethodsForComplexCorrFunc" ...
+    ,"shortZeroPaddingValidateMethodsForComplexCorrFunc"];
+nearestNeighboursCases.lipids = "100;40;30";
+nearestNeighboursCases.lipidWaters = "80;70;60;50;40;30;20";
+configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
+ 
+lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns"];
 lipids.PLPC.atomsCount = 10000;
 
-lipids.PSM.fileNamesToAnalyse = [ ...
-    "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime50ns" ...
-    "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime50ns" ...
+lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
+    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime500ns" ...
+    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime500ns" ...
+    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime500ns"];
+lipids.PLPC_lipid.atomsCount = 8000;
+
+lipids.PSM_lipidWater.fileNamesToAnalyse = [ ...
     "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns"];
 lipids.PSM.atomsCount = 10000;
 
-lipids.DOPS.fileNamesToAnalyse = [ ...
-    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime50ns" ...
-    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime50ns" ...
-    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns"];
-lipids.DOPS.atomsCount = 10000;
+lipids.PSM_lipid.fileNamesToAnalyse = [ ...
+    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime500ns" ...
+    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime500ns" ...
+    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime500ns"];
+lipids.PSM.atomsCount = 7900;
 
-for whichLipid = string(fieldnames(lipids))'
-    % create random squence of atoms for one atom
-    if ~strcmp(whichLipid,'PLPC')
-        randomSequenceOfAtoms = randperm(lipids.(whichLipid).atomsCount);
-        save(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep) ...
+lipids.DOPS_lipidWater.fileNamesToAnalyse = [ ...
+    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns"];
+
+lipids.DOPS_lipid.fileNamesToAnalyse = [ ...
+    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime500ns" ...
+    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime500ns" ...
+    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime500ns"];
+lipids.DOPS.atomsCount = 7700;
+
+checkIfFilesForMultiSimExist(lipids);
+
+for lipidToAnalyse = string(fieldnames(lipids))'
+    splittedFieldName = strsplit(lipidToAnalyse,'_');
+    lipid = splittedFieldName{1};
+    consituent = splittedFieldName{2};
+    % random sequence of atoms are used from the nearest neighbours
+    % analysis of the lipids.
+    load(sprintf('randomSequenceOfAtoms_%s%s',lipid,consituent));
+    save(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep) ...
         ,'randomSequenceOfAtoms');
+    if strcmp(consituent,'lipid')
+        change_nearestNeighbourCases_inConfigurationFileTo( ...
+            nearestNeighboursCases.lipids,configurationFilePath);
+    else
+        change_nearestNeighbourCases_inConfigurationFileTo( ...
+            nearestNeighboursCases.lipidWaters,configurationFilePath);
     end
-    for newFileName = lipids.(whichLipid).fileNamesToAnalyse
+    
+    for newFileName = lipids.(lipidToAnalyse).fileNamesToAnalyse
         % change file name in configuration file
-        change_fileName_inConfigurationFileTo(newFileName ...
-            ,configurationFilePath);
-        % run main simulation with this configuration
-        simulationMain;
+            change_fileName_inConfigurationFileTo(newFileName ...
+                ,configurationFilePath);
+        for scriptNr = 1:length(scriptsToRun)
+            newScriptName = scriptsToRun(scriptNr);
+            change_scriptName_inConfigurationFileTo(newScriptName ...
+                ,configurationFilePath);
+            % run main simulation with this configuration
+            simulationMain;
+        end
     end
 end
 
+function checkIfFilesForMultiSimExist(lipids)
+dataDirectory = "/daten/a/Relaxation/Lipids/simulation_max/";
+for lipidToAnalyse = string(fieldnames(lipids))'
+    fileNamesCount = length(lipids.(lipidToAnalyse).fileNamesToAnalyse);
+    whichLipid = strsplit(lipidToAnalyse,'_');
+    whichLipid = whichLipid{1};
+    for fileNR = 1:fileNamesCount
+        fileName = lipids.(lipidToAnalyse).fileNamesToAnalyse(fileNR);
+        filePath = sprintf('%s%s%s%s.mat',dataDirectory,whichLipid,filesep ...
+            ,fileName);
+        if ~exist(filePath,'file')
+            warning('File %s does not exist. Script will crash then.' ...
+                ,fileName);
+        end
+    end
+end
+end

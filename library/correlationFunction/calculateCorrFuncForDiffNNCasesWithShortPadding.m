@@ -1,5 +1,5 @@
 function [sumCorrelationFunction] = ...
-    calculateCorrelationFunctionForDifferentNNCases(sphericalHarmonic ...
+    calculateCorrFuncForDiffNNCasesWithShortPadding(sphericalHarmonic ...
     ,nearestNeighbourCases)
 
 % EXPLANATIONS OF CALCULATION:
@@ -30,7 +30,7 @@ function [sumCorrelationFunction] = ...
 % the postprocessing part.
 
 [~,timeSteps] = size(sphericalHarmonic);
-zeroPaddingLength = 2^(nextpow2(timeSteps)+1);
+zeroPaddingLength = 2^(nextpow2(timeSteps));
 
 % This is faster than double(fft(...
 % double for higher precision in correlation functions
@@ -48,7 +48,5 @@ for nearestNeighbours = nearestNeighbourCases
         correlationFunction(1:nearestNeighbours,1:timeSteps),1)/timeSteps;
 end
 
- end
-
-
+end
 

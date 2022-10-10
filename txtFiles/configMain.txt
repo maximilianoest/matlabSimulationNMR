@@ -1,4 +1,4 @@
-fileName=20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns
+fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime30ns
 
 dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
@@ -12,7 +12,8 @@ averagingRegionForSpectralDensity=0.98;1
 
 fractionForLags=1
 nearestNeighbours=3000
-nearestNeighbourCases=80;70;60;50;30
+nearestNeighbourCases=100;40;30
+
 mainMagneticField=3
 atomsToCalculate=3
 
