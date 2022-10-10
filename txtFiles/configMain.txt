@@ -3,7 +3,7 @@ fileName=20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns
 dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=findDeltaTAndNN_lipidWater_longSimulationTimes
+scriptFileToRun=angleDependency_lipidWater_longSimulationDuration
 
 printToCommandWindow=1
 dataLoaded=0

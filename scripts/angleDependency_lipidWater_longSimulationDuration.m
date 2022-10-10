@@ -17,8 +17,7 @@ logMessage(sprintf(['The lag is set to %d time steps, which ' ...
     'is equivalent to %.2f %%. This configuration only shortens the '...
     'correlation functions and NOT the simulation time.'],lags ...
     ,(configuration.fractionForLags)*100),logFilePath,false);
-
-
+if exist(nearestNeigh
 nearestNeighbours = getNumberOfNearestNeighbourNumber(configuration ...
     ,numberOfHs,logFilePath);
 
@@ -33,8 +32,6 @@ logMessage('Preallocation of arrays.',logFilePath,true);
 r1Estimation_theta_phi_atomCounter = zeros(fibreAnglesThetaCount ...
     ,fibreAnglesPhiCount,atomsToCalculate);
 r1Estimation_theta_phi = zeros(fibreAnglesThetaCount,fibreAnglesPhiCount);
-meanPositions = single([mean(trajectoryX,2) mean(trajectoryY,2) ...
-    mean(trajectoryZ,2)]);
 
 atomCounter = 1;
 calculatedAtomIndices = zeros(1,atomsToCalculate);
@@ -77,6 +74,8 @@ sumCorrelationFunctionSaverSecondOrder = zeros(fibreAnglesThetaCount ...
 
 atomTimer = zeros(1,atomsToCalculate);
 %% Start simulation
+meanPositions = single([mean(trajectoryX,2) mean(trajectoryY,2) ...
+    mean(trajectoryZ,2)]);
 printBreakLineToLogFile(logFilePath);
 logMessage('Start simulation.',logFilePath,true);
 for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
