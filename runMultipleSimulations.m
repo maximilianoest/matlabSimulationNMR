@@ -14,8 +14,8 @@ global scriptNr;
 
 scriptsToRun = ["validateMethodsForComplexCorrFunc" ...
     ,"shortZeroPaddingValidateMethodsForComplexCorrFunc"];
-nearestNeighboursCases.lipids = "100;40;30";
-nearestNeighboursCases.lipidWaters = "80;70;60;50;40;30;20";
+nearestNeighboursCases.lipids = "5500;1000;600;300";
+nearestNeighboursCases.lipidWaters = "8000;5000;4000;3000;2000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
  
 lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
