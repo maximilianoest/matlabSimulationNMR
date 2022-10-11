@@ -1,5 +1,6 @@
 clc; clear all; close all;
 addpath(genpath('library'));
+addpath(genpath('matFiles'));
 % data was created but then the script crashed
 % createNewDataSetsFromOthers();
 
