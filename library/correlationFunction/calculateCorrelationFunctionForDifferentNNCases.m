@@ -31,6 +31,10 @@ function [sumCorrelationFunction] = ...
 % real.^2 seems to be faster than abs(fftSphericalHarmonic).^2. Differences
 % in precision of the both methods are neglectable.
 %
+% For zeroth order spherical harmonic the calculation of ifft is much
+% slower because no multi core processing is used. Therefore, the complex
+% conversion in fft is necessary
+%
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
@@ -39,15 +43,13 @@ zeroPaddingLength = 2^(nextpow2(timeSteps)+1);
 
 % This is faster than double(fft(...
 % double for higher precision in correlation functions
-fftSphericalHarmonic = fft(double(sphericalHarmonic),zeroPaddingLength,2);
-
+fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
+    ,zeroPaddingLength,2);
 
 fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
     + imag(fftSphericalHarmonic).^2;
-clear fftSphericalHarmonic
 
 correlationFunction = ifft(fftCorrelationFunction,[],2);
-clear fftCorrelationFunction
 
 for nearestNeighbours = nearestNeighbourCases
     fieldName = sprintf('nearestNeighbours%g',nearestNeighbours);
