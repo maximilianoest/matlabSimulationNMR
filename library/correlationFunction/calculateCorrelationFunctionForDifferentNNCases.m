@@ -26,6 +26,11 @@ function [sumCorrelationFunction] = ...
 % considered. Therefore, the simulation time has to be shortended to get a
 % loaction dependent correlation function.
 %
+% Calculation with : ifft(abs(fftSphericalHarmonic).^2 ,[],2) is much
+% slower than calculating each part separately. Additionally, imag.^2 +
+% real.^2 seems to be faster than abs(fftSphericalHarmonic).^2. Differences
+% in precision of the both methods are neglectable.
+%
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
@@ -36,11 +41,13 @@ zeroPaddingLength = 2^(nextpow2(timeSteps)+1);
 % double for higher precision in correlation functions
 fftSphericalHarmonic = fft(double(sphericalHarmonic),zeroPaddingLength,2);
 
-% This is faster than real^2 + img^2
-% due to double, this should not change any precision
-correlationFunction = ifft(abs(fftSphericalHarmonic).^2 ,[],2);
 
+fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
+    + imag(fftSphericalHarmonic).^2;
 clear fftSphericalHarmonic
+
+correlationFunction = ifft(fftCorrelationFunction,[],2);
+clear fftCorrelationFunction
 
 for nearestNeighbours = nearestNeighbourCases
     fieldName = sprintf('nearestNeighbours%g',nearestNeighbours);
