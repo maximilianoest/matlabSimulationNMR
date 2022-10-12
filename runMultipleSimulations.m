@@ -4,23 +4,16 @@ addpath(genpath('matFiles'));
 % data was created but then the script crashed
 % createNewDataSetsFromOthers();
 
-global configurationFilePath;
-global lipids;
-global lipidToAnalyse;
-global newFileName;
-global scriptsToRun;
-global nearestNeighboursCases;
-global scriptNr;
-
 scriptsToRun = ["validateMethodsForComplexCorrFunc"]; % ...
     %,"shortZeroPaddingValidateMethodsForComplexCorrFunc"];
 nearestNeighboursCases.lipids = "5500;2600;300";
 nearestNeighboursCases.lipidWaters = "8000;5000;2000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
  
-lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
-    "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns"];
-lipids.PLPC_lipidWater.atomsCount = 10000;
+% already run
+% lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
+%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns"];
+% lipids.PLPC_lipidWater.atomsCount = 10000;
 
 lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
     "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime500ns"]; % ...
@@ -76,7 +69,9 @@ for lipidToAnalyse = string(fieldnames(lipids))'
             change_scriptName_inConfigurationFileTo(newScriptName ...
                 ,configurationFilePath);
             % run main simulation with this configuration
+            multiSimVariables = who;
             simulationMain;
+            clearvars('-except',multiSimVariables{:});
         end
     end
 end

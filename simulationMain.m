@@ -69,10 +69,10 @@ catch ME
 end
 
 if ~configuration.dataLoaded
-    logMessage('Start loading data.',dataFilePath);
+    logMessage('Start loading data.',logFilePath);
     [trajectoryX,trajectoryY,trajectoryZ,gromacsSimulationConfiguration] = ...
         loadTrajectoriesAndSimConfig(dataFilePath);
-    logMessage('Loading data finished.',dataFilePath);
+    logMessage('Loading data finished.',logFilePath);
 else
     logMessage('Data was already loaded in the run before.',dataFilePath);
 end
