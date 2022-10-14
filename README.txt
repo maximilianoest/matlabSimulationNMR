@@ -19,5 +19,11 @@ Following information is important:
 - values in constants.txt are important for the calculations. The path to
     the constants.txt file is hardcoded in simulation main and maybe is 
     used somewhere else in the code. 
+- the trajectories are saved in single precision. Therefore, all data is 
+    calculated in single precision, too. This is validated for the 
+    calculation of the correlation function. There, the difference in 
+    between double and single precsion is much smaller the the values of 
+    the correlation function and its changed noise (calculated for 25 
+    atoms and shown in saved under validateMethodsForComplexCorrFunc.m)
 
 
