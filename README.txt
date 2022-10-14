@@ -25,5 +25,8 @@ Following information is important:
     between double and single precsion is much smaller the the values of 
     the correlation function and its changed noise (calculated for 25 
     atoms and shown in saved under validateMethodsForComplexCorrFunc.m)
+- for the calculation of the spectral density it is switched back to 
+    double precision because the numbers calculated in the explicit 
+    FT have some small and large orders.
 
 
