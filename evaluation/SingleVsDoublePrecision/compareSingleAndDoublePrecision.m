@@ -1,13 +1,15 @@
 clc; clear all; close all;
 fieldStrengthInT = 3; % main magnetic field strength
-addpath(genpath('../../library'));
-addpath(genpath('../../txtFiles'));
+addpath(genpath(sprintf('..%s..%slibrary',createFilesepStringArray(2))));
+addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
 constants = readConstantsFile('constants.txt');
-resultsDir = '../../RESULTS/validateMethodsForComplexCorrFunc';
+resultsDir = sprintf('..%s..%sRESULTS%svalidateMethodsForComplexCorrFunc' ...
+    ,createFilesepStringArray(3));
 if ~exist(resultsDir,'dir')
     error('The results directory does not exist.');
 end
-savingDirectory = sprintf('%s%sPlots%s',resultsDir,filesep,filesep);
+savingDirectory = sprintf('%s%sPlots%s',resultsDir ...
+    ,createFilesepStringArray(2));
 addpath(genpath(resultsDir));
 dipoleDipoleConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
@@ -18,7 +20,8 @@ phi = 1;
 nNCases.lipidWater = 'nearestNeighbours8000';
 nNCases.lipid = 'nearestNeighbours5500';
 allMatFilesInResultsDirectory = dir( ...
-    sprintf('%s%s*.mat',resultsDir,filesep));
+    sprintf('%s%ssingleDoublePrecisionComparison%s*.mat',resultsDir ...
+    ,filesep,filesep));
 figPosAndSize = [50 50 1000 700];
 configVariables = who;
 
@@ -27,7 +30,8 @@ relevantResults = struct();
 for fileCounter = 1:length(allMatFilesInResultsDirectory)
     % create file path
     fileName = allMatFilesInResultsDirectory(fileCounter).name;
-    filePath = sprintf('%s%s%s',resultsDir,filesep,fileName);
+    filePath = sprintf('%s%s%s',allMatFilesInResultsDirectory( ...
+        fileCounter).folder,filesep,fileName);
     
     % load data
     simulationResults = load(filePath);
