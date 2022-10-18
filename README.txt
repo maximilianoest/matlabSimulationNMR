@@ -27,6 +27,6 @@ Following information is important:
     atoms and shown in saved under validateMethodsForComplexCorrFunc.m)
 - for the calculation of the spectral density it is switched back to 
     double precision because the numbers calculated in the explicit 
-    FT have some small and large orders.
+    FT have some small and some large orders.
 
 

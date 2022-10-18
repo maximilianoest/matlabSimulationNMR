@@ -1,4 +1,3 @@
-
 %% Initialize system
 
 addpath(genpath('library'));
@@ -49,7 +48,7 @@ averagingRegionForSpectralDensity = ...
 % If implemented, the first part of the scriptFileToRun is executed. In the
 % try block the scriptFileToRun is executed. If the arrays are preallocated
 % the called scriptFileToRun should quit after preallocaiton and then the
-% data will be loaded. If this functionality is not implemented, the data
+% data will be loaded. If this functionality is not implemented, data
 % is load first and then the script is executed.
 
 try
@@ -70,8 +69,8 @@ end
 
 if ~configuration.dataLoaded
     logMessage('Start loading data.',logFilePath);
-    [trajectoryX,trajectoryY,trajectoryZ,gromacsSimulationConfiguration] = ...
-        loadTrajectoriesAndSimConfig(dataFilePath);
+    [trajectoryX,trajectoryY,trajectoryZ,gromacsSimulationConfiguration] ...
+        = loadTrajectoriesAndSimConfig(dataFilePath);
     logMessage('Loading data finished.',logFilePath);
 else
     logMessage('Data was already loaded in the run before.',dataFilePath);

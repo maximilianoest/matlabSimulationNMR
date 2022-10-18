@@ -4,12 +4,12 @@ addpath(genpath('matFiles'));
 % data was created but then the script crashed
 % createNewDataSetsFromOthers();
 
-scriptsToRun = ["validateMethodsForComplexCorrFunc"]; % ...
-    %,"shortZeroPaddingValidateMethodsForComplexCorrFunc"];
+scriptsToRun = ["validateMethodsForComplexCorrFunc"];
 nearestNeighboursCases.lipids = "5500;2600;300";
 nearestNeighboursCases.lipidWaters = "8000;5000;2000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
- 
+
+
 % already run
 % lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
 %     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns"];
@@ -62,8 +62,8 @@ for lipidToAnalyse = string(fieldnames(lipids))'
     
     for newFileName = lipids.(lipidToAnalyse).fileNamesToAnalyse
         % change file name in configuration file
-            change_fileName_inConfigurationFileTo(newFileName ...
-                ,configurationFilePath);
+        change_fileName_inConfigurationFileTo(newFileName ...
+            ,configurationFilePath);
         for scriptNr = 1:length(scriptsToRun)
             newScriptName = scriptsToRun(scriptNr);
             change_scriptName_inConfigurationFileTo(newScriptName ...
@@ -84,8 +84,8 @@ for lipidToAnalyse = string(fieldnames(lipids))'
     whichLipid = whichLipid{1};
     for fileNR = 1:fileNamesCount
         fileName = lipids.(lipidToAnalyse).fileNamesToAnalyse(fileNR);
-        filePath = sprintf('%s%s%s%s.mat',dataDirectory,whichLipid,filesep ...
-            ,fileName);
+        filePath = sprintf('%s%s%s%s.mat',dataDirectory,whichLipid ...
+            ,filesep,fileName);
         atomsCount = lipids.(lipidToAnalyse).atomsCount;
         fprintf('Number of hydrogen atoms in dataset: %i\n',atomsCount);
         if ~exist(filePath,'file')
