@@ -1,9 +1,9 @@
-fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns
+fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns
 
 dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=validateMethodsForComplexCorrFunc
+scriptFileToRun=calculateCorrFuncWithShortPadding
 
 printToCommandWindow=1
 dataLoaded=0

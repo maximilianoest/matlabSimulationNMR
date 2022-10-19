@@ -3,7 +3,7 @@ addpath(genpath('library'));
 addpath(genpath('matFiles'));
 % data was created but then the script crashed
 
-scriptsToRun = ["validateMethodsForComplexCorrFunc"]; %#ok<NBRAK>
+scriptsToRun = ["calculateCorrFuncWithShortPadding"]; %#ok<NBRAK>
 nearestNeighboursCases.lipids = "5500;2600;300";
 nearestNeighboursCases.lipidWaters = "8000;5000;2000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
