@@ -13,7 +13,7 @@ fileNames = [ ...
 
 filePaths = fileDirectories + fileNames;
 timeStepSkips = [1 2 3 5 10];
-shortings = [1/2 1/4 1/10 1/20];
+shortings = [1];
 
 %% save data as with other simulation parameters
 for fileNr = 1:length(fileNames)
