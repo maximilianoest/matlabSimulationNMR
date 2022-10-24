@@ -49,9 +49,9 @@ for lipidToAnalyse = string(fieldnames(lipids))'
     consituent = splittedFieldName{2};
     % random sequence of atoms are used from the nearest neighbours
     % analysis of the lipids.
-    load(sprintf('randomSequenceOfAtoms_%s%s',lipid,consituent));
-    save(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep) ...
-        ,'randomSequenceOfAtoms');
+%     load(sprintf('randomSequenceOfAtoms_%s%s',lipid,consituent));
+%     save(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep) ...
+%         ,'randomSequenceOfAtoms');
     if strcmp(consituent,'lipid')
         change_nearestNeighbourCases_inConfigurationFileTo( ...
             nearestNeighboursCases.lipids,configurationFilePath);
