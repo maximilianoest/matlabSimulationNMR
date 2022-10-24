@@ -17,15 +17,14 @@ for fieldNr = 1:fieldNamesCount
     fieldName = saverStructFieldNames{fieldNr};
     corrFuncSaverThetaPhi = squeeze(corrFuncSaverStruct ...
         .(fieldName)(thetaNumber,phiNumber,:))';
-    corrFuncCalculted = corrFuncCalculatedStruct.(fieldName);
+    corrFuncCalculated = corrFuncCalculatedStruct.(fieldName);
     if length(corrFuncSaverThetaPhi) ...
             ~= length(corrFuncCalculatedStruct.(fieldName))
         error('addTwoStructsWithSameFieldNames:arraysDoNotHaveTheSameLength' ...
             ,'The arrays within the structs do not have the same lengths');
     end
-    
     corrFuncSaverStruct.(fieldName)(thetaNumber,phiNumber,:) ...
-        = corrFuncSaverThetaPhi + corrFuncCalculted;
+        = corrFuncSaverThetaPhi + corrFuncCalculated;
 end
 
 end

@@ -35,6 +35,13 @@ function [sumCorrelationFunction] = ...
 % slower because no multi core processing is used. Therefore, the complex
 % conversion in fft is necessary
 %
+% Because ifft is a linear transformation the summation can already be
+% performed in the frequency domain.
+%
+% nextpow2(length+1) is chosen because otherwise mirrowing effects in in
+% the correlation functions is observed. These mirrowing effects cause a
+% rise of the correlation function with high lag time.
+%
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
@@ -49,12 +56,14 @@ fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
 fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
     + imag(fftSphericalHarmonic).^2;
 
-correlationFunction = ifft(fftCorrelationFunction,[],2);
-
-for nearestNeighbours = nearestNeighbourCases
+for nearestNeighboursCount = 1:length(nearestNeighbourCases)
+    nearestNeighbours = nearestNeighbourCases(nearestNeighboursCount);
+    summedFfftCorrelationFunction = sum(fftCorrelationFunction( ...
+        1:nearestNeighbours,:),1);
+    summedCorrelationFunction = ifft(summedFfftCorrelationFunction,[],2);
     fieldName = sprintf('nearestNeighbours%g',nearestNeighbours);
-    sumCorrelationFunction.(fieldName) = sum( ...
-        correlationFunction(1:nearestNeighbours,1:timeSteps),1)/timeSteps;
+    sumCorrelationFunction.(fieldName) = double( ...
+        summedCorrelationFunction(1:timeSteps)/timeSteps);
 end
 
  end

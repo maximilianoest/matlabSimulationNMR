@@ -38,6 +38,7 @@ function [sumCorrelationFunction] = ...
 % Because ifft is a linear transformation the summation can already be
 % performed in the frequency domain.
 %
+%
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
