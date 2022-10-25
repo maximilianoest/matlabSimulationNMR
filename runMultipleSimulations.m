@@ -7,21 +7,21 @@ nearestNeighboursCases.lipids = "5500;2600;300";
 nearestNeighboursCases.lipidWaters = "8000;2000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
 
+% lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
+%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns"];
+% lipids.PLPC_lipidWater.atomsCount = 10000;
+
 lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
-    "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns"];
+    "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
 lipids.PLPC_lipidWater.atomsCount = 10000;
 
-% lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
-%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-% lipids.PLPC_lipidWater.atomsCount = 10000;
-% 
-% lipids.PSM_lipidWater.fileNamesToAnalyse = [ ...
-%     "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-% lipids.PSM_lipidWater.atomsCount = 10000;
-% 
-% lipids.DOPS_lipidWater.fileNamesToAnalyse = [ ...
-%     "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-% lipids.DOPS_lipidWater.atomsCount = 10000;
+lipids.PSM_lipidWater.fileNamesToAnalyse = [ ...
+    "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
+lipids.PSM_lipidWater.atomsCount = 10000;
+
+lipids.DOPS_lipidWater.fileNamesToAnalyse = [ ...
+    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
+lipids.DOPS_lipidWater.atomsCount = 10000;
 
 % lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
 %     "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime1000ns" ...
