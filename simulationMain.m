@@ -33,6 +33,7 @@ checkIfFileExists(dataFilePath,logFilePath);
 
 logMessage('Defining simulation parameters.',logFilePath,true);
 [numberOfHs,~,timeSteps] = size(matfile(dataFilePath),'trajectories');
+randomSequenceOfAtoms = randperm(numberOfHs);
 logMessage(sprintf(['    Found %d hydrogen atoms at %d time ' ...
     'steps of %.3d s'],numberOfHs,timeSteps,deltaTInS),logFilePath,false);
 
