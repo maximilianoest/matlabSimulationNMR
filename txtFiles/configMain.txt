@@ -1,9 +1,9 @@
-fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns
+fileName=20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns
 
 dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=angleDependency_lipidWater_bigSimulation
+scriptFileToRun=angleDependency_solidLipid_bigSimulation
 
 printToCommandWindow=1
 dataLoaded=0
@@ -12,10 +12,10 @@ averagingRegionForSpectralDensity=0.98;1
 
 fractionForLags=1
 nearestNeighbours=3000
-nearestNeighbourCases=8000;2000
+nearestNeighbourCases=80
 
 mainMagneticField=3
-atomsToCalculate=2200
+atomsToCalculate=3
 atomCounter=1
 
 fibreAnglesTheta=45

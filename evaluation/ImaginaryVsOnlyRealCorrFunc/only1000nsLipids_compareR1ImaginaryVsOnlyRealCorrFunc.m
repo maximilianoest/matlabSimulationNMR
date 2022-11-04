@@ -15,8 +15,8 @@ dipoleDipoleConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     /(constants.nanoMeter^6);
 fieldStrengthInT = 3; % main magnetic field strength
 omega0 = constants.gyromagneticRatioOfHydrogenAtom * fieldStrengthInT;
-saving = 0;
-theta = 2;
+saving = 1;
+theta = 1;
 phi = 1;
 nNCase = 'nearestNeighbours5500';
 allMatFilesInResultsDirectory = dir(sprintf( ...
@@ -29,6 +29,8 @@ subFigPosAndSize = [ ...
     0.55 0.55 widthAndHeight ; ...
     0.07 0.06 widthAndHeight ; ...
     0.55 0.06 widthAndHeight];
+fileComparingRealVsImag = fopen(sprintf("%sfileComparingRealVsImag" ...
+    + "_thetaPhi%i%i.txt",savingDirectory,theta,phi),'w');
 configVariables = who;
 
 relevantResults = struct();
@@ -96,10 +98,25 @@ for whichLipid = string(fieldnames(relevantResults)')
     end
     lgd = legend();
     legendEntries = {};
+    r1Array = zeros(1,3);
+    onlyRealR1Array = zeros(1,3);
+    deltaTArray = zeros(1,3);
     for datasetNr = 1:length(lipidData)
         dataset = lipidData(datasetNr);
         
         deltaT = dataset.deltaTInS;
+        switch deltaT 
+            case 2e-12
+                r1ArrayIndex = 1;
+            case 4e-12
+                r1ArrayIndex = 2;
+            case 6e-12
+                r1ArrayIndex = 3;
+            otherwise 
+                warning('not found');
+        end
+        deltaTArray(r1ArrayIndex) = deltaT;
+        
         simulationDuration = dataset.simulationDurationInS;
         
         legendEntries{end+1} = sprintf("sim. Dur.: %.2d, dT: %.2d" ...
@@ -119,7 +136,16 @@ for whichLipid = string(fieldnames(relevantResults)')
             end
             
             corrFunc = double(dataset.(corrFuncNames(corrFuncCaseNr( ...
-                1:round(end*0.7))));
+                1:round(end*0.7)))));
+            fprintf(fileComparingRealVsImag ...
+                ,"Lipid %s, sim.Dur. = %.2d, dT = %.2d, theta = %.2f" ...
+                + ", phi = %.2f : mean(%s): real = %.4d, imag = " ...
+                +"%.4d \n",whichLipid ...
+                ,simulationDuration,deltaT ...
+                ,dataset.fibreAnglesTheta(theta) ...
+                ,dataset.fibreAnglesPhi(phi) ...
+                ,corrFuncNames(corrFuncCaseNr),mean(real(corrFunc)) ...
+                ,mean(imag(corrFunc)));
             corrFuncLength = length(corrFunc);
             timeAxis = 0:deltaT:(corrFuncLength-1)*deltaT;
         
@@ -147,6 +173,8 @@ for whichLipid = string(fieldnames(relevantResults)')
             % spectral density
             specDens = 2*(deltaT*cumsum(corrFunc.*exp( ...
                 preFactorSpecDens*1i*omega0*deltaT*(0:corrFuncLength-1))));
+            onlyRealSpecDens = 2*(deltaT*cumsum(real(corrFunc).*exp( ...
+                preFactorSpecDens*1i*omega0*deltaT*(0:corrFuncLength-1))));
             axes(subFigs(specDensPlotIndex)); %#ok<LAXES>
             lgd = legend();
             plot(timeAxis,abs(real(specDens)));
@@ -162,9 +190,42 @@ for whichLipid = string(fieldnames(relevantResults)')
             end
             xlabel("upper limit of FT [s]")
             
+            % R1
+            r1Array(r1ArrayIndex) = r1Array(r1ArrayIndex) ...
+                + dipoleDipoleConstant*3/2*abs(real(mean( ...
+                specDens(end-5000:end))));
+            onlyRealR1Array(r1ArrayIndex) = onlyRealR1Array(r1ArrayIndex) ...
+                + dipoleDipoleConstant*3/2*abs(real(mean( ...
+                onlyRealSpecDens(end-5000:end))));
+            
+            
         end
-        
-        
+    end
+    %%
+    if saving
+        saveFigureTo(savingDirectory,whichLipid ...
+            ,dataset.matlabSimulationDate ...
+            ,sprintf('lipids1000ns_CorrFuncAndSpecDens_thetaphi%i%i'...
+            ,theta,phi));
+        resultsArray = zeros(1,6);
+        resultsArray(1:2:end) = deltaTArray;
+        resultsArray(2:2:end) = r1Array;
+        onlyRealResultsArray = zeros(1,6);
+        onlyRealResultsArray(1:2:end) = deltaTArray;
+        onlyRealResultsArray(2:2:end) = onlyRealR1Array;
+        fprintf(fileComparingRealVsImag ...
+            ,"  Lipid %s theta = %.2f phi = %.2f \n" ...
+            + "   whole:  dt: R1 = %s \n" ...
+            + "   real:   dt: R1 = %s \n"...
+            ,whichLipid,dataset.fibreAnglesTheta(theta) ...
+            ,dataset.fibreAnglesPhi(phi) ...
+            ,sprintf("%.2d: %.4f  ",resultsArray) ...
+            ,sprintf("%.2d: %.4f  ",onlyRealResultsArray));
+    end
+    
+end
+fclose('all');
+    
 %         ylabel('Correlation function');
 %         if datasetNr == 1
 %             lgd = legend( ...
@@ -245,5 +306,3 @@ for whichLipid = string(fieldnames(relevantResults)')
 %             ,'realVsWholeCorrFunc');
 %     end
     
-    end
-end

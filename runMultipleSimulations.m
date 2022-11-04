@@ -2,44 +2,39 @@ clc; clear all; close all;
 addpath(genpath('library'));
 addpath(genpath('matFiles'));
 
-scriptsToRun = ["angleDependency_lipidWater_bigSimulation"]; %#ok<NBRAK>
-nearestNeighboursCases.lipids = "5500;2600;300";
-nearestNeighboursCases.lipidWaters = "8000;2000";
+scriptsToRun = ["angleDependency_solidLipid_bigSimulation"]; %#ok<NBRAK>
+nearestNeighboursCases.lipids = "5500";
+nearestNeighboursCases.lipidWaters = "8000";
 configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
 
 % lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
-%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns"];
+%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns" ...
+%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns"];
 % lipids.PLPC_lipidWater.atomsCount = 10000;
 
-lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
-    "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-lipids.PLPC_lipidWater.atomsCount = 10000;
-
-lipids.PSM_lipidWater.fileNamesToAnalyse = [ ...
-    "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-lipids.PSM_lipidWater.atomsCount = 10000;
-
-lipids.DOPS_lipidWater.fileNamesToAnalyse = [ ...
-    "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
-lipids.DOPS_lipidWater.atomsCount = 10000;
-
-% lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
-%     "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime1000ns" ...
-%     "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns" ...
-%     "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime1000ns"];
-% lipids.PLPC_lipid.atomsCount = 8000;
+% lipids.PLPC_lipidWater.fileNamesToAnalyse = [...
+%     "20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
+% lipids.PLPC_lipidWater.atomsCount = 10000;
 % 
-% lipids.PSM_lipid.fileNamesToAnalyse = [ ...
-%     "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime1000ns" ...
-%     "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns" ...
-%     "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime1000ns"];
-% lipids.PSM_lipid.atomsCount = 7900;
+% lipids.PSM_lipidWater.fileNamesToAnalyse = [ ...
+%     "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
+% lipids.PSM_lipidWater.atomsCount = 10000;
 % 
-% lipids.DOPS_lipid.fileNamesToAnalyse = [ ...
-%     "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt2ps_simTime1000ns" ...
-%     "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns" ...
-%     "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt6ps_simTime1000ns"];
-% lipids.DOPS_lipid.atomsCount = 7700;
+% lipids.DOPS_lipidWater.fileNamesToAnalyse = [ ...
+%     "20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns"];
+% lipids.DOPS_lipidWater.atomsCount = 10000;
+
+lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
+    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+lipids.PLPC_lipid.atomsCount = 8000;
+
+lipids.PSM_lipid.fileNamesToAnalyse = [ ...
+    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+lipids.PSM_lipid.atomsCount = 7900;
+
+lipids.DOPS_lipid.fileNamesToAnalyse = [ ...
+    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+lipids.DOPS_lipid.atomsCount = 7700;
 
 checkIfFilesForMultiSimExist(lipids);
 
@@ -47,11 +42,6 @@ for lipidToAnalyse = string(fieldnames(lipids))'
     splittedFieldName = strsplit(lipidToAnalyse,'_');
     lipid = splittedFieldName{1};
     consituent = splittedFieldName{2};
-    % random sequence of atoms are used from the nearest neighbours
-    % analysis of the lipids.
-%     load(sprintf('randomSequenceOfAtoms_%s%s',lipid,consituent));
-%     save(sprintf('matFiles%srandomSequenceOfAtoms.mat',filesep) ...
-%         ,'randomSequenceOfAtoms');
     if strcmp(consituent,'lipid')
         change_nearestNeighbourCases_inConfigurationFileTo( ...
             nearestNeighboursCases.lipids,configurationFilePath);
