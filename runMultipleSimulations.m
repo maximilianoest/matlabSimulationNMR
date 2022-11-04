@@ -25,15 +25,15 @@ configurationFilePath = sprintf('txtFiles%sconfigMain.txt',filesep);
 % lipids.DOPS_lipidWater.atomsCount = 10000;
 
 lipids.PLPC_lipid.fileNamesToAnalyse = [ ...
-    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+    "20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns"];
 lipids.PLPC_lipid.atomsCount = 8000;
 
 lipids.PSM_lipid.fileNamesToAnalyse = [ ...
-    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+    "20220509_PSM_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns"];
 lipids.PSM_lipid.atomsCount = 7900;
 
 lipids.DOPS_lipid.fileNamesToAnalyse = [ ...
-    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns.mat"];
+    "20220110_DOPS_TIP4_Bilayer_50water_lipid_H_whole_dt4ps_simTime1000ns"];
 lipids.DOPS_lipid.atomsCount = 7700;
 
 checkIfFilesForMultiSimExist(lipids);
