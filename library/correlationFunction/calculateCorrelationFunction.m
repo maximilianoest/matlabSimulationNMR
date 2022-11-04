@@ -1,5 +1,6 @@
-function [sumCorrelationFunction] = ...
+function [summedCorrelationFunction] = ...
     calculateCorrelationFunction(sphericalHarmonic)
+
 
 % EXPLANATIONS OF CALCULATION:
 % The symmetric flag for ifft can't be set here because the imaginary part
@@ -25,24 +26,40 @@ function [sumCorrelationFunction] = ...
 % considered. Therefore, the simulation time has to be shortended to get a
 % loaction dependent correlation function.
 %
+% Calculation with : ifft(abs(fftSphericalHarmonic).^2 ,[],2) is much
+% slower than calculating each part separately. Additionally, imag.^2 +
+% real.^2 seems to be faster than abs(fftSphericalHarmonic).^2. Differences
+% in precision of the both methods are neglectable.
+%
+% For zeroth order spherical harmonic the calculation of ifft is much
+% slower because no multi core processing is used. Therefore, the complex
+% conversion in fft is necessary
+%
+% Because ifft is a linear transformation the summation can already be
+% performed in the frequency domain.
+%
+% nextpow2(length+1) is chosen because otherwise mirrowing effects in in
+% the correlation functions is observed. These mirrowing effects cause a
+% rise of the correlation function with high lag time.
+%
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
 [~,timeSteps] = size(sphericalHarmonic);
-zeroPaddingLength = 2^(nextpow2(timeSteps));
+zeroPaddingLength = 2^(nextpow2(timeSteps)+1);
 
 % This is faster than double(fft(...
 % double for higher precision in correlation functions
-fftSphericalHarmonic = fft(double(sphericalHarmonic),zeroPaddingLength,2);
+fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
+    ,zeroPaddingLength,2);
 
-% This is faster than real^2 + img^2
-% due to double, this should not change any precision
-correlationFunction = ifft(abs(fftSphericalHarmonic).^2 ,[],2);
+fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
+    + imag(fftSphericalHarmonic).^2;
 
-clearvars fftSphericalHarmonic
-
-sumCorrelationFunction = sum(correlationFunction(:,1:timeSteps),1) ...
-    /timeSteps;
+summedFfftCorrelationFunction = sum(fftCorrelationFunction,1);
+summedCorrelationFunction = ifft(summedFfftCorrelationFunction,[],2);
+summedCorrelationFunction = double( ...
+    summedCorrelationFunction(1:timeSteps)/timeSteps);
 
  end
 
