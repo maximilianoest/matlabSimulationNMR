@@ -1,5 +1,6 @@
-function corrFuncSaverStruct = addTwoCorrelationFunctionStructs( ...
-    corrFuncSaverStruct,corrFuncCalculatedStruct,thetaNumber,phiNumber)
+function corrFuncSaverStruct = ...
+    addTwoCorrelationFunctionStructsWithoutAngleDependency( ...
+    corrFuncSaverStruct,corrFuncCalculatedStruct)
 
 saverStructFieldNames = fieldnames(corrFuncSaverStruct);
 calculationStructFieldNames = fieldnames(corrFuncCalculatedStruct);
@@ -15,16 +16,15 @@ fieldNamesCount = length(saverStructFieldNames);
 
 for fieldNr = 1:fieldNamesCount
     fieldName = saverStructFieldNames{fieldNr};
-    corrFuncSaverThetaPhi = squeeze(corrFuncSaverStruct ...
-        .(fieldName)(thetaNumber,phiNumber,:))';
+    corrFuncSaverThetaPhi = corrFuncSaverStruct.(fieldName);
     corrFuncCalculated = corrFuncCalculatedStruct.(fieldName);
     if length(corrFuncSaverThetaPhi) ...
             ~= length(corrFuncCalculatedStruct.(fieldName))
         error('addTwoStructsWithSameFieldNames:arraysDoNotHaveTheSameLength' ...
             ,'The arrays within the structs do not have the same lengths');
     end
-    corrFuncSaverStruct.(fieldName)(thetaNumber,phiNumber,:) ...
-        = corrFuncSaverThetaPhi + corrFuncCalculated;
+    corrFuncSaverStruct.(fieldName) = corrFuncSaverThetaPhi  ...
+        + corrFuncCalculated;
 end
 
 end

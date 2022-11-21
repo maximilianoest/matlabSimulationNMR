@@ -1,19 +1,23 @@
-fileName=20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns
+fileName=20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt20ps_simTime50ns
 
 dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=findDeltaTAndNN_lipidWater_longSimulationTime
+scriptFileToRun=angleDependency_solidLipid_bigSimulation
 
 printToCommandWindow=1
 dataLoaded=0
 savingIntervall=5
+averagingRegionForSpectralDensity=0.98;1
+locationsCount=10
 
 fractionForLags=1
-nearestNeighbours=10
-nearestNeighbourCases=8000;7000;6000;5000;3000
-mainMagneticField=3
-atomsToCalculate=200
+nearestNeighbours=5500
+nearestNeighbourCases=50
 
-fibreAnglesTheta=0;90
+mainMagneticField=3
+atomsToCalculate=2200
+atomCounter=1
+
+fibreAnglesTheta=45
 fibreAnglesPhi=0

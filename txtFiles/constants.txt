@@ -4,3 +4,10 @@ vaccumPermeability=1.25663706212e-6
 nanoMeter=1e-9
 picoSecond=1e-12
 nanoSecond=1e-9
+
+avogadroConstant=6.02214076e23
+atomicWeightHydrogen=1.00794
+atomicWeightOxygen=15.99943
+atomicWeightNitrogen=14.00672
+atomicWeightPhosphorus=30.9737622
+atomicWeightCarbon=12.01078

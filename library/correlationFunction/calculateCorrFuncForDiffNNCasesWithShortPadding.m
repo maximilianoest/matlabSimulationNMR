@@ -1,6 +1,6 @@
-function [summedCorrelationFunction] = ...
-    calculateCorrelationFunction(sphericalHarmonic)
-
+function [sumCorrelationFunction] = ...
+    calculateCorrFuncForDiffNNCasesWithShortPadding(sphericalHarmonic ...
+    ,nearestNeighbourCases)
 
 % EXPLANATIONS OF CALCULATION:
 % The symmetric flag for ifft can't be set here because the imaginary part
@@ -38,15 +38,12 @@ function [summedCorrelationFunction] = ...
 % Because ifft is a linear transformation the summation can already be
 % performed in the frequency domain.
 %
-% nextpow2(length+1) is chosen because otherwise mirrowing effects in in
-% the correlation functions is observed. These mirrowing effects cause a
-% rise of the correlation function with high lag time.
 %
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
 [~,timeSteps] = size(sphericalHarmonic);
-zeroPaddingLength = 2^(nextpow2(timeSteps)+1);
+zeroPaddingLength = 2^(nextpow2(timeSteps));
 
 % This is faster than double(fft(...
 % double for higher precision in correlation functions
@@ -56,12 +53,15 @@ fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
 fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
     + imag(fftSphericalHarmonic).^2;
 
-summedFfftCorrelationFunction = sum(fftCorrelationFunction,1);
-summedCorrelationFunction = ifft(summedFfftCorrelationFunction,[],2);
-summedCorrelationFunction = double( ...
-    summedCorrelationFunction(1:timeSteps)/timeSteps);
+for nearestNeighboursCount = 1:length(nearestNeighbourCases)
+    nearestNeighbours = nearestNeighbourCases(nearestNeighboursCount);
+    summedFfftCorrelationFunction = sum(fftCorrelationFunction( ...
+        1:nearestNeighbours,:),1);
+    summedCorrelationFunction = ifft(summedFfftCorrelationFunction,[],2);
+    fieldName = sprintf('nearestNeighbours%g',nearestNeighbours);
+    sumCorrelationFunction.(fieldName) = double( ...
+        summedCorrelationFunction(1:timeSteps)/timeSteps);
+end
 
- end
-
-
+end
 
