@@ -1,0 +1,844 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2019 The MathWorks, Inc.
+              R2019b Update 3 (9.7.0.1261785) 64-bit (glnxa64)
+                             November 27, 2019
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+
+	Classroom License -- for classroom instructional use only.
+
+All files exist 
+Lipid: DOPS
+Overall simulation steps: 25000000
+Gromacs simulation time step [ps]: 0.002
+Saving interval [#simulationSteps]: 50
+Consequently, there are 500000 frames with a dT of 0.1 ps.
+--------------------------
+Simulation originally was performed at :
+Simulation duration [ps]: 50000
+Simulation duration [ns]: 50
+Simulation duration [us]: 0.05
+Simulation will be read from binary as :
+Starting at time 3e-08sec and ending at time 5e-08 sec
+Thus, the available simulation duration is 20000 ps
+--------------------------
+The follwing simulation configurations will be saved 
+ sim. Dur. | deltaT :
+  20 ns   |   10 ps
+
+    Reading trajectory /daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr... 
+outputting data every 5000 frames
+single precision detected
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 5000 contains 17700 atoms,
+    and is located at time step 249950
+    frame is set at 499.9 ps from beginning of simulation
+    box dimensions are 5.55037 by 5.55037 by 8.92527 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 10000 contains 17700 atoms,
+    and is located at time step 499950
+    frame is set at 999.9 ps from beginning of simulation
+    box dimensions are 5.57079 by 5.57079 by 8.85977 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 15000 contains 17700 atoms,
+    and is located at time step 749950
+    frame is set at 1499.9 ps from beginning of simulation
+    box dimensions are 5.57441 by 5.57441 by 8.80357 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 20000 contains 17700 atoms,
+    and is located at time step 999950
+    frame is set at 1999.9 ps from beginning of simulation
+    box dimensions are 5.6112 by 5.6112 by 8.75612 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 25000 contains 17700 atoms,
+    and is located at time step 1249950
+    frame is set at 2499.9 ps from beginning of simulation
+    box dimensions are 5.62447 by 5.62447 by 8.7231 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 30000 contains 17700 atoms,
+    and is located at time step 1499950
+    frame is set at 2999.9 ps from beginning of simulation
+    box dimensions are 5.5777 by 5.5777 by 8.80176 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 35000 contains 17700 atoms,
+    and is located at time step 1749950
+    frame is set at 3499.9 ps from beginning of simulation
+    box dimensions are 5.62137 by 5.62137 by 8.68213 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 40000 contains 17700 atoms,
+    and is located at time step 1999950
+    frame is set at 3999.9 ps from beginning of simulation
+    box dimensions are 5.65865 by 5.65865 by 8.53817 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 45000 contains 17700 atoms,
+    and is located at time step 2249950
+    frame is set at 4499.9 ps from beginning of simulation
+    box dimensions are 5.61486 by 5.61486 by 8.72092 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 50000 contains 17700 atoms,
+    and is located at time step 2499950
+    frame is set at 4999.9 ps from beginning of simulation
+    box dimensions are 5.63424 by 5.63424 by 8.69684 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 55000 contains 17700 atoms,
+    and is located at time step 2749950
+    frame is set at 5499.9 ps from beginning of simulation
+    box dimensions are 5.60559 by 5.60559 by 8.76545 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 60000 contains 17700 atoms,
+    and is located at time step 2999950
+    frame is set at 5999.9 ps from beginning of simulation
+    box dimensions are 5.66988 by 5.66988 by 8.58235 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 65000 contains 17700 atoms,
+    and is located at time step 3249950
+    frame is set at 6499.9 ps from beginning of simulation
+    box dimensions are 5.65334 by 5.65334 by 8.59226 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 70000 contains 17700 atoms,
+    and is located at time step 3499950
+    frame is set at 6999.9 ps from beginning of simulation
+    box dimensions are 5.59921 by 5.59921 by 8.77712 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 75000 contains 17700 atoms,
+    and is located at time step 3749950
+    frame is set at 7499.9 ps from beginning of simulation
+    box dimensions are 5.62524 by 5.62524 by 8.6888 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 80000 contains 17700 atoms,
+    and is located at time step 3999950
+    frame is set at 7999.9 ps from beginning of simulation
+    box dimensions are 5.64381 by 5.64381 by 8.65872 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 85000 contains 17700 atoms,
+    and is located at time step 4249950
+    frame is set at 8499.9 ps from beginning of simulation
+    box dimensions are 5.61694 by 5.61694 by 8.69703 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 90000 contains 17700 atoms,
+    and is located at time step 4499950
+    frame is set at 8999.9 ps from beginning of simulation
+    box dimensions are 5.65973 by 5.65973 by 8.54184 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 95000 contains 17700 atoms,
+    and is located at time step 4749950
+    frame is set at 9499.9 ps from beginning of simulation
+    box dimensions are 5.65459 by 5.65459 by 8.58541 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 100000 contains 17700 atoms,
+    and is located at time step 4999950
+    frame is set at 9999.9 ps from beginning of simulation
+    box dimensions are 5.65172 by 5.65172 by 8.5872 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 105000 contains 17700 atoms,
+    and is located at time step 5249950
+    frame is set at 10499.9 ps from beginning of simulation
+    box dimensions are 5.59763 by 5.59763 by 8.78234 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 110000 contains 17700 atoms,
+    and is located at time step 5499950
+    frame is set at 10999.9 ps from beginning of simulation
+    box dimensions are 5.60233 by 5.60233 by 8.76308 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 115000 contains 17700 atoms,
+    and is located at time step 5749950
+    frame is set at 11499.9 ps from beginning of simulation
+    box dimensions are 5.64228 by 5.64228 by 8.63947 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 120000 contains 17700 atoms,
+    and is located at time step 5999950
+    frame is set at 11999.9 ps from beginning of simulation
+    box dimensions are 5.64421 by 5.64421 by 8.5995 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 125000 contains 17700 atoms,
+    and is located at time step 6249950
+    frame is set at 12499.9 ps from beginning of simulation
+    box dimensions are 5.62554 by 5.62554 by 8.65428 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 130000 contains 17700 atoms,
+    and is located at time step 6499950
+    frame is set at 12999.9 ps from beginning of simulation
+    box dimensions are 5.61401 by 5.61401 by 8.69489 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 135000 contains 17700 atoms,
+    and is located at time step 6749950
+    frame is set at 13499.9 ps from beginning of simulation
+    box dimensions are 5.59251 by 5.59251 by 8.81427 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 140000 contains 17700 atoms,
+    and is located at time step 6999950
+    frame is set at 13999.9 ps from beginning of simulation
+    box dimensions are 5.65599 by 5.65599 by 8.58019 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 145000 contains 17700 atoms,
+    and is located at time step 7249950
+    frame is set at 14499.9 ps from beginning of simulation
+    box dimensions are 5.64363 by 5.64363 by 8.64511 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 150000 contains 17700 atoms,
+    and is located at time step 7499950
+    frame is set at 14999.9 ps from beginning of simulation
+    box dimensions are 5.61028 by 5.61028 by 8.6918 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 155000 contains 17700 atoms,
+    and is located at time step 7749950
+    frame is set at 15499.9 ps from beginning of simulation
+    box dimensions are 5.56732 by 5.56732 by 8.84033 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 160000 contains 17700 atoms,
+    and is located at time step 7999950
+    frame is set at 15999.9 ps from beginning of simulation
+    box dimensions are 5.62092 by 5.62092 by 8.71121 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 165000 contains 17700 atoms,
+    and is located at time step 8249950
+    frame is set at 16499.9 ps from beginning of simulation
+    box dimensions are 5.61105 by 5.61105 by 8.72747 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 170000 contains 17700 atoms,
+    and is located at time step 8499950
+    frame is set at 16999.9 ps from beginning of simulation
+    box dimensions are 5.59915 by 5.59915 by 8.76602 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 175000 contains 17700 atoms,
+    and is located at time step 8749950
+    frame is set at 17499.9 ps from beginning of simulation
+    box dimensions are 5.67316 by 5.67316 by 8.52762 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 180000 contains 17700 atoms,
+    and is located at time step 8999950
+    frame is set at 17999.9 ps from beginning of simulation
+    box dimensions are 5.64347 by 5.64347 by 8.59722 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 185000 contains 17700 atoms,
+    and is located at time step 9249950
+    frame is set at 18499.9 ps from beginning of simulation
+    box dimensions are 5.67841 by 5.67841 by 8.49878 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 190000 contains 17700 atoms,
+    and is located at time step 9499950
+    frame is set at 18999.9 ps from beginning of simulation
+    box dimensions are 5.69188 by 5.69188 by 8.47046 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 195000 contains 17700 atoms,
+    and is located at time step 9749950
+    frame is set at 19499.9 ps from beginning of simulation
+    box dimensions are 5.70056 by 5.70056 by 8.39997 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 200000 contains 17700 atoms,
+    and is located at time step 9999950
+    frame is set at 19999.9 ps from beginning of simulation
+    box dimensions are 5.68592 by 5.68592 by 8.47024 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 205000 contains 17700 atoms,
+    and is located at time step 10249950
+    frame is set at 20499.9 ps from beginning of simulation
+    box dimensions are 5.70529 by 5.70529 by 8.46613 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 210000 contains 17700 atoms,
+    and is located at time step 10499950
+    frame is set at 20999.9 ps from beginning of simulation
+    box dimensions are 5.67916 by 5.67916 by 8.53927 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 215000 contains 17700 atoms,
+    and is located at time step 10749950
+    frame is set at 21499.9 ps from beginning of simulation
+    box dimensions are 5.64984 by 5.64984 by 8.63918 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 220000 contains 17700 atoms,
+    and is located at time step 10999950
+    frame is set at 21999.9 ps from beginning of simulation
+    box dimensions are 5.61988 by 5.61988 by 8.71873 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 225000 contains 17700 atoms,
+    and is located at time step 11249950
+    frame is set at 22499.9 ps from beginning of simulation
+    box dimensions are 5.63711 by 5.63711 by 8.65716 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 230000 contains 17700 atoms,
+    and is located at time step 11499950
+    frame is set at 22999.9 ps from beginning of simulation
+    box dimensions are 5.57147 by 5.57147 by 8.84943 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 235000 contains 17700 atoms,
+    and is located at time step 11749950
+    frame is set at 23499.9 ps from beginning of simulation
+    box dimensions are 5.55739 by 5.55739 by 8.88655 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 240000 contains 17700 atoms,
+    and is located at time step 11999950
+    frame is set at 23999.9 ps from beginning of simulation
+    box dimensions are 5.55364 by 5.55364 by 8.88869 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 245000 contains 17700 atoms,
+    and is located at time step 12249950
+    frame is set at 24499.9 ps from beginning of simulation
+    box dimensions are 5.60952 by 5.60952 by 8.69963 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 250000 contains 17700 atoms,
+    and is located at time step 12499950
+    frame is set at 24999.9 ps from beginning of simulation
+    box dimensions are 5.54781 by 5.54781 by 8.94541 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 255000 contains 17700 atoms,
+    and is located at time step 12749950
+    frame is set at 25499.9 ps from beginning of simulation
+    box dimensions are 5.56496 by 5.56496 by 8.8085 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 260000 contains 17700 atoms,
+    and is located at time step 12999950
+    frame is set at 25999.9 ps from beginning of simulation
+    box dimensions are 5.63591 by 5.63591 by 8.62418 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 265000 contains 17700 atoms,
+    and is located at time step 13249950
+    frame is set at 26499.9 ps from beginning of simulation
+    box dimensions are 5.63861 by 5.63861 by 8.62635 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 270000 contains 17700 atoms,
+    and is located at time step 13499950
+    frame is set at 26999.9 ps from beginning of simulation
+    box dimensions are 5.62766 by 5.62766 by 8.6752 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 275000 contains 17700 atoms,
+    and is located at time step 13749950
+    frame is set at 27499.9 ps from beginning of simulation
+    box dimensions are 5.62245 by 5.62245 by 8.669 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 280000 contains 17700 atoms,
+    and is located at time step 13999950
+    frame is set at 27999.9 ps from beginning of simulation
+    box dimensions are 5.68461 by 5.68461 by 8.5252 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 285000 contains 17700 atoms,
+    and is located at time step 14249950
+    frame is set at 28499.9 ps from beginning of simulation
+    box dimensions are 5.6781 by 5.6781 by 8.51015 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 290000 contains 17700 atoms,
+    and is located at time step 14499950
+    frame is set at 28999.9 ps from beginning of simulation
+    box dimensions are 5.70237 by 5.70237 by 8.46671 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 295000 contains 17700 atoms,
+    and is located at time step 14749950
+    frame is set at 29499.9 ps from beginning of simulation
+    box dimensions are 5.68419 by 5.68419 by 8.47647 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 300000 contains 17700 atoms,
+    and is located at time step 14999950
+    frame is set at 29999.9 ps from beginning of simulation
+    box dimensions are 5.6308 by 5.6308 by 8.63993 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 305000 contains 17700 atoms,
+    and is located at time step 15249950
+    frame is set at 30499.9 ps from beginning of simulation
+    box dimensions are 5.67779 by 5.67779 by 8.49374 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 310000 contains 17700 atoms,
+    and is located at time step 15499950
+    frame is set at 30999.9 ps from beginning of simulation
+    box dimensions are 5.70622 by 5.70622 by 8.41955 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 315000 contains 17700 atoms,
+    and is located at time step 15749950
+    frame is set at 31499.9 ps from beginning of simulation
+    box dimensions are 5.70653 by 5.70653 by 8.45144 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 320000 contains 17700 atoms,
+    and is located at time step 15999950
+    frame is set at 31999.9 ps from beginning of simulation
+    box dimensions are 5.69843 by 5.69843 by 8.44461 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 325000 contains 17700 atoms,
+    and is located at time step 16249950
+    frame is set at 32499.9 ps from beginning of simulation
+    box dimensions are 5.67732 by 5.67732 by 8.54585 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 330000 contains 17700 atoms,
+    and is located at time step 16499950
+    frame is set at 32999.9 ps from beginning of simulation
+    box dimensions are 5.75484 by 5.75484 by 8.26634 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 335000 contains 17700 atoms,
+    and is located at time step 16749950
+    frame is set at 33499.9 ps from beginning of simulation
+    box dimensions are 5.70948 by 5.70948 by 8.46834 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 340000 contains 17700 atoms,
+    and is located at time step 16999950
+    frame is set at 33999.9 ps from beginning of simulation
+    box dimensions are 5.71206 by 5.71206 by 8.42039 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 345000 contains 17700 atoms,
+    and is located at time step 17249950
+    frame is set at 34499.9 ps from beginning of simulation
+    box dimensions are 5.73124 by 5.73124 by 8.3748 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 350000 contains 17700 atoms,
+    and is located at time step 17499950
+    frame is set at 34999.9 ps from beginning of simulation
+    box dimensions are 5.68294 by 5.68294 by 8.54139 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 355000 contains 17700 atoms,
+    and is located at time step 17749950
+    frame is set at 35499.9 ps from beginning of simulation
+    box dimensions are 5.73633 by 5.73633 by 8.34255 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 360000 contains 17700 atoms,
+    and is located at time step 17999950
+    frame is set at 35999.9 ps from beginning of simulation
+    box dimensions are 5.68968 by 5.68968 by 8.53982 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 365000 contains 17700 atoms,
+    and is located at time step 18249950
+    frame is set at 36499.9 ps from beginning of simulation
+    box dimensions are 5.70638 by 5.70638 by 8.43848 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 370000 contains 17700 atoms,
+    and is located at time step 18499950
+    frame is set at 36999.9 ps from beginning of simulation
+    box dimensions are 5.70253 by 5.70253 by 8.47298 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 375000 contains 17700 atoms,
+    and is located at time step 18749950
+    frame is set at 37499.9 ps from beginning of simulation
+    box dimensions are 5.68103 by 5.68103 by 8.50375 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 380000 contains 17700 atoms,
+    and is located at time step 18999950
+    frame is set at 37999.9 ps from beginning of simulation
+    box dimensions are 5.6463 by 5.6463 by 8.65032 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 385000 contains 17700 atoms,
+    and is located at time step 19249950
+    frame is set at 38499.9 ps from beginning of simulation
+    box dimensions are 5.64189 by 5.64189 by 8.6151 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 390000 contains 17700 atoms,
+    and is located at time step 19499950
+    frame is set at 38999.9 ps from beginning of simulation
+    box dimensions are 5.63788 by 5.63788 by 8.64532 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 395000 contains 17700 atoms,
+    and is located at time step 19749950
+    frame is set at 39499.9 ps from beginning of simulation
+    box dimensions are 5.59815 by 5.59815 by 8.68817 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 400000 contains 17700 atoms,
+    and is located at time step 19999950
+    frame is set at 39999.9 ps from beginning of simulation
+    box dimensions are 5.59471 by 5.59471 by 8.7497 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 405000 contains 17700 atoms,
+    and is located at time step 20249950
+    frame is set at 40499.9 ps from beginning of simulation
+    box dimensions are 5.59935 by 5.59935 by 8.79581 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 410000 contains 17700 atoms,
+    and is located at time step 20499950
+    frame is set at 40999.9 ps from beginning of simulation
+    box dimensions are 5.58798 by 5.58798 by 8.79641 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 415000 contains 17700 atoms,
+    and is located at time step 20749950
+    frame is set at 41499.9 ps from beginning of simulation
+    box dimensions are 5.57362 by 5.57362 by 8.84317 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 420000 contains 17700 atoms,
+    and is located at time step 20999950
+    frame is set at 41999.9 ps from beginning of simulation
+    box dimensions are 5.61272 by 5.61272 by 8.71417 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 425000 contains 17700 atoms,
+    and is located at time step 21249950
+    frame is set at 42499.9 ps from beginning of simulation
+    box dimensions are 5.61904 by 5.61904 by 8.68663 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 430000 contains 17700 atoms,
+    and is located at time step 21499950
+    frame is set at 42999.9 ps from beginning of simulation
+    box dimensions are 5.62926 by 5.62926 by 8.65343 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 435000 contains 17700 atoms,
+    and is located at time step 21749950
+    frame is set at 43499.9 ps from beginning of simulation
+    box dimensions are 5.57791 by 5.57791 by 8.82746 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 440000 contains 17700 atoms,
+    and is located at time step 21999950
+    frame is set at 43999.9 ps from beginning of simulation
+    box dimensions are 5.60946 by 5.60946 by 8.73353 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 445000 contains 17700 atoms,
+    and is located at time step 22249950
+    frame is set at 44499.9 ps from beginning of simulation
+    box dimensions are 5.66926 by 5.66926 by 8.54656 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 450000 contains 17700 atoms,
+    and is located at time step 22499950
+    frame is set at 44999.9 ps from beginning of simulation
+    box dimensions are 5.65729 by 5.65729 by 8.56882 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 455000 contains 17700 atoms,
+    and is located at time step 22749950
+    frame is set at 45499.9 ps from beginning of simulation
+    box dimensions are 5.61243 by 5.61243 by 8.73932 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 460000 contains 17700 atoms,
+    and is located at time step 22999950
+    frame is set at 45999.9 ps from beginning of simulation
+    box dimensions are 5.68836 by 5.68836 by 8.51219 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 465000 contains 17700 atoms,
+    and is located at time step 23249950
+    frame is set at 46499.9 ps from beginning of simulation
+    box dimensions are 5.68943 by 5.68943 by 8.49846 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 470000 contains 17700 atoms,
+    and is located at time step 23499950
+    frame is set at 46999.9 ps from beginning of simulation
+    box dimensions are 5.71166 by 5.71166 by 8.43401 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 475000 contains 17700 atoms,
+    and is located at time step 23749950
+    frame is set at 47499.9 ps from beginning of simulation
+    box dimensions are 5.68245 by 5.68245 by 8.4959 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 480000 contains 17700 atoms,
+    and is located at time step 23999950
+    frame is set at 47999.9 ps from beginning of simulation
+    box dimensions are 5.66348 by 5.66348 by 8.58015 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 485000 contains 17700 atoms,
+    and is located at time step 24249950
+    frame is set at 48499.9 ps from beginning of simulation
+    box dimensions are 5.65118 by 5.65118 by 8.60261 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 490000 contains 17700 atoms,
+    and is located at time step 24499950
+    frame is set at 48999.9 ps from beginning of simulation
+    box dimensions are 5.64987 by 5.64987 by 8.62272 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 495000 contains 17700 atoms,
+    and is located at time step 24749950
+    frame is set at 49499.9 ps from beginning of simulation
+    box dimensions are 5.59538 by 5.59538 by 8.69213 nm
+  coordinate  data present in this frame
+
+opening file "/daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr",
+        ...GMX_trn_file  
+    frame number 500000 contains 17700 atoms,
+    and is located at time step 24999950
+    frame is set at 49999.9 ps from beginning of simulation
+    box dimensions are 5.63243 by 5.63243 by 8.68254 nm
+  coordinate  data present in this frame
+
+correcting intro binaries of xyz data xdata.binary
+
+1407.97 seconds spent processing trajectory /daten/a/Relaxation/Lipids/simulation_max/DOPS/GROMACS/20220110_DOPS_TIP4_Monolayer_50water/lipidWaterAndSolidLipid_whole_H.trr
+
+
+    Reading /home/moesterreicher/GROMACS/trr2mat/xdata.binary... 
+    beginning from 300000 frame 
+    processing simulation until frame 500000 

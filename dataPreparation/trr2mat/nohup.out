@@ -1,0 +1,8 @@
+Running matlab script
+Running matlab script
+./runMatlabScript.sh: line 4: 16742 Terminated              matlab -nosplash -nodisplay -nodesktop -r 'try; createMatFileFromTrrFile; catch e; disp(e.message); disp(e.stack); save(sprintf("%s_Error",datestr(now,"yyyymmdd")),"e");  end; quit;' > Monolayer_lipidWaterAndsolidLipidTrrCreation1.log
+Running matlab script
+Running matlab script
+Sleeping till GROMACS is ready
+Awakening to run Matlab script
+Running matlab script

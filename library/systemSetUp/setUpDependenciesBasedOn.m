@@ -13,6 +13,7 @@ if runningOnServer()
 else
     dataDirectory = configuration.dataDirectoryOnLocalMachine;
 end
+
 dataDirectory = sprintf('%s%s%s',dataDirectory,whichLipid,filesep);
 
 resultsDirectory = sprintf('%s%s%s%s%s%s',pwd,filesep, ...

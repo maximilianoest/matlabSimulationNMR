@@ -1,0 +1,119 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2019 The MathWorks, Inc.
+              R2019b Update 3 (9.7.0.1261785) 64-bit (glnxa64)
+                             November 27, 2019
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+
+	Classroom License -- for classroom instructional use only.
+
+
+
+20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt01ps_simTime50ns.mat
+deltaT: 1.000000e-01ps, simulationDuration: 50 ns 
+Start loading data 
+deltaT: 2.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 50 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 2.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 40 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 2.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 30 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 2.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 25 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 2.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 20 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 2.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 3.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 5.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+deltaT: 1ps, simulationDuration: 10 ns 
+Saved 20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PLPC/ 
+
+
+20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt01ps_simTime50ns.mat
+deltaT: 1.000000e-01ps, simulationDuration: 50 ns 
+Start loading data 
+deltaT: 2.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 50 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 50 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime50ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 2.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 40 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 40 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime40ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 2.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 30 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 30 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime30ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 2.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 25 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 25 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime25ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 2.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 20 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 20 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime20ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 2.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 3.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt03ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 5.000000e-01ps, simulationDuration: 10 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt05ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
+deltaT: 1ps, simulationDuration: 10 ns 
+Saved 20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt1ps_simTime10ns.mat in directory /daten/a/Relaxation/Lipids/simulation_max/PSM/ 
