@@ -3,7 +3,7 @@ fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1
 dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=solidMyelin_20230126_GraKaPerformanceTest
+scriptFileToRun=solidMyelin_20230109_DetermineCorrelationFunctions
 
 printToCommandWindow=1
 dataLoaded=0
@@ -19,5 +19,5 @@ mainMagneticField=3
 atomsToCalculate=2200
 atomCounter=1
 
-fibreAnglesTheta=0
+fibreAnglesTheta=45
 fibreAnglesPhi=0
