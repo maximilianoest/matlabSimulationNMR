@@ -3,7 +3,7 @@ fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1
 dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=solidMyelin_20230109_DetermineCorrelationFunctions
+scriptFileToRun=solidMyelin_20230126_GraKaPerformanceTest
 
 printToCommandWindow=1
 dataLoaded=0
