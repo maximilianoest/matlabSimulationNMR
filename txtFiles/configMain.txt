@@ -13,7 +13,7 @@ locationsCount=10
 
 fractionForLags=1
 nearestNeighbours=5500
-nearestNeighbourCases=5500
+nearestNeighbourCases=5500;200
 
 mainMagneticField=3
 atomsToCalculate=2200
