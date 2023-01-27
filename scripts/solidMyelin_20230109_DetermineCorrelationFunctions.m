@@ -7,7 +7,7 @@ if ~exist('nearestNeighbourCases','var')
     logMessage('Preallocation of arrays as a first part of the script' ...
         ,logFilePath,true);
     nearestNeighbourCases = getValuesFromStringEnumeration( ...
-        configuration.nearestNeighbours,";","numeric");
+        configuration.nearestNeighbourCases,";","numeric");
     nearestNeighbourCases = sort(nearestNeighbourCases,'descend');
     maxNearestNeighbours = nearestNeighbourCases(1);
     
@@ -28,11 +28,6 @@ if ~exist('nearestNeighbourCases','var')
     
     phi = configuration.fibreAnglesPhi;
     zAxis = [0 0 1];
-    
-    
-    rotatedX = zeros(maxNearestNeighbours,timeSteps,'single');
-    rotatedY = zeros(maxNearestNeighbours,timeSteps,'single');
-    rotatedZ = zeros(maxNearestNeighbours,timeSteps,'single');
     
     polarAngle = zeros(maxNearestNeighbours,timeSteps,'single');
     azimuthAngle = zeros(maxNearestNeighbours,timeSteps,'single');
@@ -79,8 +74,6 @@ totalRotationMatrix = rotationMatrixTheta*rotationMatrixPhi;
 
 logMessage('Start simulation.',logFilePath,true);
 
-timeWithoutGPU = 0;
-
 
 for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
     atomTimerStart = tic;
@@ -93,13 +86,15 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         ,trajectoryY,trajectoryZ);
     
     [polarAngle,azimuthAngle] = ...
-        transformToSphericalCoordinates(rotatedX,rotatedY,rotatedZ);            
+        transformToSphericalCoordinates( ...
+        trajectoryX(nearestNeighboursIDs,:) ...
+        ,trajectoryY(nearestNeighboursIDs,:) ...
+        ,trajectoryZ(nearestNeighboursIDs,:));            
     [sphericalHarmonicZerothOrder,sphericalHarmonicFirstOrder ...
         ,sphericalHarmonicSecondOrder] = calculateSphericalHarmonics( ...
         polarAngle,azimuthAngle,nearestNeighbourDistancesPow3);
     
     % calculate correlation functions
-    tic
     corrFuncZerothOrder = ...
         calculateCorrFuncForMultipleNNCasesAsMatrix( ...
         sphericalHarmonicZerothOrder,nearestNeighbourCases);
@@ -109,7 +104,6 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
     corrFuncSecondOrder = ...
         calculateCorrFuncForMultipleNNCasesAsMatrix( ...
         sphericalHarmonicSecondOrder,nearestNeighbourCases);
-    timeWithoutGPU(end+1) = toc; %#ok<SAGROW>
     
     % saving
     whichDirectory = resultsDirectory + corrFuncDirectories( ...
@@ -119,7 +113,8 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         error("Chosen wrong directory: %s",whichDirectory);
     end
     saveCorrFuncTo(whichDirectory,corrFuncZerothOrder,atomNumber ...
-        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs);
+        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs ...
+        ,theta,phi);
     
     
     whichDirectory = resultsDirectory + corrFuncDirectories( ...
@@ -129,7 +124,8 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         error("Chosen wrong directory: %s",whichDirectory);
     end
     saveCorrFuncTo(whichDirectory,corrFuncFirstOrder,atomNumber ...
-        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs);
+        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs...
+        ,theta,phi);
     
     
     whichDirectory = resultsDirectory + corrFuncDirectories( ...
@@ -139,7 +135,8 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         error("Chosen wrong directory: %s",whichDirectory);
     end
     saveCorrFuncTo(whichDirectory,corrFuncSecondOrder,atomNumber ...
-        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs);
+        ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs...
+        ,theta,phi);
     
     
     sumCorrFuncZerothOrder = sumCorrFuncZerothOrder + corrFuncZerothOrder;
@@ -162,8 +159,6 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         ,datestr(averageTimeForOneAtom,'HH:MM:SS') ...
         ,datetime('now')+averageTimeForOneAtom ...
         *(atomsToCalculate-atomCounter)),logFilePath,false);
-    logMessage(sprintf("  --> Average time for calculation without " ...
-        + "GPU %f ",mean(timeWithoutGPU)),logFilePath,false);
     
     if mod(atomCounter,configuration.savingIntervall) == 0
         lastSavingDate = datestr(now,'yyyymmdd_HHMM');

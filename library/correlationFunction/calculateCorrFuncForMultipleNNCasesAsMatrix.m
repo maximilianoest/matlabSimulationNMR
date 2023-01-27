@@ -56,7 +56,6 @@ fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
 fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
     + imag(fftSphericalHarmonic).^2;
 
-nearestNeighbourCases = sort(nearestNeighbourCases,'descend');
 sumCorrelationFunctions = zeros(length(nearestNeighbourCases),timeSteps);
 for nearestNeighboursCount = 1:length(nearestNeighbourCases)
     nearestNeighbours = nearestNeighbourCases(nearestNeighboursCount);

@@ -12,10 +12,10 @@ corrFuncDirs = directoryInfo(getValuesFromStructAsArray(directoryInfo ...
 loadCorrFuncZerothOrder = 1;
 loadCorrFuncFirstOrder = 1;
 loadCorrFuncSecondOrder = 1;
-specificDate = "20220401";
+specificDate = "20221222";
 atomIndices = 'all';
 nearestNeighbours = 5500;
-simDurationInNs = 50;
+simDurationInNs = 200;
 dTInPs = 20;
 
 for directoryNr = 1:length(corrFuncDirs)
@@ -48,7 +48,7 @@ for directoryNr = 1:length(corrFuncDirs)
                     folderName+filesep+directoryName,fileNamesToLoad);
             end
         otherwise
-           error("Not detectable directory.");
+           warning("Not detectable directory %s.", directoryName);
    end
     
 end
@@ -213,7 +213,7 @@ for fileName = fileNamesToLoad
     sumCorrFunc = sumCorrFunc + corrFunc;
 end
 fprintf("Averaged %i data curves. \n",length(fileNamesToLoad));
-averagedCorrFunc = corrFunc / length(fileNamesToLoad);
+averagedCorrFunc = sumCorrFunc / length(fileNamesToLoad);
 end
 
 
