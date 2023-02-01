@@ -9,6 +9,9 @@ for numberOfNNCases = 1:size(corrFuncForDifferentNN,1)
         ,NNcases(numberOfNNCases) ...
         ,replace(num2str(simDurInNs),".","_") ...
         ,replace(num2str(deltaTInPs ),".","_"));
+    if exist(savingName,'file')
+        error("Correlation function already exists.");
+    end
     save(savingName,'corrFunc','-v7.3')
 end
 
