@@ -84,6 +84,8 @@ if ~exist('nearestNeighbourCases','var')
     calculatedAtomIndices(1:atomCounter) = ...
         oldResults.calculatedAtomIndices(1:atomCounter);
     randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
+    atomTimer = zeros(1,atomsToCalculate);
+    atomTimer(1:atomCounter) = oldResults.atomTimer;
     
     sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
     sumCorrFuncFirstOrder = oldResults.sumCorrFuncFirstOrder;
@@ -102,7 +104,6 @@ if ~exist('nearestNeighbourCases','var')
 end
 meanPositions = single([mean(trajectoryX,2) mean(trajectoryY,2) ...
         mean(trajectoryZ,2)]);
-atomTimer = zeros(1,atomsToCalculate);
 
 %% Start simulation
 logMessage(sprintf("You have chosen theta = %.4f and phi = %.4f" ...
