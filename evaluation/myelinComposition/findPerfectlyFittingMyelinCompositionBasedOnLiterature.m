@@ -4,6 +4,8 @@ clc; clear all; close all; fclose("all");
 addpath(genpath(sprintf('..%s..%slibrary',filesep,filesep)));
 addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
 constants = readConstantsFile('constants.txt');
+
+%% configuration
 NUMBER_OF_heaviest_MOLECULES_IN_ONE_LEAFLET = 50;
 
 atomNameCollection = ["C" "H" "N" "O" "P" "S"];
@@ -403,7 +405,7 @@ finalCompositionTable(end).moleculeWeight = overallWeight;
 % results above.
 fileID = fopen("C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\" ...
     + "myelinModelComposition\20221222_myelinModelComposition_Bilayer\" ...
-    + "charmm-gui-7171069307_UNTOUCHED\gromacs\step5_input.gro");
+    + "20230202_myelin_monolayer_50water\step5_input.gro");
 
 lipidsInGroDataCheck = getLipidsInModelFromGroFile(fileID ...
     ,atomNameCollection);
