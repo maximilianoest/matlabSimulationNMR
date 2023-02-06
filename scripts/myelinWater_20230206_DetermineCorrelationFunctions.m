@@ -6,53 +6,18 @@ logMessage(sprintf('Starting the external script: %s.m \n\n', mfilename) ...
 if ~exist('nearestNeighbourCases','var')
     logMessage('Loading old results to continue with simulation.' ...
         ,logFilePath,false);
-    if exist(configuration.oldResultsFileToLoad,'file')
-        oldResults = load(configuration.oldResultsFileToLoad);
-        additionalInformation = sprintf("These results are a " ...
-            + "continuation of %s",configuration.oldResultsFileToLoad);
-    else
-        error("Old results file does not exist");
-    end
     
     nearestNeighbourCases = getValuesFromStringEnumeration( ...
         configuration.nearestNeighbourCases,";","numeric");
     nearestNeighbourCases = sort(nearestNeighbourCases,'descend');
     maxNearestNeighbours = nearestNeighbourCases(1);
+    casesCount = length(nearestNeighbourCases);
     
     theta = configuration.fibreAnglesTheta;
     yAxis = [0 1 0];
     
     phi = configuration.fibreAnglesPhi;
     zAxis = [0 0 1];
-    
-    logMessage("Comparing old with new configuration.",logFilePath,false);
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        fileName,oldResults.configuration.fileName);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        nearestNeighbourCases ...
-        ,sort(oldResults.nearestNeighbourCases,'descend'));
-    
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        averagingRegionForSpectralDensity ...
-        ,oldResults.averagingRegionForSpecDens);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation(theta ...
-        ,oldResults.configuration.fibreAnglesTheta);
-    checkForEqualConfigurationsInNewAndOldSimulation(phi ...
-        ,oldResults.configuration.fibreAnglesPhi);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation(omega0 ...
-        ,oldResults.omega0);
-    
-    
-    if ~(atomsToCalculate > oldResults.atomCounter)
-        error("Atoms to calculate (%i) must be larger than the " ...
-            + " atom counter`(%i).",atomsToCalculate ...
-            ,oldResults.atomCounter);
-    end
-    logMessage("All good.",logFilePath,false);
-    
     
     logMessage("Preallocation of arrays.",logFilePath,true);
     nearestNeighboursIDs = zeros(1,maxNearestNeighbours);
@@ -69,37 +34,87 @@ if ~exist('nearestNeighbourCases','var')
     sphericalHarmonicSecondOrder = zeros(maxNearestNeighbours,timeSteps ...
         ,'like',double(1j));
     
-    corrFuncZerothOrder = zeros(1,timeSteps,'like',double(1j));
-    corrFuncFirstOrder = zeros(1,timeSteps,'like',double(1j));
-    corrFuncSecondOrder = zeros(1,timeSteps,'like',double(1j));
+    corrFuncZerothOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    corrFuncFirstOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    corrFuncSecondOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    
+    sumCorrFuncZerothOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    sumCorrFuncFirstOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    sumCorrFuncSecondOrder = zeros(casesCount,timeSteps,'like',double(1j));
+    
+    atomTimer = zeros(1,atomsToCalculate);
+    atomCounter = 1;
+    calculatedAtomIndices = zeros(1,atomsToCalculate);
+    randomSequenceOfAtoms = randperm(numberOfHs);
     
     logMessage("Preallocation ready.",logFilePath,true)
     
-    logMessage("Set up variables based on old simulation." ...
-        ,logFilePath,false);
-    atomCounter = oldResults.atomCounter;
-    r1Estimation = zeros(1,numberOfHs);
-    r1Estimation(1:atomCounter) = oldResults.r1Estimation(1:atomCounter);
-    calculatedAtomIndices = zeros(1,atomsToCalculate);
-    calculatedAtomIndices(1:atomCounter) = ...
-        oldResults.calculatedAtomIndices(1:atomCounter);
-    randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
-    atomTimer = zeros(1,atomsToCalculate);
-    atomTimer(1:atomCounter) = oldResults.atomTimer;
+    if configuration.reloadOldSimulation
+        if exist(configuration.oldResultsFileToLoad,'file')
+            oldResults = load(configuration.oldResultsFileToLoad);
+            additionalInformation = sprintf("These results are a " ...
+                + "continuation of %s",configuration.oldResultsFileToLoad);
+        else
+            error("Old results file does not exist");
+        end
+        logMessage("Comparing old with new configuration.",logFilePath ...
+            ,false);
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            fileName,oldResults.configuration.fileName);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            nearestNeighbourCases ...
+            ,sort(oldResults.nearestNeighbourCases,'descend'));
+        
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            averagingRegionForSpectralDensity ...
+            ,oldResults.averagingRegionForSpecDens);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation(theta ...
+            ,oldResults.configuration.fibreAnglesTheta);
+        checkForEqualConfigurationsInNewAndOldSimulation(phi ...
+            ,oldResults.configuration.fibreAnglesPhi);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation(omega0 ...
+            ,oldResults.omega0);
+        
+        
+        if ~(atomsToCalculate > oldResults.atomCounter)
+            error("Atoms to calculate (%i) must be larger than the " ...
+                + " atom counter (%i).",atomsToCalculate ...
+                ,oldResults.atomCounter);
+        end
+        logMessage("All good.",logFilePath,false);
+        
+        logMessage("Set up variables based on old simulation." ...
+            ,logFilePath,false);
+        atomCounter = oldResults.atomCounter;
+        r1Estimation = zeros(1,numberOfHs);
+        r1Estimation(1:atomCounter) = oldResults.r1Estimation( ...
+            1:atomCounter);
+        calculatedAtomIndices(1:atomCounter) = ...
+            oldResults.calculatedAtomIndices(1:atomCounter);
+        randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
+        atomTimer = zeros(1,atomsToCalculate);
+        atomTimer(1:atomCounter) = oldResults.atomTimer;
+        
+        sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
+        sumCorrFuncFirstOrder = oldResults.sumCorrFuncFirstOrder;
+        sumCorrFuncSecondOrder = oldResults.sumCorrFuncSecondOrder;
+        
+        logMessage(sprintf("This log file appends the log file under %s" ...
+            ,oldResults.logFilePath),logFilePath,false);
+        atomCounter = atomCounter + 1;
+        clear oldResults
+    end
     
-    sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
-    sumCorrFuncFirstOrder = oldResults.sumCorrFuncFirstOrder;
-    sumCorrFuncSecondOrder = oldResults.sumCorrFuncSecondOrder;
     
     corrFuncDirectories = createCorrFuncDirectoriesIfNotExist( ...
         resultsDirectory,gromacsSimulationDate);
-    atomCounter = atomCounter + 1;
+    
     logMessage("Created directories for correlation functions" ...
         + " if necessary.",logFilePath,false);
     
-    logMessage(sprintf("This log file appends the log file under %s" ...
-        ,oldResults.logFilePath),logFilePath,false);
-    clear oldResults
     return;
 end
 meanPositions = single([mean(trajectoryX,2) mean(trajectoryY,2) ...
@@ -182,7 +197,6 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs...
         ,theta,phi);
     
-    
     sumCorrFuncZerothOrder = sumCorrFuncZerothOrder + corrFuncZerothOrder;
     sumCorrFuncFirstOrder = sumCorrFuncFirstOrder + corrFuncFirstOrder;
     sumCorrFuncSecondOrder = sumCorrFuncSecondOrder + corrFuncSecondOrder;
@@ -197,7 +211,7 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         ,averageSpectralDensitySecondOrder,dipolDipolConstant); %#ok<SAGROW>
     
     logMessage(sprintf('Calculated %i atom(s)',atomCounter),logFilePath);
-    atomTimer(atomCounter) = toc(atomTimerStart);
+    atomTimer(atomCounter) = toc(atomTimerStart); %#ok<SAGROW>
     averageTimeForOneAtom = seconds(mean(atomTimer(1:atomCounter)));
     logMessage(sprintf(['  --> Average time for one atom: %s \n' ...
        '        Approximately ready on: %s.'] ...
@@ -205,16 +219,27 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         ,datetime('now')+averageTimeForOneAtom ...
         *(atomsToCalculate-atomCounter)),logFilePath,false);
     
+    
     if mod(atomCounter,configuration.savingIntervall) == 0
         lastSavingDate = datestr(now,'yyyymmdd_HHMM');
         createDataSavingObject();
         save(resultsFileSavingPath,'-struct','dataSavingObject','-v7.3');
         logMessage('Saved data',logFilePath,false);
         
+         updateSimulationProgressMonitor( ...
+             sumCorrFuncZerothOrder(1,:)/atomCounter ...
+             ,sumCorrFuncFirstOrder(1,:)/atomCounter ...
+             ,sumCorrFuncSecondOrder(1,:)/atomCounter ...
+             ,averageSpectralDensityFirstOrder ...
+             ,averageSpectralDensitySecondOrder,r1Estimation ...
+             ,deltaTInS,averagingRegionForSpectralDensity ...
+             ,resultsDirectory,whichLipid,matlabSimulationDate)
+        
         logMessage(sprintf( ...
-            "   => Estimated relaxation rate for NN = %i " ...
-            + "calculated atoms: %.4f",nearestNeighbourCases(1) ...
-            ,r1Estimation(atomCounter)),logFilePath,false);
+            "   => Estimated relaxation rate for " ...
+            + "calculated atoms (NN = %i): %.4f" ...
+            ,nearestNeighbourCases(1),r1Estimation(atomCounter)) ...
+            ,logFilePath,false);
     end
     
     printEqualSignBreakLineToLogFile(logFilePath);
