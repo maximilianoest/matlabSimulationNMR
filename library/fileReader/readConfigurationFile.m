@@ -2,6 +2,9 @@ function [configuration] = readConfigurationFile(configurationFilePath)
 
 configuration = {};
 configFileId = fopen(configurationFilePath);
+if configFileId == -1
+    error("Configuration file was not found,")
+end
 data = textscan(configFileId, '%s %s','Delimiter','=');
 fclose(configFileId);
 

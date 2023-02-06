@@ -1,9 +1,10 @@
-fileName=20220401_PLPC_TIP4_Bilayer_50water_lipid_H_whole_dt20ps_simTime50ns
+fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns
+scriptFileToRun=solidMyelin_20230201_ContinueSimulation
 
-dataDirectoryOnServer=/daten/a/Relaxation/Lipids/simulation_max/
+dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-scriptFileToRun=angleDependency_solidLipid_bigSimulation
+oldResultsFileToLoad=/home/moesterreicher/matlabSimulationNMR/RESULTS/solidMyelin_20230109_DetermineCorrelationFunctions/20230127_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns.mat
 
 printToCommandWindow=1
 dataLoaded=0
@@ -13,10 +14,10 @@ locationsCount=10
 
 fractionForLags=1
 nearestNeighbours=5500
-nearestNeighbourCases=50
+nearestNeighbourCases=5500;200
 
 mainMagneticField=3
-atomsToCalculate=2200
+atomsToCalculate=5000
 atomCounter=1
 
 fibreAnglesTheta=45

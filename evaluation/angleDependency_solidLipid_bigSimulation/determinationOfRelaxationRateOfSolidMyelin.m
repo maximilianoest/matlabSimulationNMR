@@ -29,6 +29,7 @@ filesInDirectory = filesInDirectory + ".mat";
 datasetNr = 1;
 partOfSpecDensToPlot = [0.8 1];
 partOfSpecDensToCalculateR1 = 0.99;
+allLipidNames = {};
 
 for datasetNr = 1:length(filesInDirectory)
     fig = initializeFigure();
@@ -103,6 +104,8 @@ for datasetNr = 1:length(filesInDirectory)
             locDepSpecDensFirstOrder,locDepSpecDensSecondOrder ...
             ,dipolDipolConstant); %#ok<SAGROW>
     end
+    locationDepR1ForAllLipids(datasetNr,:,:) = locDepR1;
+    allLipidNames{end+1} = lipidName;
     
     % plotting location dependency of R1 in lipids
     initializeSubplot(fig,2,2,3);
@@ -131,6 +134,36 @@ for datasetNr = 1:length(filesInDirectory)
     
 end
 
+%%
+initializeFigure();
+title("Location dependent $R_1$");
+for datasetNr = 1:size(locationDepR1ForAllLipids,1)
+   plot(squeeze(locationDepR1ForAllLipids(datasetNr,1,:)) ...
+       ,squeeze(locationDepR1ForAllLipids(datasetNr,2,:)),"*-");
+end
+xlabel("Location $[m]$");
+ylabel("Relaxation Rate $R_1$ $[Hz]$");
+legend(allLipidNames);
+
+if saving
+    saveFigureTo(resultsDirectory,"LocationDependentR1","allLipids"...
+            ,"");
+end
+
+initializeFigure();
+title("Location dependent $R_1$");
+for datasetNr = 1:size(locationDepR1ForAllLipids,1)
+   plot(squeeze(locationDepR1ForAllLipids(datasetNr,1,2:end)) ...
+       ,squeeze(locationDepR1ForAllLipids(datasetNr,2,2:end)),"*-");
+end
+xlabel("Location $[m]$");
+ylabel("Relaxation Rate $R_1$ $[Hz]$");
+legend(allLipidNames);
+
+if saving
+    saveFigureTo(resultsDirectory,"LocationDependentR1","allLipids"...
+            ,"withoutFirstDatapoint");
+end
 
 %% 
 % results = load(resultsDirectory + filesInDirectory(datasetNr));

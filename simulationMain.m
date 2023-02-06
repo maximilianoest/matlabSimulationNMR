@@ -1,4 +1,5 @@
 %% Initialize system
+clear all; close all; clc;
 
 addpath(genpath('library'));
 addpath(genpath('txtFiles'));
@@ -9,12 +10,20 @@ configuration = readConfigurationFile('configMain.txt');
 matlabSimulationDate = datestr(date,'yyyymmdd');
 [dataDirectory,resultsFileSavingPath,logFilePath] = ...
     setUpDependenciesBasedOn(configuration);
+resultsDirectory = getDirectoryOfAbsoluteFilePath(resultsFileSavingPath);
+
 logMessage('System initialized. Dependendencies were added.',logFilePath)
 
 %% Analyse data set based on file name
 
 analyseFileNameAndCreateVariablesInBaseWorkspace(configuration ...
     ,logFilePath);
+if whichLipid == "MYELIN"
+   dataDirectory = [dataDirectory formOfLayer filesep];
+   if ~isfolder(dataDirectory)
+       error("Data directory not found.");
+   end
+end
 
 %% Define constants
 checkIfFileExists(constantsFileName,logFilePath);
