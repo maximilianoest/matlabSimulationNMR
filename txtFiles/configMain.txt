@@ -1,4 +1,4 @@
-fileName=20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt02ps_simTime20ns
+fileName=20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt16ps_simTime10ns
 scriptFileToRun=myelinWater_20230206_DetermineCorrelationFunctions
 
 dataDirectoryOnServer=/daten/a/Relaxation/
@@ -15,7 +15,7 @@ locationsCount=10
 
 fractionForLags=1
 nearestNeighbours=5500
-nearestNeighbourCases=10000;200
+nearestNeighbourCases=15000;200
 
 mainMagneticField=3
 atomsToCalculate=2500
