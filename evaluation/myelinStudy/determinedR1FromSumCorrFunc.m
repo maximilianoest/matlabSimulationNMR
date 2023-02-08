@@ -2,9 +2,9 @@ clc; clear all; close all; fclose('all');
 
 addpath(genpath("../../library/"));
 constants = readConstantsFile("../../txtFiles/constants.txt");
-results = load("C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\solidMyelin_20230201_ContinueSimulation\20230201_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns.mat");
+results = load("C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\myelinWater_20230206_DetermineCorrelationFunctions\20230208_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt02ps_simTime20ns.mat");
 
-nearestNeighbourCase = 5500;
+nearestNeighbourCase = 15000;
 nNIndex = results.nearestNeighbourCases == nearestNeighbourCase;
 if isempty(nNIndex)
     error("Not determined nearestNeighbourCase");
@@ -134,7 +134,7 @@ calculatedAtomsAxis = 1:results.atomCounter;
 r1Estimation = results.r1Estimation(1:results.atomCounter);
 initializeSubplot(fig,2,2,4);
 plot(calculatedAtomsAxis,r1Estimation);
-axis([0 inf 0.75 1.25] * mean(r1Estimation(end-100:end)))
+% axis([0 inf 0.75 1.25] * mean(r1Estimation(1:end)))
 lgd = legend();
 lgd.Visible = 'Off';
 ylabel("R$_1$ [Hz]");

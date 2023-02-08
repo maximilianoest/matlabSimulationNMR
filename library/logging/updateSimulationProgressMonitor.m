@@ -36,9 +36,13 @@ text(0.05,0.5,fourthSubplotText,'interpreter','latex');
 set(ax,'visible','off');
 lgd = legend();
 lgd.Visible = 'Off';
-
-saveFigureTo(resultsDirectory,whichLipid,datestr(now,"yyyymmdd") ...
-    ,"simulationProgress",false)
+simDuration = length(corrFuncFirstOrder)*dTInSec/1e-9;
+dTInPs = dTInSec/1e-12;
+specification = sprintf("simulationProgress_simDur%sns_dT%sps" ...
+    ,getDecimalNumberAsSeparatedWithUnderScore(simDuration) ...
+    ,getDecimalNumberAsSeparatedWithUnderScore(dTInPs));
+saveFigureTo(resultsDirectory,whichLipid,matlabSimulationDate ...
+    ,specification,false)
 
 close(fig);
 
