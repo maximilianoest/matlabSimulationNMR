@@ -26,7 +26,7 @@ for file = fileNames
         error('File cannot be found %s.',filePath);
     end
 end
-saving = 1;
+saving = 0;
 
 %% load data
 
