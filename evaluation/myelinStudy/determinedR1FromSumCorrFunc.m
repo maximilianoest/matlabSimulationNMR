@@ -2,21 +2,28 @@ clc; clear all; close all; fclose('all');
 
 addpath(genpath("../../library/"));
 constants = readConstantsFile("../../txtFiles/constants.txt");
-resultsPath = "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\myelinWater_20230206_DetermineCorrelationFunctions\";
-results = load(resultsPath + "20230208_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns.mat");
+resultsPath = "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\solidMyelin_20230215_ContinueShortPaddingSimulation\";
+results = load(resultsPath + "20230215_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns.mat");
 
-nearestNeighbourCase = 15000;
+nearestNeighbourCase = 5500;
 nNIndex = results.nearestNeighbourCases == nearestNeighbourCase;
-if isempty(nNIndex)
+if ~any(nNIndex)
     error("Not determined nearestNeighbourCase");
 end
 
+% prefix = "sumCorrFunc";
+prefix = "offsetCorrectedCorrFunc";
+
+
 zeroPaddingLength = 100000;
-corrFuncFirstOrder =  results.sumCorrFuncFirstOrder(nNIndex,1:1:end) ...
+cutCorrelationFunctionAfter = 0.6;
+corrFuncFirstOrder =  results.(prefix + "FirstOrder")( ...
+    nNIndex,1:1:round(cutCorrelationFunctionAfter*end)) ...
     /results.atomCounter;
 corrFuncFirstOrder(end+1:end+zeroPaddingLength) ...
     = zeros(1,zeroPaddingLength);
-corrFuncSecondOrder = results.sumCorrFuncSecondOrder(nNIndex,1:1:end) ...
+corrFuncSecondOrder = results.(prefix + "SecondOrder")( ...
+    nNIndex,1:1:round(cutCorrelationFunctionAfter*end)) ...
     /results.atomCounter;
 corrFuncSecondOrder(end+1:end+zeroPaddingLength) ...
     = zeros(1,zeroPaddingLength);
@@ -70,7 +77,7 @@ r1WithoutZeroPad = calculateR1WithSpectralDensity( ...
 
 
 
-timeStepSkips = [1/256 1/8 1/4 1/2 1 2 3 4 5 6];
+timeStepSkips = [1/16 1/8 1/4 1/2 1 2 3 4 5 6];
 interpolatedR1 = [];
 r1AtTimeStep = [];
 for timeStep = timeStepSkips
@@ -177,7 +184,7 @@ calculatedAtomsAxis = 1:results.atomCounter;
 r1Estimation = results.r1Estimation(1:results.atomCounter);
 initializeSubplot(fig,2,2,4);
 plot(calculatedAtomsAxis,r1Estimation);
-axis([0 inf 0.75 1.25] * mean(r1Estimation(1:end)))
+% axis([0 inf 0.75 1.25] * mean(r1Estimation(1:end)))
 lgd = legend();
 lgd.Visible = 'Off';
 ylabel("R$_1$ [Hz]");

@@ -31,7 +31,7 @@ leg = legend();
 leg.Visible = "off";
 
 ax = initializeSubplot(fig,2,2,4);
-fourthSubplotText = sprintf("Current R1 estimate: %f.4",r1Estimation(end));
+fourthSubplotText = sprintf("Current R1 estimate: %.4f",r1Estimation(end));
 text(0.05,0.5,fourthSubplotText,'interpreter','latex');
 set(ax,'visible','off');
 lgd = legend();
