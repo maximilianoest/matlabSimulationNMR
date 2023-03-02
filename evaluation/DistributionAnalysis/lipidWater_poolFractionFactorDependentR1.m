@@ -10,13 +10,18 @@ clc; clear all; close all;
 % fraction must be somehow inversely proportional to the pool fraction
 % factor.
 %
-% 1. get distributions (cacluated by createDensityDistributions.m)
-% 2. 
 
 %% add directories
 addpath(genpath(sprintf('..%s..%slibrary',filesep,filesep)));
 addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
 constants = readConstantsFile('constants.txt');
+
+savingPath = sprintf("..%s..%sRESULTS%sdensityDistributions%s" ...
+    ,createFilesepStringArray(4));
+saving = 1;
+
+% set border where lipid part is cutted
+lipidHCountBorder = 0;
 
 % based on Tsukiashi2018
 % T1 vs. temperature: y = 0.058071*x + 1.7623 with x = Temperature in °C
@@ -36,12 +41,17 @@ fprintf("Free water R1: %.4f \n", freeWaterR1);
 % 
 % #_H,i: number of atoms in i pool or part of pool i
 % f = M_0,SL / M_0,LW = #_H,SL / #_H,LW : pool fraction factor
-fprintf("Fromula: R1_LW(f) = (1 - #_H,surf / #_H,SL * f) * R1_free" ...
-    + " + #_H,surf / #_H,SL * f * R1_surf \n");
+formula = "R1_LW(f) = (1 - #_H,surf / #_H,SL * f) * R1_free" ...
+    + " + #_H,surf / #_H,SL * f * R1_surf \n";
+fprintf("Fromula: " + formula);
 
 % fieldstrength
 fieldStrength = 3; % Tesla
 omega0 = constants.gyromagneticRatioOfHydrogenAtom * fieldStrength;
+
+% information in subplot
+fourthSubplotText = sprintf("Field strength: %.2f Tesla\n" ...
+    + "Lipid H count border: %.2f \n", fieldStrength,lipidHCountBorder);
 %% data
 resultsDirectory = sprintf( ...
     "..%s..%sRESULTS%sdensityDistributions%sPlots%s" ...
@@ -81,12 +91,13 @@ for lipidNr = 1:length(lipidNames)
         * mean(distributionData.dVolumeForTimeStep);
     
     numberOfWaterHsInSurfaceRegion = numberOfHsInWaterPool ...
-        .* (numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
+        .* (numberOfHsInLipidPool > lipidHCountBorder ...
+        & numberOfHsInWaterPool > 0);
     numberOfWaterHsInFreeRegion = numberOfHsInWaterPool ...
-        .* ~(numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
+        .* ~(numberOfHsInLipidPool > lipidHCountBorder ...
+        & numberOfHsInWaterPool > 0);
     
-    
-    ax = initializeSubplot(fig,2,2,lipidNr);
+    initializeSubplot(fig,2,2,lipidNr);
     plot(distributionData.avgLocations,numberOfHsInLipidPool);
     plot(distributionData.avgLocations,numberOfHsInWaterPool);
     plot(distributionData.avgLocations,numberOfWaterHsInSurfaceRegion,"--");
@@ -149,23 +160,36 @@ for lipidNr = 1:length(lipidNames)
     if abs(overallWaterR1_control - overallPoolR1) > 0.00001
        error("Results are not equal");
     end
-    fprintf("  Formula: R1_LW(f) = (1 - %.4f * f) * %.4f + %.4f * f * %.4f \n" ...
+    filledFormula = sprintf("R1_LW(f) = (1 - %.4f * f) * %.4f + %.4f " ...
+        + "* f * %.4f \n" ...
         ,sum(numberOfWaterHsInSurfaceRegion)/overallHsInLipidPool ...
         ,freeWaterR1,sum(numberOfWaterHsInSurfaceRegion) ...
         /overallHsInLipidPool,surfaceWaterR1);
+    fprintf("  Formula: %s",filledFormula);
+    f_max = overallHsInLipidPool/sum(numberOfWaterHsInSurfaceRegion);
     fprintf("  Largest possible pool fraction factor: f_max = %.4f \n" ...
-        ,overallHsInLipidPool/sum(numberOfWaterHsInSurfaceRegion));
+        ,f_max);
     
     
     fprintf("\n\n");
     
+    fourthSubplotText = sprintf("%sLipid: %s\n" ...
+        + "   %s   fmax: %.4f\n   R1surf: %.4f\n \n",fourthSubplotText ...
+        ,lipid,replace(filledFormula,"_","\_"),f_max,surfaceWaterR1);
     
-    
-    
-
 end
 
+ax = initializeSubplot(fig,2,2,4);
+text(0.05,0.5,fourthSubplotText,'interpreter','latex');
+set(ax,'visible','off');
+lgd = legend();
+lgd.Visible = 'Off';
 
+if saving
+    saveFigureTo(savingPath,"allLipids",datestr(now,"yyyymmdd") ...
+        ,sprintf("poolFractionDependentR1_lipidBorderHCount%d" ...
+        ,lipidHCountBorder));
+end
 
 
 %% functions
