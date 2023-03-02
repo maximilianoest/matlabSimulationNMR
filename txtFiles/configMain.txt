@@ -1,4 +1,4 @@
-fileName=20230202_MYELIN_TIP4_Monolayer_50water_allMonolayer_H_whole_dt01ps_simTime05ns
+fileName=20230202_MYELIN_TIP4_Monolayer_50water_allMonolayer_H_whole_dt01ps_simTime5ns
 scriptFileToRun=wholeMyelin_20230302_determineCrossRelaxationCorrFuncs
 
 groupsToSearchIn=MEMB;Water
@@ -14,7 +14,7 @@ oldResultsFileToLoad=C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\so
 printToCommandWindow=1
 dataLoaded=0
 savingIntervall=5
-averagingRegionForSpectralDensity=0.99;1
+averagingRegionForSpectralDensity=0.8;1
 locationsCount=10
 
 fractionForLags=1
