@@ -1,15 +1,16 @@
-fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns
-scriptFileToRun=solidMyelin_20230201_ContinueSimulation
+fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime800ns
+scriptFileToRun=solidMyelin_20230215_determineShortPaddedCorrFunc
 
 dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-oldResultsFileToLoad=/home/moesterreicher/matlabSimulationNMR/RESULTS/solidMyelin_20230109_DetermineCorrelationFunctions/20230127_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime1000ns.mat
+reloadOldSimulation=0
+oldResultsFileToLoad=C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\solidMyelin_20230215_ContinueShortPaddingSimulation\20230215_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt20ps_simTime200ns.mat
 
 printToCommandWindow=1
 dataLoaded=0
 savingIntervall=5
-averagingRegionForSpectralDensity=0.98;1
+averagingRegionForSpectralDensity=0.5;0.6
 locationsCount=10
 
 fractionForLags=1
@@ -17,7 +18,7 @@ nearestNeighbours=5500
 nearestNeighbourCases=5500;200
 
 mainMagneticField=3
-atomsToCalculate=5000
+atomsToCalculate=2500
 atomCounter=1
 
 fibreAnglesTheta=45

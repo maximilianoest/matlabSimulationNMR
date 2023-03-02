@@ -1,5 +1,11 @@
 function saveFigureTo(savingDirectory,whichLipid,simulationDate ...
-    ,figureDescription)
+    ,figureDescription,varargin)
+
+if isempty(varargin)
+   backUpOldFigure = true;
+else
+    backUpOldFigure = varargin{1};
+end
 
 if ~strcmp(savingDirectory(end),filesep)
     savingDirectory = sprintf('%s%s',savingDirectory,filesep);
@@ -10,7 +16,7 @@ end
 fileName = sprintf('%s_%s_%s',whichLipid,simulationDate,figureDescription);
 fileSavingPath = sprintf('%s%s.png',savingDirectory,fileName);
 
-if exist(sprintf('%s%s',fileSavingPath),'file')
+if exist(sprintf('%s%s',fileSavingPath),'file') && backUpOldFigure
     oldDirectory = sprintf('%sOLD%s',savingDirectory,filesep);
     if ~exist(oldDirectory,'dir')
         mkdir(oldDirectory);

@@ -4,60 +4,30 @@ logMessage(sprintf('Starting the external script: %s.m \n\n', mfilename) ...
 
 %% Preallocation
 if ~exist('nearestNeighbourCases','var')
-    logMessage('Loading old results to continue with simulation.' ...
-        ,logFilePath,false);
-    if exist(configuration.oldResultsFileToLoad,'file')
-        oldResults = load(configuration.oldResultsFileToLoad);
-        additionalInformation = sprintf("These results are a " ...
-            + "continuation of %s",configuration.oldResultsFileToLoad);
-    else
-        error("Old results file does not exist");
-    end
-    
+    logMessage('Preallocation of arrays as a first part of the script' ...
+        ,logFilePath,true);
     nearestNeighbourCases = getValuesFromStringEnumeration( ...
         configuration.nearestNeighbourCases,";","numeric");
     nearestNeighbourCases = sort(nearestNeighbourCases,'descend');
     maxNearestNeighbours = nearestNeighbourCases(1);
+    
+    averagingRegionForSpecDens = getAveragingRegionForSpecDens( ...
+        configuration.averagingRegionForSpectralDensity,logFilePath);
+    
+    atomCounter = 1;
+    calculatedAtomIndices = zeros(1,atomsToCalculate);
+    
+    randomSequenceOfAtoms = randperm(numberOfHs);
+    
+    nearestNeighboursIDs = zeros(1,maxNearestNeighbours);
+    nearestNeighbourDistancesPow3 = zeros(maxNearestNeighbours,timeSteps ...
+        ,'single');
     
     theta = configuration.fibreAnglesTheta;
     yAxis = [0 1 0];
     
     phi = configuration.fibreAnglesPhi;
     zAxis = [0 0 1];
-    
-    logMessage("Comparing old with new configuration.",logFilePath,false);
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        fileName,oldResults.configuration.fileName);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        nearestNeighbourCases ...
-        ,sort(oldResults.nearestNeighbourCases,'descend'));
-    
-    checkForEqualConfigurationsInNewAndOldSimulation( ...
-        averagingRegionForSpectralDensity ...
-        ,oldResults.averagingRegionForSpecDens);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation(theta ...
-        ,oldResults.configuration.fibreAnglesTheta);
-    checkForEqualConfigurationsInNewAndOldSimulation(phi ...
-        ,oldResults.configuration.fibreAnglesPhi);
-    
-    checkForEqualConfigurationsInNewAndOldSimulation(omega0 ...
-        ,oldResults.omega0);
-    
-    
-    if ~(atomsToCalculate > oldResults.atomCounter)
-        error("Atoms to calculate (%i) must be larger than the " ...
-            + " atom counter`(%i).",atomsToCalculate ...
-            ,oldResults.atomCounter);
-    end
-    logMessage("All good.",logFilePath,false);
-    
-    
-    logMessage("Preallocation of arrays.",logFilePath,true);
-    nearestNeighboursIDs = zeros(1,maxNearestNeighbours);
-    nearestNeighbourDistancesPow3 = zeros(maxNearestNeighbours ...
-        ,timeSteps,'single');
     
     polarAngle = zeros(maxNearestNeighbours,timeSteps,'single');
     azimuthAngle = zeros(maxNearestNeighbours,timeSteps,'single');
@@ -69,45 +39,31 @@ if ~exist('nearestNeighbourCases','var')
     sphericalHarmonicSecondOrder = zeros(maxNearestNeighbours,timeSteps ...
         ,'like',double(1j));
     
+    r1Estimation = zeros(1,numberOfHs);
+    
     corrFuncZerothOrder = zeros(1,timeSteps,'like',double(1j));
     corrFuncFirstOrder = zeros(1,timeSteps,'like',double(1j));
     corrFuncSecondOrder = zeros(1,timeSteps,'like',double(1j));
     
-    logMessage("Preallocation ready.",logFilePath,true)
-    
-    logMessage("Set up variables based on old simulation." ...
-        ,logFilePath,false);
-    atomCounter = oldResults.atomCounter;
-    r1Estimation = zeros(1,numberOfHs);
-    r1Estimation(1:atomCounter) = oldResults.r1Estimation(1:atomCounter);
-    calculatedAtomIndices = zeros(1,atomsToCalculate);
-    calculatedAtomIndices(1:atomCounter) = ...
-        oldResults.calculatedAtomIndices(1:atomCounter);
-    randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
-    atomTimer = zeros(1,atomsToCalculate);
-    atomTimer(1:atomCounter) = oldResults.atomTimer;
-    
-    sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
-    sumCorrFuncFirstOrder = oldResults.sumCorrFuncFirstOrder;
-    sumCorrFuncSecondOrder = oldResults.sumCorrFuncSecondOrder;
+    sumCorrFuncZerothOrder = zeros(1,timeSteps,'like',double(1j));
+    sumCorrFuncFirstOrder = zeros(1,timeSteps,'like',double(1j));
+    sumCorrFuncSecondOrder = zeros(1,timeSteps,'like',double(1j));
     
     corrFuncDirectories = createCorrFuncDirectoriesIfNotExist( ...
         resultsDirectory,gromacsSimulationDate);
-    atomCounter = atomCounter + 1;
     logMessage("Created directories for correlation functions" ...
         + " if necessary.",logFilePath,false);
     
-    logMessage(sprintf("This log file appends the log file under %s" ...
-        ,oldResults.logFilePath),logFilePath,false);
-    clear oldResults
+    logMessage('Arrays successfully preallocated',logFilePath,false);
     return;
 end
 meanPositions = single([mean(trajectoryX,2) mean(trajectoryY,2) ...
         mean(trajectoryZ,2)]);
+atomTimer = zeros(1,atomsToCalculate);
 
 %% Start simulation
-logMessage(sprintf("You have chosen theta = %.4f and phi = %.4f" ...
-    ,theta,phi),logFilePath,false);
+logMessage(sprintf("You have chosen theta = %.4f and phi = %.4f",theta,phi) ...
+    ,logFilePath,false);
 logMessage("Rotating dataset.",logFilePath);
 rotationMatrixPhi = get3DRotationMatrix(deg2rad(phi),zAxis);
 rotationMatrixTheta = get3DRotationMatrix(deg2rad(theta),yAxis);
@@ -140,13 +96,13 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
     
     % calculate correlation functions
     corrFuncZerothOrder = ...
-        calculateCorrFuncForMultipleNNCasesAsMatrix( ...
+        calculateCorrFuncForDiffNNCasesWithShortPadding( ...
         sphericalHarmonicZerothOrder,nearestNeighbourCases);
     corrFuncFirstOrder = ...
-        calculateCorrFuncForMultipleNNCasesAsMatrix( ...
+        calculateCorrFuncForDiffNNCasesWithShortPadding( ...
         sphericalHarmonicFirstOrder,nearestNeighbourCases);
     corrFuncSecondOrder = ...
-        calculateCorrFuncForMultipleNNCasesAsMatrix( ...
+        calculateCorrFuncForDiffNNCasesWithShortPadding( ...
         sphericalHarmonicSecondOrder,nearestNeighbourCases);
     
     % saving
@@ -188,16 +144,15 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
     sumCorrFuncSecondOrder = sumCorrFuncSecondOrder + corrFuncSecondOrder;
     
     [averageSpectralDensityFirstOrder,averageSpectralDensitySecondOrder] ...
-        = calculateSpectralDensities( ...
-        sumCorrFuncFirstOrder(1,:)/atomCounter ...
-        ,sumCorrFuncSecondOrder(1,:)/atomCounter,omega0,deltaTInS ...
-        ,averagingRegionForSpectralDensity);
+        = calculateSpectralDensities(sumCorrFuncFirstOrder(1,:) ...
+        /atomCounter,sumCorrFuncSecondOrder(1,:)/atomCounter,omega0 ...
+        ,deltaTInS,averagingRegionForSpecDens);
     r1Estimation(atomCounter) = calculateR1WithSpectralDensity( ...
         averageSpectralDensityFirstOrder ...
         ,averageSpectralDensitySecondOrder,dipolDipolConstant); %#ok<SAGROW>
     
     logMessage(sprintf('Calculated %i atom(s)',atomCounter),logFilePath);
-    atomTimer(atomCounter) = toc(atomTimerStart); %#ok<SAGROW>
+    atomTimer(atomCounter) = toc(atomTimerStart);
     averageTimeForOneAtom = seconds(mean(atomTimer(1:atomCounter)));
     logMessage(sprintf(['  --> Average time for one atom: %s \n' ...
        '        Approximately ready on: %s.'] ...
@@ -211,15 +166,21 @@ for atomNumber = randomSequenceOfAtoms(atomCounter:atomsToCalculate)
         save(resultsFileSavingPath,'-struct','dataSavingObject','-v7.3');
         logMessage('Saved data',logFilePath,false);
         
+        updateSimulationProgressMonitor( ...
+            sumCorrFuncZerothOrder(1,:)/atomCounter ...
+            ,sumCorrFuncFirstOrder(1,:)/atomCounter ...
+            ,sumCorrFuncSecondOrder(1,:)/atomCounter ...
+            ,averageSpectralDensityFirstOrder ...
+            ,averageSpectralDensitySecondOrder,r1Estimation(1:atomCounter) ...
+            ,deltaTInS,averagingRegionForSpectralDensity ...
+            ,resultsDirectory,whichLipid,matlabSimulationDate)
+        
         logMessage(sprintf( ...
-            "   => Estimated relaxation rate for NN = %i " ...
-            + "calculated atoms: %.4f",nearestNeighbourCases(1) ...
+            '   => Estimated relaxation rate for calculated atoms: %.4f' ...
             ,r1Estimation(atomCounter)),logFilePath,false);
     end
     
     printEqualSignBreakLineToLogFile(logFilePath);
     atomCounter = atomCounter + 1;
 end
-
-
 

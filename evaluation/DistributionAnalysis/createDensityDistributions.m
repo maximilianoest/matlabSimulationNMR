@@ -130,7 +130,7 @@ for datasetNr = 1:length(lipidNames)
         ,filesep,filesToLoad(datasetNr))); 
     densityDistribution = [];
     densityDistributionOnlyHdydrogen = [];
-%     getSimulationConfigurationFromFileName(filesToLoad(datasetNr));
+
     [atomsCountFromTraj,~,timeSteps] = size(trajData.trajectories);
     
     if atomsCountFromTraj ~= atomsCountFromGroFile

@@ -33,19 +33,19 @@ fourthSubplotText = "";
 for lipidNr = 1:length(lipids)
     load(densityDirectory + fileNames(lipidNr));
     hydrogenAtomsInSurfaceRegion = numberOfHsInWaterPool ...
-        .* (numberOfHsInLipidPool > 0.1 & numberOfHsInWaterPool > 0.1);
+        .* (numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
     hydrogenAtomsInFreeWaterRegion = numberOfHsInWaterPool ...
-        .* ~(numberOfHsInLipidPool > 0.1 & numberOfHsInWaterPool > 0.1);
+        .* ~(numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
     
-    fig = initializeFigure();
-    ax = initializeSubplot(fig,2,2,1);
-    plot(avgLocations,hydrogenAtomsInSurfaceRegion);
-    plot(avgLocations,hydrogenAtomsInFreeWaterRegion);
-    xticks([-5e-9 : 1e-9 : 5e-9]); %#ok<NBRAK>
-    xticklabels([-5 : 1 : 5]);
-    xlabel("Postions [nm]")
-    legend("Surface region", "Free water region");
-    title("Number of H atoms");
+%     fig = initializeFigure();
+%     ax = initializeSubplot(fig,2,2,1);
+%     plot(avgLocations,hydrogenAtomsInSurfaceRegion);
+%     plot(avgLocations,hydrogenAtomsInFreeWaterRegion);
+%     xticks([-5e-9 : 1e-9 : 5e-9]); %#ok<NBRAK>
+%     xticklabels([-5 : 1 : 5]);
+%     xlabel("Postions [nm]")
+%     legend("Surface region", "Free water region");
+%     title("Number of H atoms");
     
     numberOfHAtomsInSurfaceRegion = sum(hydrogenAtomsInSurfaceRegion);
     numberOfHAtomsInFreeWaterRegion = sum(hydrogenAtomsInFreeWaterRegion);

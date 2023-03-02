@@ -1,4 +1,4 @@
-function [sumCorrelationFunction] = ...
+function sumCorrelationFunctions = ...
     calculateCorrFuncForDiffNNCasesWithShortPadding(sphericalHarmonic ...
     ,nearestNeighbourCases)
 
@@ -42,6 +42,7 @@ function [sumCorrelationFunction] = ...
 % NOTE: There is no offset suppression implemented. This have to be made in
 % the postprocessing part.
 
+
 [~,timeSteps] = size(sphericalHarmonic);
 zeroPaddingLength = 2^(nextpow2(timeSteps));
 
@@ -53,13 +54,13 @@ fftSphericalHarmonic = fft(complex(sphericalHarmonic) ...
 fftCorrelationFunction = real(fftSphericalHarmonic).^2 ...
     + imag(fftSphericalHarmonic).^2;
 
+sumCorrelationFunctions = zeros(length(nearestNeighbourCases),timeSteps);
 for nearestNeighboursCount = 1:length(nearestNeighbourCases)
     nearestNeighbours = nearestNeighbourCases(nearestNeighboursCount);
     summedFfftCorrelationFunction = sum(fftCorrelationFunction( ...
         1:nearestNeighbours,:),1);
     summedCorrelationFunction = ifft(summedFfftCorrelationFunction,[],2);
-    fieldName = sprintf('nearestNeighbours%g',nearestNeighbours);
-    sumCorrelationFunction.(fieldName) = double( ...
+    sumCorrelationFunctions(nearestNeighboursCount,:) = double( ...
         summedCorrelationFunction(1:timeSteps)/timeSteps);
 end
 
