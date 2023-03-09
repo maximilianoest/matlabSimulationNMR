@@ -25,12 +25,12 @@ savingDirectory = sprintf('%s%sPlots%s',resultsDir ...
 saving = 1;
 
 %% get relevant results from files
-directory = "C:\Users\maxoe\Documents\Gromacs\testDatasets\";
+directory = "/daten/a/Relaxation/Lipids/simulation_max/";
 lipidNames = ["DOPS" "PLPC" "PSM"];
 filesToLoad = [ ...
-    "20220110_DOPS_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns" ...
-    "20220804_PLPC_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns" ...
-    "20220804_PSM_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns"];
+    "20220110_DOPS_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns" ...
+    "20220804_PLPC_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns" ...
+    "20220804_PSM_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns"];
 
 groFileName = "prd";
 
@@ -45,7 +45,7 @@ massPhosphorusKG = constants.atomicWeightPhosphorus/1000/avogadro;
 
 atomNamesToIgnore = ["POT" "CLA" "M"];
 
-numberOfLocations = 100;
+numberOfLocations = 10000;
 
 for datasetNr = 1:length(lipidNames)
     lipidName = lipidNames(datasetNr);
