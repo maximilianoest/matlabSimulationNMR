@@ -45,7 +45,7 @@ massPhosphorusKG = constants.atomicWeightPhosphorus/1000/avogadro;
 
 atomNamesToIgnore = ["POT" "CLA" "M"];
 
-numberOfLocations = 10000;
+numberOfLocations = 2000;
 
 for datasetNr = 1:length(lipidNames)
     lipidName = lipidNames(datasetNr);
