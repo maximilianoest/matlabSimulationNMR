@@ -43,8 +43,57 @@ if ~exist('nearestNeighbourCases','var')
     if ~configuration.reloadOldSimulation
         logMessage("No old simulation results will be loaded" ...
             ,logFilePath,false);
+    elseif exist(configuration.oldResultsFileToLoad,'file')
+        logMessage('Loading old results to continue with simulation.' ...
+            ,logFilePath,false);
+        oldResults = load(configuration.oldResultsFileToLoad);
+        additionalInformation = sprintf("These results are a " ...
+            + "continuation of %s",configuration.oldResultsFileToLoad);
+        logMessage(additionalInformation,logFilePath,false);
+        
+        logMessage("Comparing old with new configuration values." ...
+            ,logFilePath,false);
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            fileName,oldResults.configuration.fileName);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            nearestNeighbourCases ...
+            ,sort(oldResults.nearestNeighbourCases,'descend'));
+        
+        checkForEqualConfigurationsInNewAndOldSimulation( ...
+            averagingRegionForSpectralDensity ...
+            ,oldResults.averagingRegionForSpectralDensity);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation(theta ...
+            ,oldResults.configuration.fibreAnglesTheta);
+        checkForEqualConfigurationsInNewAndOldSimulation(phi ...
+            ,oldResults.configuration.fibreAnglesPhi);
+        
+        checkForEqualConfigurationsInNewAndOldSimulation(omega0 ...
+            ,oldResults.omega0);
+        
+        logMessage("All good.",logFilePath,false);
+        logMessage("Set up variables based on old simulation." ...
+            ,logFilePath,false);
+        
+        atomCounter = oldResults.atomCounter;
+        r1Auto = oldResults.r1Auto;
+        r1Cross = oldResults.r1Cross;
+        calculatedAtomIndices = oldResults.calculatedAtomIndices;
+        randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
+        atomTimer = oldResults.atomTimer;
+        
+        sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
+        sumCorrFuncFirstOrder = oldResults.sumCorrFuncFirstOrder;
+        sumCorrFuncSecondOrder = oldResults.sumCorrFuncSecondOrder;
+        
+        atomCounter = atomCounter + 1;
+        
+        logMessage(sprintf("This log file appends the log file under %s" ...
+            ,oldResults.logFilePath),logFilePath,false);
+        clear oldResults
     else
-        error("functionality not implemented: reload old simulation");
+        error("Old results file does not exist!");
     end
     
     corrFuncDirectories = createCorrFuncDirectoriesIfNotExist( ...
@@ -149,12 +198,11 @@ for atomNumber = randomSequenceOfMemebraneAtoms( ...
         corrFuncDirectories == gromacsSimulationDate + "_" ...
         + getNamesOfVariblesAsArray(corrFuncSecondOrder) + filesep);
     if ~isfolder(whichDirectory)
-        error("Chosen wrong directory: %s",whichDirectory);
+        error("Chosen wrong directory: %s.",whichDirectory);
     end
     saveCorrFuncTo(whichDirectory,corrFuncSecondOrder,atomNumber ...
         ,nearestNeighbourCases,simulationDurationInNs,deltaTInPs...
         ,theta,phi);
-    
     
     sumCorrFuncZerothOrder = sumCorrFuncZerothOrder + corrFuncZerothOrder;
     sumCorrFuncFirstOrder = sumCorrFuncFirstOrder + corrFuncFirstOrder;
@@ -196,7 +244,6 @@ for atomNumber = randomSequenceOfMemebraneAtoms( ...
             ,avgSpecDensZerothOrder,avgSpecDensFirstOrder ...
             ,avgSpecDensSecondOrder,deltaTInS ...
             ,averagingRegionForSpectralDensity,r1Cross,r1Auto)
-        
         
         saveFigureTo(resultsDirectory,whichLipid,matlabSimulationDate ...
             ,sprintf("simulationProgress_simDur%sns_dT%sps" ...
