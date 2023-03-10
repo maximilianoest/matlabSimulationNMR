@@ -8,8 +8,8 @@ indexFileName=index_wholeMonolayerModel_H.ndx
 dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-reloadOldSimulation=1
-oldResultsFileToLoad=/home/moesterreicher/matlabSimulationNMR/RESULTS/wholeMyelin_20230302_determineCrossRelaxationCorrFuncs/20230302_Results_MYELINallMonolayer_20230202_MYELIN_TIP4_Monolayer_50water_allMonolayer_H_whole_dt01ps_simTime5ns.mat
+reloadOldSimulation=0
+oldResultsFileToLoad=C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\solidMyelin_20230215_ContinueShortPaddingSimulation\20230215_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt20ps_simTime200ns.mat
 
 printToCommandWindow=1
 dataLoaded=0
@@ -22,7 +22,7 @@ nearestNeighbours=17000
 nearestNeighbourCases=17000;200
 
 mainMagneticField=3
-atomsToCalculate=5000
+atomsToCalculate=2500
 atomCounter=1
 
 fibreAnglesTheta=45
