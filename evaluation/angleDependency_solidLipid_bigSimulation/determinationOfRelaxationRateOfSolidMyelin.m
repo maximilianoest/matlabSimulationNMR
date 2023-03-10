@@ -71,10 +71,10 @@ for datasetNr = 1:length(filesInDirectory)
     
     % determine R1
     % 1. with real and imag part of corr funcs
-    overallPoolR1 = calculateR1WithSpectralDensity( ...
+    overallPoolR1(datasetNr) = calculateR1WithSpectralDensity( ...
         specDensFirstOrder(round(partOfSpecDensToCalculateR1*end):end) ...
         ,specDensSecondOrder(round(partOfSpecDensToCalculateR1*end):end) ...
-        ,dipolDipolConstant);
+        ,dipolDipolConstant); %#ok<SAGROW>
     
     % 2. only with real part of corr funcs
     [realSpecDensFirstOrder, realSpecDensSecondOrder] = ...
@@ -119,7 +119,7 @@ for datasetNr = 1:length(filesInDirectory)
     % plotting results into fourth subplot slot
     fourthSubplotText = sprintf("Lipid: %s\n overall R1: %.4f \n R1 based" ...
         + " only real corr func: %.4f \n" ...
-        ,lipidName,overallPoolR1,r1OnlyRealCorrFunc);
+        ,lipidName,overallPoolR1(datasetNr),r1OnlyRealCorrFunc);
     
     ax = initializeSubplot(fig,2,2,4);
     text(0.05,0.5,fourthSubplotText,'interpreter','latex');
@@ -163,6 +163,9 @@ legend(allLipidNames);
 if saving
     saveFigureTo(resultsDirectory,"LocationDependentR1","allLipids"...
             ,"withoutFirstDatapoint");
+    lipidNames = string(allLipidNames);
+    save(resultsDirectory + "lipidRelaxationRates.mat",'lipidNames' ...
+        ,'overallPoolR1');
 end
 
 %% 
