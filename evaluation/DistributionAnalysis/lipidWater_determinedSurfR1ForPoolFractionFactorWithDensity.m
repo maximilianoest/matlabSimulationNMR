@@ -23,7 +23,7 @@ matFileNames = [ ...
 corrFuncFilePaths = matlabSimResultsFolder + matFileNames;
 
 %% set up parameter
-hCountBorder = 0.05;
+hCountBorder = 0.1;
 fprintf("H atoms count border: %2.f \n",hCountBorder);
 
 % based on Tsukiashi2018

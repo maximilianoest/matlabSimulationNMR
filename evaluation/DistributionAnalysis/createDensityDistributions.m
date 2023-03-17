@@ -1,5 +1,9 @@
 clc; clear all; close all; fclose('all');
 
+%% ERROR / BUG
+% The first and last two locations give density distributions that are not
+% valid. This should be corrected in upcoming evaluations.
+
 % ATTENTION: with mean positions, it is possible that more than one atom is
 % at one position. Thus the distribution and density is not right.
 % Therefore, a snapshot of the production run is used.

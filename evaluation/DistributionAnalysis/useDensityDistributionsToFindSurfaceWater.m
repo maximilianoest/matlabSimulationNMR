@@ -1,196 +1,189 @@
-clc; clear all; close all; fclose('all');
+clc; clear; close all; fclose('all');
 % Description:
 % In the orientation-dependency paper the authors said that in the
 % cross-region is where both densities of solid lipid and lipid water H are
 % larger than 0. They found that this region are 32% of the membran
 % associated hydrogen nuceli. Here I am interested in the part of the lipid
 % water pool that is interacting with the solid lipid part. Therefore, I
-% divide the density of the interacting part by the non-interacting part.
+% divide the density of the interacting part by the whole water pool.
 
 %% add directories
 addpath(genpath(sprintf('..%s..%slibrary',filesep,filesep)));
 addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
 constants = readConstantsFile('constants.txt');
 
-%% check if paths are correct
-filesDirectory = ...
-   ['C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS' ...
-   '\densityDistributions\Plots\'];
-fileNames = ["densityDistribution_DOPS" ...
-    "densityDistribution_PLPC" "densityDistribution_PSM"];
-dateToLoad = "20221122";
-fileNames = dateToLoad + fileNames;
-for file = fileNames
-    filePath = sprintf("%s%s.mat",filesDirectory,file);
-    if ~exist(filePath,'file')
-        error('File cannot be found %s.',filePath);
-    end
-end
-saving = 0;
+%% paths to load
+densityDistributionsFolder = "C:\Users\maxoe\Google Drive\Promotion" ...
+    + "\Simulation\RESULTS\densityDistributions\";
+distributionDateID = "20230309";
+lipidNames = ["DOPS" "PLPC" "PSM"];
+fileNames = distributionDateID + "densityDistribution_" ...
+    + lipidNames + ".mat";
+
+matlabSimResultsFolder = "C:\Users\maxoe\Google Drive\Promotion\" ...
+    + "Simulation\RESULTS\angleDependency_lipidWater_bigSimulation\";
+matFileNames = [ ...
+    "20221101_Results_DOPSwater_20220110_DOPS_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns" ...
+    "20221025_Results_PLPCwater_20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns" ...
+    "20221028_Results_PSMwater_20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns" ] ...
+    + ".mat";
+corrFuncFilePaths = matlabSimResultsFolder + matFileNames;
+
+%% set up
+% fieldstrength
+fieldStrength = 3; % Tesla
+omega0 = constants.gyromagneticRatioOfHydrogenAtom * fieldStrength;
+
+% based on Tsukiashi2018
+% T1 vs. temperature: y = 0.058071*x + 1.7623 with x = Temperature in °C
+temperature = 18; % °C
+freeWaterR1 =  1/(0.058071 * temperature + 1.7623);
+fprintf("Free water R1: %.4f \n", freeWaterR1);
+
+windowSize = 9;
+averageDensityRegion = 50;
+bulkWaterFractionForBorder = 0.95;
+fprintf("Bulk water density fraction for border: %.4f\n" ...
+    ,bulkWaterFractionForBorder);
+fourthSubplotText  = sprintf("Bulk water density fraction: %.4f \n" ...
+    ,bulkWaterFractionForBorder);
+
+saving = 1;
 
 %% load data
 
 fig = initializeFigure();
-fourthSubplotText = "";
 for fileNr = 1:length(fileNames)
-   lipidName = strrep(fileNames(fileNr) ...
-       ,dateToLoad + "densityDistribution_","");
-   data = load(sprintf("%s%s.mat",filesDirectory,fileNames(fileNr)));
-   if lipidName ~= data.lipidName
-       error("not the same lipide");
-   end
-   subFig(fileNr) = initializeSubplot(fig,2,2,fileNr); %#ok<SAGROW>
-   title(sprintf("Density H-Atoms (Lipid: %s)", lipidName));
-   legendEntries = {};
-   avgLocations = data.avgLocations;
-   plts = [];
-   density = [];
-   lowerIndices = [];
-   upperIndices = [];
-   moleculesToCompare = data.moleculesToCompare;
-   for moleculeNr = 1:length(moleculesToCompare)
-       densDistr = squeeze(mean(data.densityDistributionOnlyHdydrogen( ...
-           :,moleculeNr,:),1));
-       plts(end+1) = plot(avgLocations,densDistr); %#ok<SAGROW>
-       if data.moleculesToCompare(moleculeNr) == "SOL"
-           legendEntries{end+1} = "Water"; %#ok<SAGROW>
-           coherentRegion = findCoherentRegion(find(densDistr > 0.1));
-       else
-           legendEntries{end+1} = "Lipid"; %#ok<SAGROW>
-           coherentRegion = findCoherentRegion(find(densDistr < 0.1));
-       end
-       
-       lowerBorder = avgLocations(coherentRegion(1));
-       upperBorder = avgLocations(coherentRegion(end));
-       
-       density(moleculeNr,:) = densDistr'; %#ok<SAGROW>
-       lowerIndices = sort([lowerIndices coherentRegion(1)]); 
-       upperIndices = sort([upperIndices coherentRegion(end)]);
-       
-       plotVerticalLine(lowerBorder,120);
-       plotVerticalLine(upperBorder,120);
-   end
+    lipidName = lipidNames(fileNr);
+    fprintf(" ---- %s \n",lipidName);
+    distribData = load(sprintf("%s%s",densityDistributionsFolder ...
+        ,fileNames(fileNr)));
+    if lipidName ~= distribData.lipidName
+        error("Not the same lipid!");
+    end
+    
+    hDensityLipid = squeeze(mean( ...
+        distribData.densityDistributionOnlyHdydrogen(: ...
+        ,distribData.moleculesToCompare == lipidName,2:end-1),1))';
+    hDensityWater = squeeze(mean( ...
+        distribData.densityDistributionOnlyHdydrogen(: ...
+        ,distribData.moleculesToCompare == "SOL",2:end-1),1))';
+    locations = distribData.avgLocations(2:end-1);
+    
+    meanFilteredHDensityLipid = meanFilter(hDensityLipid,windowSize);
+    meanFilteredHDensityWater = meanFilter(hDensityWater,windowSize);
+    
+    hydrogenAtomWeight = distribData.atomWeightCollection( ...
+        distribData.atomNameCollection == "H");
+    hFrequencyLipid = meanFilteredHDensityLipid*mean( ...
+        distribData.dVolumeForTimeStep)/hydrogenAtomWeight;
+    hFrequencyWater = meanFilteredHDensityWater*mean( ...
+        distribData.dVolumeForTimeStep)/hydrogenAtomWeight;
+    
+    allHsInLipidPool = sum(hFrequencyLipid);
+    allHsHsInWaterPool = sum(hFrequencyWater);
+    
+    fprintf("All Hs in lipid: %.2f \nAll Hs in water: %.2f \n" ...
+        ,allHsInLipidPool,allHsHsInWaterPool);
+    
+    bulkWaterHDensity = mean(hDensityWater(end/2-averageDensityRegion ...
+        : end/2+averageDensityRegion));
+    fprintf("Bulk water hydrogen atom density: %.4f. kg/m^3. \n" ...
+        + "Density border: %.4f \n" ...
+        ,bulkWaterHDensity,bulkWaterHDensity*bulkWaterFractionForBorder);
+    
+    surfWater = meanFilteredHDensityWater  ...
+        < bulkWaterHDensity*bulkWaterFractionForBorder;
+    borders = find(abs(diff(surfWater)) == 1);
+    
+    surfaceWaterFraction = sum(meanFilteredHDensityWater(surfWater)) ...
+        /sum(meanFilteredHDensityWater);
+    freeWaterFraction = sum(meanFilteredHDensityWater(~surfWater)) ...
+        /sum(meanFilteredHDensityWater);
+    
+    fprintf("Interacting water fraction: %.4f \n" ...
+        +"Free water fraction: %.4f\n",surfaceWaterFraction ...
+        ,freeWaterFraction);
+    
+    
+    initializeSubplot(fig,2,2,fileNr);
+    title(lipidName);
+    
+    plot(locations(1:end-1),meanFilteredHDensityLipid(1:end-1));
+    plot(locations(1:end-1),meanFilteredHDensityWater(1:end-1));
+    
+    plotVerticalLine(locations(borders(1)),120);
+    plotVerticalLine(locations(borders(end)),120);
+    
+    ylabel("Density [$\frac{kg}{m^3}$]");
+    xlabel("Location in [m]");
+    xticks(-5e-9 : 1e-9 : 5e-9);
+    lgd = legend("Lipid","Water");
+    lgd.Location = 'best';
+    
+    if fileNr ~= 1
+        lgd.Visible = 'off';
+    end
+    
+    
+    fourthSubplotText = sprintf("%sLipid: %s\n  surf water: " ...
+        +" %.4f \n  free water: %.4f \n" ...
+        ,fourthSubplotText,lipidName,surfaceWaterFraction ...
+        ,freeWaterFraction);
+    
+    
+    corrFuncData = load(corrFuncFilePaths(fileNr));
+    if corrFuncData.whichLipid ~= lipidName
+        error("Not the same lipids are compared with each other.");
+    end
+    deltaTInS = corrFuncData.deltaTInS;
+    corrFuncFirstOrder = corrFuncData.sumCorrFuncFirstOrder ...
+        .nearestNeighbours8000 / corrFuncData.atomCounter;
+    corrFuncSecondOrder = corrFuncData.sumCorrFuncSecondOrder ...
+        .nearestNeighbours8000 / corrFuncData.atomCounter;
+    
+    [specDensFirstOrder, specDensSecondOrder] = ...
+        calculateSpectralDensities(corrFuncFirstOrder ...
+        ,corrFuncSecondOrder,omega0,deltaTInS,[0.9 1]);
+    
+    dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
+        *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
+        /(constants.nanoMeter^6);
+    totalWaterPoolR1 = calculateR1WithSpectralDensity( ...
+        specDensFirstOrder,specDensSecondOrder,dipolDipolConstant);
+    fprintf("  Total water pool R1 = %.4f \n",totalWaterPoolR1);
+    
    
-   hydrogenAtomWeight = data.atomWeightCollection( ...
-       data.atomNameCollection == "H");
-   averageDVolume = mean(data.dVolumeForTimeStep);
-   
-   fprintf("Lipid %s: \n",lipidName);
-   %% water interaction fraction based on density distribution
-   fprintf("   Water pool based on denstiy distribution: \n");
-   numberOfHsInWaterPoolBasedOnDensity = ...
-       density(moleculesToCompare == "SOL",:)/hydrogenAtomWeight ...
-       *averageDVolume;
-   fprintf("   Found %.2f hydrogen atoms in pool. \n" ...
-       ,sum(numberOfHsInWaterPoolBasedOnDensity));
-   numberOfHsInInteractionRegionOfWater = ...
-       [numberOfHsInWaterPoolBasedOnDensity(1:lowerIndices(2)) ...
-       numberOfHsInWaterPoolBasedOnDensity(upperIndices(1):end)];
-   fprintf("   Found %.2f hydrogen atoms in interaction region. \n" ...
-       ,sum(numberOfHsInInteractionRegionOfWater));
-   numberOfHsInFreeWater = ...
-       numberOfHsInWaterPoolBasedOnDensity(lowerIndices(2)+1:upperIndices(1)-1);
-   fprintf("   Found %.2f hydrogen atoms in the free water region.\n" ...
-       ,sum(numberOfHsInFreeWater));
-   interactingWaterFraction = ...
-       sum(numberOfHsInInteractionRegionOfWater) ...
-       /sum(numberOfHsInWaterPoolBasedOnDensity);
-   fprintf("   The water interaction fraction based on density is %.4f. \n" ...
-       ,interactingWaterFraction)
-   fprintf(" ------------------ \n");
-   
-   %% lipid interaction fraction based on density distribution
-   fprintf("   Lipid pool based on density distribution: \n");
-   numberOfHsInLipidPoolBasedOnDensity = ...
-       density(moleculesToCompare == lipidName,:)/hydrogenAtomWeight ...
-       *averageDVolume;
-   fprintf("   Found %.2f hydrogen atoms in pool. \n" ...
-       ,sum(numberOfHsInLipidPoolBasedOnDensity));
-   numberOfHsInInteractionRegionOfLipid = ...
-       numberOfHsInLipidPoolBasedOnDensity(lowerIndices(1):upperIndices(2));
-   fprintf("   Found %.2f hydrogen atoms in interaction region. \n" ...
-       ,sum(numberOfHsInInteractionRegionOfLipid));
-   numberOfHsInFreeLipid = ...
-       [numberOfHsInLipidPoolBasedOnDensity(1:lowerIndices(1)-1) ...
-       numberOfHsInLipidPoolBasedOnDensity(upperIndices(2)+1:end)];
-   fprintf("   Found %.2f hydrogen atoms in free lipid region.\n" ...
-       ,sum(numberOfHsInFreeLipid)); 
-   interactingLipidFraction = ...
-       sum(numberOfHsInInteractionRegionOfLipid) ...
-       /sum(numberOfHsInLipidPoolBasedOnDensity);
-   fprintf("   The lipid interaction fraction based on density is %.4f. \n" ...
-       ,interactingLipidFraction);
-   fprintf(" ------------------ \n");
-   poolFractionFactorEstimate = ...
-       sum(numberOfHsInLipidPoolBasedOnDensity) ...
-       / sum(numberOfHsInInteractionRegionOfWater);
-   fprintf("   Estimate for pool fraction factor: %.4f \n" ...
-       ,poolFractionFactorEstimate);
-   
-   fprintf(" ==============================\n");
-   
-   %% --------
-   
-   data.interactingWaterFraction = interactingWaterFraction;
-   data.interactingLipidFraction = interactingLipidFraction;
-   data.numberOfHsInLipidPool = numberOfHsInLipidPoolBasedOnDensity;
-   data.numberOfHsInWaterPool = numberOfHsInWaterPoolBasedOnDensity;
-   if saving
-       save(sprintf("%s%s_withInteractionFractions.mat" ...
-           ,filesDirectory,fileNames(fileNr)),'-struct','data');
-   end
-   fourthSubplotText = sprintf("%sLipid: %s\n  water interaction " ...
-       +"fraction: %.4f \n  lipid interaction fraction: %.4f \n" ...
-       +"  estimate for pool fraction factor: %.4f \n\n" ...
-       ,fourthSubplotText,lipidName,interactingWaterFraction ...
-       ,interactingLipidFraction,poolFractionFactorEstimate);
-   
-   ylabel("Density $[kg/m^3]$");
-   xlabel("Location $[m]$");
-   xticks(-5e-9 : 1e-9 : 5e-9);
-   lgd = legend(plts,legendEntries);
-   if fileNr == 3
-       lgd.Location = "North";
-   else
-       lgd.Visible = "Off";
-   end 
-   
-   
+    fprintf("  Surface/Free water fraction: %.4f / %.4f\n" ...
+        ,surfaceWaterFraction,freeWaterFraction);
+    
+    surfaceWaterR1 = totalWaterPoolR1 / surfaceWaterFraction ...
+        - freeWaterFraction / surfaceWaterFraction ...
+        * freeWaterR1;
+    
+    fprintf("  Surface water R1: %.4f\n",surfaceWaterR1);
+    
+    fourthSubplotText = sprintf("%sR1surf: %.4f\n \n",fourthSubplotText ...
+        ,surfaceWaterR1);
+    
 end
 %%
-ax = initializeSubplot(fig,2,2,fileNr+1);
+ax = initializeSubplot(fig,2,2,4);
 text(0.05,0.5,fourthSubplotText,'interpreter','latex');
 set(ax,'visible','off');
 lgd = legend();
 lgd.Visible = 'Off';
-if saving
-    saveFigureTo(filesDirectory ...
-        ,"LocationDistributions_InteractionRegions","allLipids"...
-        ,"onlyHydrogen");
-end
-    
 
+if saving
+    saveFigureTo(densityDistributionsFolder ...
+        ,datestr(now,"yyyymmdd") + "_allLipids" ...
+        ,"DensityDistributionsAndSurfWater","onlyHydrogen_bulkBorder" ...
+        + num2str(round(bulkWaterFractionForBorder*100)),true);
+end
+
+%% functions in use
 function plt = plotVerticalLine(xPos,yValue)
 plt = plot([xPos xPos],[0 yValue],'--k','LineWidth',0.7);
 end
 
-function indices = findCoherentRegion(indices)
-differenceInIndices = diff(indices);
-lengthOfCoherentRegion = 1;
-for counter = 1:length(differenceInIndices)
-    if differenceInIndices(counter) == 1
-        lengthOfCoherentRegion(end) = lengthOfCoherentRegion(end) + 1;
-    else
-        lengthOfCoherentRegion(end+1) = 1; %#ok<AGROW>
-    end
-end
-[maxLength,index] = max(lengthOfCoherentRegion);
-if index == 1
-    indices = indices(1:maxLength);
-else
-    startIndex = sum(lengthOfCoherentRegion(1:index-1)) + 1;
-    endIndex = startIndex -1 + maxLength;
-    indices = indices(startIndex : endIndex);
-end
-end
 
