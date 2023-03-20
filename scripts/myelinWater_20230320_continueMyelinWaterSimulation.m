@@ -89,13 +89,11 @@ if ~exist('nearestNeighbourCases','var')
         logMessage("Set up variables based on old simulation." ...
             ,logFilePath,false);
         atomCounter = oldResults.atomCounter;
-        r1Estimation = zeros(1,numberOfHs);
         r1Estimation(1:atomCounter) = oldResults.r1Estimation( ...
             1:atomCounter);
         calculatedAtomIndices(1:atomCounter) = ...
             oldResults.calculatedAtomIndices(1:atomCounter);
         randomSequenceOfAtoms = oldResults.randomSequenceOfAtoms;
-        atomTimer = zeros(1,atomsToCalculate);
         atomTimer(1:atomCounter) = oldResults.atomTimer;
         
         sumCorrFuncZerothOrder = oldResults.sumCorrFuncZerothOrder;
