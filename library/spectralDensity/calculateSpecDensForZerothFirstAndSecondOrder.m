@@ -8,7 +8,7 @@ specDensZeroAllTimeSteps = 2*(deltaT*cumsum(zerothOrderCorrFunc));
 specDensFirstAllTimeSteps = 2*(deltaT*cumsum(firstOrderCorrFunc ...
     .*exp(-1i*omega0*deltaT*(0:corrFuncLength-1))));
 specDensSecondAllTimeSteps = 2*(deltaT*cumsum(secondOrderCorrFunc ...
-    .*exp(-1i*omega0*deltaT*(0:corrFuncLength-1))));
+    .*exp(-2i*omega0*deltaT*(0:corrFuncLength-1))));
 
 specDensLength = length(specDensZeroAllTimeSteps);
 firstPoint = round(averagingRegion(1) * specDensLength);
