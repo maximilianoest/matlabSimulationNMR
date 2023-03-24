@@ -89,8 +89,7 @@ for fieldName = fieldNames
    fprintf("%-20s: %.4f \n\n",fieldName, data(end).(fieldName))
 end
 
-
-save(resultsPath + "_" + datestr(now,"yyyymmdd") ...
+save(resultsPath + datestr(now,"yyyymmdd") + "_" ...
     + "whiteMatterCompositionBasedOnLiterature",'-struct','averageData');
 
 

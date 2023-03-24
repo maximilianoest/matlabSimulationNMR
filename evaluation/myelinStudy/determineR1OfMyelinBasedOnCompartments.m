@@ -23,7 +23,7 @@ dataArray = loadFiles(filePaths);
 savingDir = resultsDir + "myelinModelResults\";
 saving = 1;
 
-%% configuration
+%% ---- configuration
 dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
     /(constants.nanoMeter^6);
@@ -96,7 +96,7 @@ hCountInWater = length(data.matFileIndices{ ...
     data.groupsToSearchIn == "Water"});
 
 
-%% calaculate R1
+%% ---- calaculate R1
 r1_SM = zeros(1,length(fieldStrengths));
 r1_MW = zeros(1,length(fieldStrengths));
 
@@ -147,14 +147,14 @@ r1Eff_SM = r1_SM + r1Auto_SM;
 r1Auto_MW = hCountInMembrane/hCountInWater * r1Auto_SM;
 r1Eff_MW = r1_MW + r1Auto_MW;
 r1Cross_MW = hCountInMembrane/hCountInWater * r1Cross_SM;
-%% plotting
+%% ---- plotting
 fig1 = initializeFigure();
 subPlt1 = initializeSubplot(fig1,2,2,1);
 subPlt2 = initializeSubplot(fig1,2,2,2);
 subPlt3 = initializeSubplot(fig1,2,2,3);
 subPlt4 = initializeSubplot(fig1,2,2,4);
 
-%% --- solid myelin
+%% ---- solid myelin
 fig1.CurrentAxes = subPlt1;
 timeAxis_SM = 0:deltaTInS_SM:(length(corrFuncFirstOrder_SM)-1)*deltaTInS_SM;
 plot(timeAxis_SM,real(corrFuncFirstOrder_SM));
@@ -237,14 +237,24 @@ legend("R$^{eff}_{1,SM}$","R$^{eff}_{1,MW}$","R$_{1,SM}$","R$_{1,MW}$" ...
 xticks(0:0.5:7);
 
 
+%% ---- saving
+
 if saving
     set(0,'CurrentFigure',fig1);
     saveFigureTo(savingDir,"wholeMyelin",datestr(now,'yyyymmdd') ...
         ,"CompartmentAndCrossR1",true);
 end
 
+save(resultsDir + "myelinModelResults\" + datestr(now,"yyyymmdd") ...
+    +"_compartmentAndCrossR1FromSimulations",'r1_MW','r1_SM' ...
+    ,'r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM','r1Eff_MW' ...
+    ,'r1Eff_SM','fieldStrengths');
 
-%% functions
+
+
+
+
+%% ---- functions
 function filePaths = checkIfFilesExistAndCreateFilePaths(resultsDir ...
     ,folderNames,fileNames)
 filePaths = strings(1,length(fileNames));
