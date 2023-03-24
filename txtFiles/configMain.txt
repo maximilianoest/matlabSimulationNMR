@@ -1,25 +1,31 @@
-fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime800ns
-scriptFileToRun=solidMyelin_20230215_determineShortPaddedCorrFunc
+fileName=20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns
+scriptFileToRun=myelinWater_20230320_continueMyelinWaterSimulation
+
+groupsToSearchIn=MEMB;Water
+unassignedGroup=System_&_H*
+indexFileName=index_wholeMonolayerModel_H.ndx
 
 dataDirectoryOnServer=/daten/a/Relaxation/
 dataDirectoryOnLocalMachine=C:\Users\maxoe\Documents\Gromacs\testDatasets\
 
-reloadOldSimulation=0
-oldResultsFileToLoad=C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\solidMyelin_20230215_ContinueShortPaddingSimulation\20230215_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt20ps_simTime200ns.mat
+reloadOldSimulation=1
+oldResultsFileToLoad=/home/moesterreicher/matlabSimulationNMR/RESULTS/myelinWater_20230206_DetermineCorrelationFunctions/20230208_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns.mat
 
 printToCommandWindow=1
 dataLoaded=0
 savingIntervall=5
-averagingRegionForSpectralDensity=0.5;0.6
+averagingRegionForSpectralDensity=0.98;1
 locationsCount=10
 
 fractionForLags=1
-nearestNeighbours=5500
-nearestNeighbourCases=5500;200
+nearestNeighbours=15000
+nearestNeighbourCases=15000;200
 
 mainMagneticField=3
-atomsToCalculate=2500
+atomsToCalculate=5000
 atomCounter=1
 
 fibreAnglesTheta=45
 fibreAnglesPhi=0
+
+

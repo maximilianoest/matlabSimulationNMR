@@ -1,5 +1,9 @@
 clc; clear all; close all; fclose('all');
 
+%% ERROR / BUG
+% The first and last two locations give density distributions that are not
+% valid. This should be corrected in upcoming evaluations.
+
 % ATTENTION: with mean positions, it is possible that more than one atom is
 % at one position. Thus the distribution and density is not right.
 % Therefore, a snapshot of the production run is used.
@@ -28,9 +32,9 @@ saving = 1;
 directory = "C:\Users\maxoe\Documents\Gromacs\testDatasets\";
 lipidNames = ["DOPS" "PLPC" "PSM"];
 filesToLoad = [ ...
-    "20220110_DOPS_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns" ...
-    "20220804_PLPC_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns" ...
-    "20220804_PSM_TIP4_Monolayer_50water_prd_dt10ps_simTime10ns"];
+    "20220110_DOPS_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns" ...
+    "20220804_PLPC_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns" ...
+    "20220804_PSM_TIP4_Monolayer_50water_prd_dt1ps_simTime10ns"];
 
 groFileName = "prd";
 
@@ -45,7 +49,7 @@ massPhosphorusKG = constants.atomicWeightPhosphorus/1000/avogadro;
 
 atomNamesToIgnore = ["POT" "CLA" "M"];
 
-numberOfLocations = 100;
+numberOfLocations = 500;
 
 for datasetNr = 1:length(lipidNames)
     lipidName = lipidNames(datasetNr);
@@ -151,7 +155,7 @@ for datasetNr = 1:length(lipidNames)
     locations = zeros(size(dXForTimeStep,2),numberOfLocations);
     
     for timeStepNr = 1:size(positionsInNM,3)
-        if mod(timeStepNr,100) == 0
+        if mod(timeStepNr,200) == 0
             fprintf("Time step: %i\n", timeStepNr);
         end
         locations(timeStepNr,:) = linspace(min( ...
@@ -283,7 +287,7 @@ for datasetNr = 1:length(lipidNames)
             ,"atomsCountFromGroFile","moleculesToCompare" ...
             ,"dXForTimeStep","dYForTimeStep","dZForTimeStep" ...
             ,"dVolumeForTimeStep","locations","lipidName" ...
-            ,"pos_atomCounter");
+            ,"pos_atomCounter",'-v7.3');
     end
     
     initializeFigure();
