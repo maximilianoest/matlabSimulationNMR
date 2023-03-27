@@ -12,9 +12,11 @@ data(1).citationKey = "OBrien1965";
 
 data(1).wmLipidContent = [0.490 0.584 0.663 0.646]; 
 data(1).wmLipidContent = [0.663 0.646]; % avoid child data
+data(1).wmLipidContent = [];
 data(1).wmNonLipidContent = 1 - data(1).wmLipidContent;
 data(1).wmWaterContent = [0.808 0.755 0.774 0.752]; 
 data(1).wmWaterContent = [0.774 0.752]; % avoid child data
+data(1).wmWaterContent = [];
 data(1).wmNonWaterContent = 1 - data(1).wmWaterContent;
 
 data(1).gmLipidContent = [0.364 0.358 0.376 0.396];
