@@ -1,5 +1,5 @@
 fileName=20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime800ns
-scriptFileToRun=myelinWater_20230320_continueMyelinWaterSimulation
+scriptFileToRun=solidMyelin_20230215_determineShortPaddedCorrFunc
 
 groupsToSearchIn=MEMB;Water
 unassignedGroup=System_&_H*
@@ -18,7 +18,7 @@ averagingRegionForSpectralDensity=0.5;0.6
 locationsCount=10
 
 fractionForLags=1
-nearestNeighbours=15000
+nearestNeighbours=5500
 nearestNeighbourCases=5500;200
 
 mainMagneticField=3
