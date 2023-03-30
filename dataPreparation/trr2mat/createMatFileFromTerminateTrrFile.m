@@ -3,17 +3,19 @@ clc; clear all; close all;
 matFilesFolder = "/daten/a/Relaxation/MYELIN/Bilayer/GROMACS/";
 gromacsFolderName =  ...
     "20221222_MYELIN_TIP4_Bilayer_50water_shortDurationForDistribution";
-path2SimData = matFilesFolder + "/" + gromacsFolderName;
+path2SimData = matFilesFolder + gromacsFolderName + "/";
     
 
 trrFileName = "prd";
 path2BinFile = [pwd '/'];
 simulationConfigurationFile = 'step7_production.mdp';
 
-if ~isfile(path2SimData + trrFileName + ".trr")
+filePath = path2SimData + trrFileName + ".trr";
+if ~isfile(filePath)
     error("File does not exist.");
 else
-    fprintf("File exist.");
+    fprintf("File exist.\n");
+    
 end
 
 %% ATTENTION
@@ -23,7 +25,7 @@ end
 % deltaT are written directly into the trajectory file
  
 %% 
-configFileId = fopen(sprintf('%s/%s',directory ...
+configFileId = fopen(sprintf('%s%s',path2SimData ...
     ,simulationConfigurationFile),'r');
 configData = textscan(configFileId, '%s %s','Delimiter','=');
 
@@ -68,7 +70,7 @@ tic
 fprintf("Time needed for processing binary file: %fs \n",toc);
 
 loadedFramesCount = size(xdata.trajectory,3);
-configu ration.nsteps = loadedFramesCount / 0.002;
+configuration.nsteps = loadedFramesCount / 0.002;
 fprintf("Number of loaded frames: %i",loadedFramesCount);
 simDurInS = (loadedFramesCount - 1) * deltaTInS;
 simDurInNs = simDurInS * 1e9;
@@ -77,9 +79,9 @@ numberOfAtoms = size(xdata.trajectory,1);
 fprintf("Found %i atoms in the data set.\n",numberOfAtoms);
 
 trajectories = zeros(numberOfAtoms,3,loadedFramesCount);
-trajectories(:,1,:) = xdata.trajectories(:,3,:);
-trajectories(:,2,:) = xdata.trajectories(:,2,:);
-trajectories(:,3,:) = xdata.trajectories(:,1,:);
+trajectories(:,1,:) = xdata.trajectory(:,3,:);
+trajectories(:,2,:) = xdata.trajectory(:,2,:);
+trajectories(:,3,:) = xdata.trajectory(:,1,:);
 
 %% save data
 deltaTForSavingName = strrep(num2str(deltaTInPs),'.','_');
