@@ -14,7 +14,7 @@ startTimePoint = 40e-9;
 endTimePoint = 50e-9;
  
 %%
-trrFileName = "overallSystem_whole";
+trrFileName = "prd";
 path2BinFile = [pwd '/'];
 simulationConfigurationFile = 'step7_production.mdp';
 timeStepSkips = [100];
