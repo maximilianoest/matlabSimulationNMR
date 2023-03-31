@@ -27,7 +27,7 @@ saving = 1;
 dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
     /(constants.nanoMeter^6);
-fieldStrengths = 0.1 : 0.05 : 7;
+fieldStrengths = 0.1 : 0.05 : 10;
 larmorFrequencies = constants.gyromagneticRatioOfHydrogenAtom ...
     *fieldStrengths;
 
@@ -234,7 +234,7 @@ axis([0 inf 0 10]);
 legend("R$^{eff}_{1,SM}$","R$^{eff}_{1,MW}$","R$_{1,SM}$","R$_{1,MW}$" ...
     ,"R$^{auto}_{1,SM}$","R$^{cross}_{1,SM}$","R$^{auto}_{1,MW}$" ...
     ,"R$^{cross}_{1,MW}$");
-xticks(0:0.5:7);
+xticks(0:0.5:fieldStrengths(end));
 
 
 %% ---- saving
