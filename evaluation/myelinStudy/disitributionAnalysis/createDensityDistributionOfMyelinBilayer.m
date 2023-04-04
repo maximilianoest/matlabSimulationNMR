@@ -12,11 +12,10 @@ if ~exist(resultsDir,'dir')
     mkdir(resultsDir)
 end
 
-directory = "C:\Users\maxoe\Documents\Gromacs\testDatasets\";
+directory = "/daten/a/Relaxation/";
 folderName = "MYELIN";
-layerForm = "\Bilayer\";
-fileName = "20221222_MYELIN_TIP4_Bilayer_50water_" ...
-    + "shortDurationForDistribution_allAtoms_prd_dt40ps_simTime17_322ns";
+layerForm = "/Monolayer/";
+fileName = "20230404_MYELIN_TIP4_50Water_ShortSimDur_prd_allAtoms_dt0_05ps_simDur0_7046ns";
 groFileName = "step6.5_equilibration";
 
 avogadro = constants.avogadroConstant;
@@ -27,11 +26,9 @@ massCarbonKG = constants.atomicWeightCarbon/1000/avogadro;
 massPhosphorusKG = constants.atomicWeightPhosphorus/1000/avogadro;
 massSulfurKg = constants.atomicWeightSulfur/1000/avogadro;
 
-
 atomNamesToIgnore = ["POT" "CLA" "M"];
 moleculesToIgnore = ["POT" "CLA"];
 
-numberOfLocations = 500;
 
 %% --------- find out which index belongs to which atom and molecule
 fprintf("Determining which index belongs to which kind of atom. \n");
@@ -204,8 +201,8 @@ end
 fprintf("Loading data and plotting distributions.\n");
 trajData = load(sprintf("%s%s.mat",directory + folderName  ...
     + layerForm,fileName));
-densityDistribution = [];
-densityDistributionOnlyHdydrogen = [];
+
+numberOfLocations = 4000;
 
 [atomsCountFromTraj,dimensions,numberOfTimeSteps] = size( ...
     trajData.trajectories(:,:,1:end));
@@ -228,6 +225,9 @@ discreteLocations = zeros(numberOfTimeSteps,numberOfLocations);
 frequency_timeLocMolAtom = zeros(numberOfTimeSteps,numberOfLocations ...
     ,length(moleculeNameCollection),length(atomNameCollection));
 
+density_timeLocMolAtom = zeros(numberOfTimeSteps,numberOfLocations ...
+    ,length(moleculeNameCollection),length(atomNameCollection));
+
 
 for timeStepNr = 1:numberOfTimeSteps
     
@@ -240,6 +240,14 @@ for timeStepNr = 1:numberOfTimeSteps
     discreteLocationBorders = linspace(minX,maxX,numberOfLocations+1);
     discreteLocations(timeStepNr,:) = discreteLocationBorders(1:end-1) ...
         + diff(discreteLocationBorders)/2;
+    dXForTimeStep(timeStepNr) = mean(diff(discreteLocationBorders));
+    dYForTimeStep(timeStepNr) =  max(positionsInM(:,2,timeStepNr)) ...
+        - min(positionsInM(:,2,timeStepNr));
+    dZForTimeStep(timeStepNr) = max(positionsInM(:,3,timeStepNr)) ...
+        - min(positionsInM(:,3,timeStepNr));
+    dVolumeForTimeStep(timeStepNr) = dXForTimeStep(timeStepNr) ...
+        * dYForTimeStep(timeStepNr) * dZForTimeStep(timeStepNr);
+    
     discreteLocationBorders(1) = discreteLocationBorders(1) ...
         - constants.nanoMeter;
     discreteLocationBorders(end) = discreteLocationBorders(end) ...
@@ -268,10 +276,17 @@ for timeStepNr = 1:numberOfTimeSteps
         
     end
     
+    
+    density_timeLocMolAtom(timeStepNr,:,:,:) = ...
+        createDensityDistributionAtTimeStep(squeeze( ...
+        frequency_timeLocMolAtom(timeStepNr,:,:,:)) ...
+        ,atomWeightCollection,dVolumeForTimeStep(timeStepNr));
 end
 
 
 %% plotting
+
+% frequency
 avgLoc = mean(discreteLocations,1);
 waterIndex = moleculeNameCollection == "WATER";
 hydrogenIndex = atomNameCollection == "H";
@@ -279,33 +294,73 @@ avgFreqWater = sum(sum(squeeze(mean(frequency_timeLocMolAtom( ...
     :,:,waterIndex,:),1)),3),2);
 avgFreqMemb = sum(sum(squeeze(mean(frequency_timeLocMolAtom( ...
     :,:,~waterIndex,:),1)),3),2);
-avgFreqWaterH = squeeze(mean(frequency_timeLocMolAtom(:,:,waterIndex,hydrogenIndex),1));
-avgFreqMembH = squeeze(sum(mean(frequency_timeLocMolAtom(:,:,~waterIndex,hydrogenIndex),1),3));
+avgFreqWaterH = squeeze(mean(frequency_timeLocMolAtom( ...
+    :,:,waterIndex,hydrogenIndex),1));
+avgFreqMembH = squeeze(sum(mean(frequency_timeLocMolAtom( ...
+    :,:,~waterIndex,hydrogenIndex),1),3));
 
 fig1 = initializeFigure();
-title("Frequency all atoms");
-initializeSubplot(fig1,2,1,1);
+initializeSubplot(fig1,2,2,1);
+title("All atoms");
 plot(avgLoc,avgFreqWater);
 plot(avgLoc,avgFreqMemb);
-legend("Water","Membrane");
+legend("Water","Membrane",'Location','north');
+xlabel('Position $[nm]$');
+ylabel("Frequency [number of atoms]");
 
-
-initializeSubplot(fig1,2,1,2);
-title("Frequency only hydrogen atoms");
+initializeSubplot(fig1,2,2,3);
+title("Only hydrogen atoms");
 plot(avgLoc,avgFreqWaterH);
 plot(avgLoc,avgFreqMembH);
-legend("Water","Membrane");
-
+lgd = legend();
+lgd.Visible = 'off';
+xlabel('Position $[nm]$');
+ylabel("Frequency [number of H atoms]");
 
 saveFigureTo(resultsDir,"wholeMyelin",datestr(now,"yyyymmdd") ...
-    ,"atomDistribution",true);
+    ,"atomFrequencyDistribution",true);
+
+% density
+windowSize = 11;
+avgDensDistribWater = meanFilter(sum(sum(squeeze(mean(density_timeLocMolAtom( ...
+    :,:,waterIndex,:),1)),3),2),windowSize);
+avgDensDistribMembr = meanFilter(sum(sum(squeeze(mean(density_timeLocMolAtom( ...
+    :,:,~waterIndex,:),1)),3),2),windowSize);
+avgDensDistribWaterH = meanFilter(squeeze(mean(density_timeLocMolAtom( ...
+    :,:,waterIndex,hydrogenIndex),1)),windowSize);
+avgDensDistribMembrH = meanFilter(squeeze(sum(mean(density_timeLocMolAtom( ...
+    :,:,~waterIndex,hydrogenIndex),1),3)),windowSize);
+
+initializeSubplot(fig1,2,2,2);
+title("All atoms");
+plot(avgLoc,avgDensDistribWater);
+plot(avgLoc,avgDensDistribMembr);
+lgd = legend();
+lgd.Visible = 'off';
+xlabel('Position $[nm]$');
+ylabel('Density $[kg/m^3]$');
+
+initializeSubplot(fig1,2,2,4);
+title("Only hydrogen atoms");
+plot(avgLoc,avgDensDistribWaterH);
+plot(avgLoc,avgDensDistribMembrH);
+lgd = legend();
+lgd.Visible = 'off';
+xlabel('Position $[nm]$');
+ylabel('Density $[kg/m^3]$');
+
+saveFigureTo(resultsDir,"wholeMyelin",datestr(now,"yyyymmdd") ...
+    ,"atomDensityDistribution",true);
+
 
 %% saving
 save(resultsDir + datestr(now,"yyyymmdd") + "_myelinDistributionData" ...
     ,'dVolumeForTimeStep','dXForTimeStep','dYForTimeStep' ...
     ,'dZForTimeStep','discreteLocations','atomNameArray' ...
     ,'moleculeNameArray','atomNameCollection' ...
-    ,'moleculeNameCollection','frequency_timeLocMolAtom','constants');
+    ,'moleculeNameCollection','atomWeightCollection' ...
+    ,'frequency_timeLocMolAtom''density_timeLocMolAtom','constants' ...
+    ,'-v7.3');
 
 
 
@@ -317,5 +372,19 @@ moleculeIndex = indexAsCell{1};
 end
 
 
+function densityDistribution = createDensityDistributionAtTimeStep( ...
+    freq_locMolAtom,atomWeightCollection,dVolume)
+densityDistribution = zeros(size(freq_locMolAtom));
 
+for locationNr = 1:size(freq_locMolAtom,1)
+    for moleculeNr = 1:size(freq_locMolAtom,2)
+        densityDistribution(locationNr,moleculeNr,:) = ...
+            squeeze(freq_locMolAtom(locationNr,moleculeNr,:)) ...
+            .* (atomWeightCollection/dVolume)';
+    end
+end
+
+
+
+end
 
