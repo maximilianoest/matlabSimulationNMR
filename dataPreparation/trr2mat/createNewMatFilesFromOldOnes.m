@@ -1,6 +1,6 @@
 clc
 %% load data
-fileDirectories = ["/daten/a/Relaxation/MYELIN/Monolaye/"];
+fileDirectories = ["/daten/a/Relaxation/MYELIN/Monolayer/"];
 
 fileNames = ["20230404_MYELIN_TIP4_50Water_ShortSimDur_prd_dt0_05ps_simDur0_7046ns"];
 
