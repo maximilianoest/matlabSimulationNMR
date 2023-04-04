@@ -1,8 +1,8 @@
 clc; clear all; close all;
 
-matFilesFolder = "/daten/a/Relaxation/MYELIN/Bilayer/GROMACS/";
+matFilesFolder = "/daten/a/Relaxation/MYELIN/Monolayer/GROMACS/";
 gromacsFolderName =  ...
-    "20221222_MYELIN_TIP4_Bilayer_50water_shortDurationForDistribution";
+    "20230404_MYELIN_TIP4_50Water_ShortSimDur";
 path2SimData = matFilesFolder + gromacsFolderName + "/";
     
 
