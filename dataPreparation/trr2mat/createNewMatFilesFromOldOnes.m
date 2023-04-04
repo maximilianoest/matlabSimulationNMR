@@ -1,11 +1,11 @@
 clc
 %% load data
-fileDirectories = ["C:\Users\maxoe\Documents\Gromacs\testDatasets\MYELIN\Bilayer\"];
+fileDirectories = ["/daten/a/Relaxation/MYELIN/Monolaye/"];
 
-fileNames = ["20221222_MYELIN_TIP4_Bilayer_50water_shortDurationForDistribution_prd_dt2ps_simDur17_322ns"];
+fileNames = ["20230404_MYELIN_TIP4_50Water_ShortSimDur_prd_dt0_05ps_simDur0_7046ns"];
 
 filePaths = fileDirectories + fileNames;
-timeStepSkips = [20];
+timeStepSkips = [40];
 shortings = [1];
 
 %% save data as with other simulation parameters
