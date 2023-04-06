@@ -8,7 +8,7 @@ constants = readConstantsFile('constants.txt');
 resultsDir = sprintf("..%s..%s..%sRESULTS%swholeMyelin" ...
     + "_densityDistributions%s",createFilesepStringArray(5));
 
-densDistribFileName = "20230404_myelinDistributionData";
+densDistribFileName = "20230405_myelinDistributionData";
 densData = load(resultsDir + densDistribFileName + ".mat");
 
 densData.avgDensity_locMolAtom = ...
