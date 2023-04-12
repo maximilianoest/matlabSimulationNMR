@@ -2,7 +2,8 @@ clc; clear all; close all;
 
 %% paths
 resultsPath = ...
-    "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\myelinModelResults\";
+    "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS" ...
+    + "\wholeMyelin_brainConstitution\";
 
 %% data collection
 
@@ -75,6 +76,20 @@ data(3).smNonLipidContent = 1 - data(3).smLipidContent;
 % Data from Norton:
 % The data points from their studies are not included here because they
 % investigate bovine brain WM composition.
+
+
+% Data from Drenthen2021: reference data for training an artifical neural
+% network. Data in Table 1 and 2 und REF
+data(4).citationKey = "Derenthen2021";
+data(4).myelinWaterContent = 0.118;
+
+% Data from Laule2004: measured MWF data from healthy and MS patients. 5 WM
+% structures: genu and splenium of CC, posterior internal capsules, minor
+% forceps, major forceps
+data(5).citationKey = "Laule2004";
+data(5).myelinWaterContent = [0.101 0.133 0.156 0.073 0.095];
+
+
 
 
 %% Data analysis
