@@ -1,3 +1,4 @@
+%%
 clc; close all; clear all; fclose('all');
 
 
@@ -15,7 +16,7 @@ end
 
 %% set up
 windowSize = 11;
-surfWaterDensBorder = 0.98;
+surfWaterDensBorder = 0.95;
 borderShiftOffset = 0;
 saving = 1;
 
@@ -130,7 +131,7 @@ ylabel('density $[kg/m^3]$');
 
 r1DataFolder = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
     + "\RESULTS\wholeMyelin_relaxationRates\";
-r1DataFileName = "20230405_compartmentAndCrossR1FromSimulations";
+r1DataFileName = "20230414_compartmentAndCrossR1FromSimulations";
 r1Data = load(r1DataFolder + r1DataFileName + ".mat");
 fieldStrength3TeslaIndex = r1Data.fieldStrengths < 3.00001 ...
     & r1Data.fieldStrengths > 2.99999;
@@ -175,20 +176,56 @@ fprintf("\n  There are %.0f water molecules at the surface.\n" ...
     ,surfWaterMoleculeCount);
 fprintf("  The surface water weight is: %.4d\n",surfWaterMass);
 
-%% According to Morell1991 https://www.ncbi.nlm.nih.gov/books/NBK28221/
+%% According to Morell1999 https://www.ncbi.nlm.nih.gov/books/NBK28221/
 fprintf("\n<strong> Histological values based on literature: </strong> \n");
+% R1 calculated with masses or with hydrogen density leads to the same
+% results. Because the hydrogen density is essential for the signal, the
+% calculations here are based on this density.
+% water content is 40% -> 40% water, 60% non-water
 
-% water content is 40% 
-waterMassRatioLit = 0.4;
-histWaterMass = waterMassRatioLit * modelMembrMass/(1-waterMassRatioLit);
-fprintf("  water mass: %.4d\n",histWaterMass);
+waterContentInMyelin = 0.4; %according to Morell1999
 
-histFreeWaterMass = histWaterMass - surfWaterMass;
-histF_free = histFreeWaterMass/histWaterMass;
-histF_surf = surfWaterMass/histWaterMass;
-fprintf("  f_surf = %.4f, f_free = %.4f\n"  ...
+%% According to studies in brainConstitution.m
+
+constitutionData = load("C:\Users\maxoe\Google Drive\Promotion" ...
+    + "\Simulation\RESULTS\wholeMyelin_brainConstitution" ...
+    + "\20230413_wmAndGMCompositionBasedOnLiterature.mat");
+
+wmWaterContent = constitutionData.wmWaterContent;
+myelinWaterFraction = wmWaterContent * constitutionData.myelinWaterContent;
+solidMyelinLipidContent = constitutionData.smLipidContent;
+
+% waterContentInMyelin = myelinWaterFraction/(myelinWaterFraction +
+%                        myelinSolidFraction)
+% -> solved for myelinSolidFraction: contains mass lipids and proteins
+solidMyelinFraction = myelinWaterFraction/waterContentInMyelin ...
+    - myelinWaterFraction;
+fprintf("  Solid myelin fraction: %.4f\n",solidMyelinFraction);
+
+% Thus, 0.0802 myelin water fraction comes hand in hand with 0.1203 solid
+% myelin fraction
+effectiveSurfInteractionVolRatio = ...
+    myelinWaterFraction / solidMyelinFraction;
+fprintf("  ESIVR for whole myelin: %.4f\n" ...
+    ,effectiveSurfInteractionVolRatio);
+
+% -> for given solid myelin mass, known from simulation and density data,
+% the histological myelin water mass is the ESIVR multiplied by the
+% given solid myelin mass of the lipids.
+histMyelinWaterMass = modelMembrMass * effectiveSurfInteractionVolRatio;
+histMyelinWaterHCount = histMyelinWaterMass / waterMoleculeWeight * 2;
+fprintf("  histological myelin water H count based on lipid weight" ...
+    + " in MD sim.: %.4f\n",histMyelinWaterHCount);
+
+histFreeWaterHCount = histMyelinWaterHCount - surfaceWaterHCount;
+fprintf("  free water H count in MD sim.: %.4f\n",histFreeWaterHCount);
+
+
+histF_free = histFreeWaterHCount/histMyelinWaterHCount;
+histF_surf = surfaceWaterHCount/histMyelinWaterHCount;
+fprintf("  histolgical f_surf = %.4f, f_free = %.4f\n"  ...
     ,histF_surf,histF_free);
-fprintf("  free water mass: %.4d\n",histFreeWaterMass);
+
 
 r1Data.r1Hist_MW = histF_free*r1Data.r1_free + histF_surf*r1Data.r1Surf_MW;
 fprintf("  Healthy MW R1 at 1.5T: %.4f\n" ...
@@ -197,22 +234,6 @@ fprintf("  Healthy MW R1 at 3T: %.4f\n" ...
     ,r1Data.r1Hist_MW(fieldStrength3TeslaIndex));
 fprintf("  Healthy MW R1 at 7T: %.4f\n" ...
     ,r1Data.r1Hist_MW(fieldStrength7TeslaIndex));
-
-% histWaterHCount = histWaterMass/waterMoleculeWeight*2;
-% fprintf("  water H count: %.4d\n",histWaterHCount);
-% histFreeWaterHCount = histWaterHCount - surfaceWaterHCount;
-% histF_free_count = histFreeWaterHCount/histWaterHCount;
-% histF_surf_count = surfaceWaterHCount/histWaterHCount;
-% fprintf("  f_surf = %.4f, f_free = %.4f\n"  ...
-%     ,histF_surf_count,histF_free_count);
-% fprintf("  free water H count: %.4d\n",histFreeWaterHCount);
-% 
-% r1Data.r1Hist_MW = histF_free_count*r1Data.r1_free  ...
-%     + histF_surf_count*r1Data.r1Surf_MW;
-% fprintf("  Healthy MW R1 at 3T: %.4f\n" ...
-%     ,r1Data.r1Hist_MW(fieldStrength3TeslaIndex));
-
-
 
 %% plotting
 
@@ -225,7 +246,7 @@ xlabel("Field strength [Tesla]");
 ylabel("R$_{1,MW}$ [Hz]");
 
 if saving
-    saveFigureTo(r1DataFolder,"myelinWater",datestr(now,'yyyymmdd') ...
+    saveFigureTo(r1DataFolder,datestr(now,'yyyymmdd'),"myelinWater" ...
         ,"histologicalMyelinWaterR1",true);
 end
 
@@ -241,10 +262,11 @@ xlabel("Field strength [Tesla]");
 ylabel("R$_1^{eff}$");
 xticks(0:0.5:r1Data.fieldStrengths(end));
 
-r1Data.compartmentR1Fig = fig;
+% r1Data.compartmentR1Fig = fig;
 
 if saving
-    saveFigureTo(r1DataFolder,"wholeMyelin",datestr(now,'yyyymmdd') ...
+    saveFigureTo(r1DataFolder,datestr(now,'yyyymmdd') ...
+        ,"solidMyelinAndMyelinWater" ...
         ,"histologicalEffectiveCompartmentR1s",true);
     
 end

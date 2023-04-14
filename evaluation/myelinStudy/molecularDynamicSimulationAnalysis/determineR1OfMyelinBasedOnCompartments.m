@@ -1,9 +1,9 @@
 clc; clear all; close all;
 
 clc; clear all; close all; fclose('all');
-addpath(genpath("../../library/"));
-constants = readConstantsFile(sprintf("..%s..%stxtFiles%sconstants.txt" ...
-    ,createFilesepStringArray(3)));
+addpath(genpath("../../../library/"));
+constants = readConstantsFile(sprintf("..%s..%s..%stxtFiles%sconstants.txt" ...
+    ,createFilesepStringArray(4)));
 
 
 resultsDir = "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\";
@@ -241,8 +241,8 @@ xticks(0:0.5:fieldStrengths(end));
 
 if saving
     set(0,'CurrentFigure',fig1);
-    saveFigureTo(savingDir,"wholeMyelin",datestr(now,'yyyymmdd') ...
-        ,"CompartmentAndCrossR1",true);
+    saveFigureTo(savingDir,datestr(now,'yyyymmdd') ...
+        ,"solidMyelinAndMyelinWater","CompartmentAndCrossR1",true);
 end
 
 save(savingDir + datestr(now,"yyyymmdd") ...
