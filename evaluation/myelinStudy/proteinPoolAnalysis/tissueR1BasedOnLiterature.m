@@ -37,8 +37,8 @@ r1_GM = setR1InDictionary(r1_GM,"3",1/1.25);
 r1_WM = setR1InDictionary(r1_WM,"0.55",1/0.4);
 r1_GM = setR1InDictionary(r1_GM,"0.55",1/0.6);
 
-r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.6);
-r1_GM = setR1InDictionary(r1_GM,"1.5",1/1);
+r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.5);
+r1_GM = setR1InDictionary(r1_GM,"1.5",1/0.9);
 
 r1_WM = setR1InDictionary(r1_WM,"3",1/0.85);
 r1_GM = setR1InDictionary(r1_GM,"3",1/1.25);

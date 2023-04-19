@@ -8,11 +8,10 @@ constants = readConstantsFile('constants.txt');
 
 %% set up
 saving = 1;
+smallFieldStrength = 0.6; % T
 
 %% directories
 resultsDir = sprintf("..%s..%s..%sRESULTS%",createFilesepStringArray(3));
-
-
 
 %% constitutions
 constitutionFolderName = sprintf("%swholeMyelin_brainConstitution%s" ...
@@ -31,7 +30,7 @@ r1Data =  load(resultsDir + r1RatesFolder + r1RatesFileName);
 
 %% observable relaxation rates in qMRI
 
-tissueR1RatesFileName = "20230413_tissueR1BasedOnLiterature";
+tissueR1RatesFileName = "20230418_tissueR1BasedOnLiterature";
 tissueR1Data = load(resultsDir + r1RatesFolder + tissueR1RatesFileName);
 
 [wmFieldStrengthsInLiterature,relaxationRatesWM] = ...
@@ -98,6 +97,7 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
     
     r1_SL = r1Data.r1Eff_SM(simFieldStrengths > (fieldStrength-0.001) ...
         & simFieldStrengths < (fieldStrength+0.001));
+    fprintf("  SL R1 MD-Sim: %.4f\n",r1_SL);
     
     if length(r1_LW) ~= 1 || length(r1_SL) ~= 1
         error("More than 2 R1 are found for a field strength.");
@@ -132,6 +132,30 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
         - gmProtWaterContent*r1_LW ...
         - gmFreeWaterContent*freeWaterR1);
     fprintf("  Protein R1 GM: %.4f. \n",r1Data.r1Prot_GM(fieldStrengthNr));
+    
+    
+    if fieldStrength < smallFieldStrength
+        
+        r1Data.smallFieldStrengths = fieldStrength;
+        r1Data.r1Prot_WM(fieldStrengthNr) = ...
+            1/(wmSolidProteinContent+wmSolidLipidContent) ...
+            *(observedWMR1 ...
+            - wmLipidWaterContent*r1_LW ...
+            - wmProtWaterContent*r1_LW ...
+            - wmFreeWaterContent*freeWaterR1);
+        fprintf("  Protein R1 WM (small field strength): %.4f. \n" ...
+            ,r1Data.r1Prot_WM(fieldStrengthNr));
+        
+        r1Data.r1Prot_GM(fieldStrengthNr) = ...
+            1/(gmSolidProteinContent + gmSolidLipidContent) ...
+            *(observedGMR1 ...
+            - gmLipidWaterContent*r1_LW ...
+            - gmProtWaterContent*r1_LW ...
+            - gmFreeWaterContent*freeWaterR1);
+        fprintf("  Protein R1 GM (small field strength): %.4f. \n" ...
+            ,r1Data.r1Prot_GM(fieldStrengthNr));
+    end
+    
 end
 
 if saving
