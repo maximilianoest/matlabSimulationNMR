@@ -7,7 +7,7 @@ addpath(genpath(sprintf('..%s..%s..%stxtFiles' ...
 constants = readConstantsFile('constants.txt');
 
 %% set up
-saving = 0;
+saving = 1;
 smallFieldStrength = 0.6; % T
 
 %% directories
@@ -16,7 +16,7 @@ resultsDir = sprintf("..%s..%s..%sRESULTS%",createFilesepStringArray(3));
 %% constitutions
 constitutionFolderName = sprintf("%swholeMyelin_brainConstitution%s" ...
     ,createFilesepStringArray(2));
-constitutionFileName = "20230419_wmAndGMCompositionBasedOnLiterature";
+constitutionFileName = "20230426_wmAndGMCompositionBasedOnLiterature";
 constData = load(resultsDir + constitutionFolderName ...
     + constitutionFileName);
 
@@ -61,49 +61,66 @@ r1Data.r1Observed_GM = zeros(1,length(fieldStrengthsInLit));
 r1Data.r1Prot_WM = zeros(1,length(fieldStrengthsInLit));
 r1Data.r1Prot_GM = zeros(1,length(fieldStrengthsInLit));
 
-% WM fractions
-wmLipidWaterContent = constData.wmWaterContent ...
-    * constData.myelinWaterContent;
+% WM fractions relative to overall WM
+myelinWaterContent = constData.wmWaterContent*constData.myelinWaterContent;
+solidMyelinContentInWm = myelinWaterContent/constData.waterContentInMyelin ...
+    - myelinWaterContent;
+ESIVR = myelinWaterContent / solidMyelinContentInWm;
+r1Data.ESIVR = ESIVR;
+
 wmSolidLipidContent = constData.wmNonWaterContent ...
     * constData.wmLipidContent;
-wmESIVR = wmLipidWaterContent/wmSolidLipidContent;
+wmLipidWaterContent = ESIVR * wmSolidLipidContent;
 wmSolidProteinContent = constData.wmNonWaterContent ...
     * constData.wmProteinContent;
-wmProtWaterContent = wmSolidProteinContent*wmESIVR;
+wmProteinWaterContent = ESIVR * wmSolidProteinContent;
 wmFreeWaterContent = constData.wmWaterContent - wmLipidWaterContent ...
-    - wmProtWaterContent;
+    - wmProteinWaterContent;
+
+% for small field strengths
+wmNonSolidLipidContent = 1 - wmSolidLipidContent;
+smallFieldWmSolidProteinContent = wmSolidProteinContent  ...
+    / wmNonSolidLipidContent;
+smallFieldWmLipidWaterContent = wmLipidWaterContent ...
+    / wmNonSolidLipidContent;
+smallFieldWmProteinWaterContent = wmProteinWaterContent ...
+    / wmNonSolidLipidContent;
+smallFieldWmFreeWaterContent = wmFreeWaterContent / wmNonSolidLipidContent;
+
+checkSum = smallFieldWmSolidProteinContent ...
+    + smallFieldWmLipidWaterContent + smallFieldWmProteinWaterContent ...
+    + smallFieldWmFreeWaterContent;
+if round(checkSum*100) ~= 100
+    error("Wrong fractions for low field strengths");
+end
+
 
 % GM fractions
-gmLipidWaterContent = constData.gmNonWaterContent ...
-    * constData.gmLipidContent * wmESIVR;
 gmSolidLipidContent = constData.gmNonWaterContent ...
     * constData.gmLipidContent;
-gmProtWaterContent = constData.gmNonWaterContent ...
-    * constData.gmProteinContent * wmESIVR;
+gmLipidWaterContent = ESIVR * gmSolidLipidContent;
 gmSolidProteinContent = constData.gmNonWaterContent ...
     * constData.gmProteinContent;
+gmProteinWaterContent = ESIVR * gmSolidProteinContent;
 gmFreeWaterContent = constData.gmWaterContent - gmLipidWaterContent ...
-    - gmProtWaterContent;
+    - gmProteinWaterContent;
 
-
-
-% WM for small field strengths where lipid cut out
-wmNonLipidContent = 1 - wmSolidLipidContent;
-smallFieldWmSolidProteinContent = wmSolidProteinContent  ...
-    / wmNonLipidContent;
-smallFieldWmLipidWaterContent = wmLipidWaterContent / wmNonLipidContent;
-smallFieldWmProteinWaterContent = wmProtWaterContent / wmNonLipidContent;
-smallFieldFreeWaterContent = wmFreeWaterContent / wmNonLipidContent;
-
-
-% GM for small field strengths where lipid is cut out
-gmNonLipidContent = 1 - wmSolidLipidContent;
+% for small field strengths
+gmNonSolidLipidContent = 1 - gmSolidLipidContent;
 smallFieldGmSolidProteinContent = gmSolidProteinContent ...
-    / gmNonLipidContent;
-smallFieldGmLipidWaterContent = gmLipidWaterContent / gmNonLipidContent;
-smallFieldGmProteinWaterContent = gmProtWaterContent / gmNonLipidContent;
-smallFieldGmFreeWaterContent = gmFreeWaterContent / gmNonLipidContent;
+    / gmNonSolidLipidContent;
+smallFieldGmLipidWaterContent = gmLipidWaterContent ...
+    / gmNonSolidLipidContent;
+smallFieldGmProteinWaterContent = gmProteinWaterContent ...
+    / gmNonSolidLipidContent;
+smallFieldGmFreeWaterContent = gmFreeWaterContent / gmNonSolidLipidContent;
 
+checkSum = smallFieldGmSolidProteinContent ...
+    + smallFieldGmLipidWaterContent + smallFieldGmProteinWaterContent ...
+    + smallFieldGmFreeWaterContent;
+if round(checkSum*100) ~= 100
+    error("Wrong fractions for low field strengths");
+end
 
 for fieldStrengthNr = 1:length(fieldStrengthsInLit)
     fieldStrength = fieldStrengthsInLit(fieldStrengthNr);
@@ -142,7 +159,7 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
             *(observedWMR1 ...
             - smallFieldWmLipidWaterContent*r1_LW ...
             - smallFieldWmProteinWaterContent*r1_LW ...
-            - smallFieldFreeWaterContent*freeWaterR1);
+            - smallFieldWmFreeWaterContent*freeWaterR1);
         fprintf("  Protein R1 WM (without lipid): %.4f. \n" ...
             ,r1Data.r1Prot_WM(fieldStrengthNr));
         
@@ -160,7 +177,7 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
             *(observedWMR1 ...
             - wmSolidLipidContent*r1_SL...
             - wmLipidWaterContent*r1_LW ...
-            - wmProtWaterContent*r1_LW ...
+            - wmProteinWaterContent*r1_LW ...
             - wmFreeWaterContent*freeWaterR1);
         fprintf("  Protein R1 WM: %.4f. \n",r1Data.r1Prot_WM( ...
             fieldStrengthNr));
@@ -170,7 +187,7 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
             *(observedGMR1 ...
             - gmSolidLipidContent*r1_SL ...
             - gmLipidWaterContent*r1_LW ...
-            - gmProtWaterContent*r1_LW ...
+            - gmProteinWaterContent*r1_LW ...
             - gmFreeWaterContent*freeWaterR1);
         fprintf("  Protein R1 GM: %.4f. \n",r1Data.r1Prot_GM( ...
             fieldStrengthNr));

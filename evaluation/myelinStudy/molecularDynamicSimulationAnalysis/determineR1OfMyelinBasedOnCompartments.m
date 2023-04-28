@@ -14,6 +14,7 @@ fileNames = ["20230328_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50
     "20230320_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns" ...
     "20230310_Results_MYELINallMonolayer_20230202_MYELIN_TIP4_Monolayer_50water_allMonolayer_H_whole_dt01ps_simTime5ns"] ...
     + ".mat";
+
 compartmentNames = ["solid" "water" "crossAuto"];
 
 filePaths = checkIfFilesExistAndCreateFilePaths(resultsDir,folderNames ...
@@ -135,10 +136,6 @@ for fieldStrengthNr = 1:length(fieldStrengths)
     r1Cross_SM(fieldStrengthNr) = calculateR1CrossWithSpecDens( ...
         specDensZerothsOrder,specDensSecondOrder,dipolDipolConstant);
     
-    
-    
-    
-    
 end
 
 % effective relaxation rates
@@ -246,11 +243,9 @@ if saving
 end
 
 save(savingDir + datestr(now,"yyyymmdd") ...
-    +"_compartmentAndCrossR1FromSimulations",'r1_MW','r1_SM' ...
+    +"_solidMyelinAndMyelinWater_CompartmentAndCrossR1",'r1_MW','r1_SM' ...
     ,'r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM','r1Eff_MW' ...
     ,'r1Eff_SM','fieldStrengths');
-
-
 
 
 

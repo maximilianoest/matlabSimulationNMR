@@ -18,14 +18,12 @@ end
 windowSize = 11;
 surfWaterDensBorder = 0.95;
 borderShiftOffset = 0;
-saving = 1;
+saving = 0;
 
 
-%% density stuff
-densDistribPathFolder = "C:\Users\maxoe\Google Drive\Promotion" ...
-    + "\Simulation\RESULTS\wholeMyelin_densityDistributions\";
+%% density data
 densDistribFileName = "20230405_myelinDistributionData_averaged";
-densData = load(densDistribPathFolder + densDistribFileName + ".mat");
+densData = load(resultsDir + densDistribFileName + ".mat");
 
 locations = densData.avgDiscreteLocations(:,2:end-1);
 dVol = mean(densData.dVolumeForTimeStep);
@@ -57,7 +55,7 @@ modelMembrHMass = sum(sum(densDistribMembrH))*dVol;
 %% Schyboll2019 water-mass ratio
 % According to Schyboll2019, the water mass ratio is defined as:
 % waterMassRatio = waterWeight/(overallMembrWeight+waterWeight)
-% % CHL, DPPCm POPE, GalC, GalS
+% CHL, DPPCm POPE, GalC, GalS
 % cWeight = (27*27+23*40+23*39+23*40+4*40) ...
 %     * densData.atomWeightCollection(densData.atomNameCollection == "C");
 % hWeight = (27*46+23*80+23*76+23*77+4*76) ...
@@ -112,13 +110,13 @@ if length(surfWaterBorders) ~= 2
     error("The borders for surface water are not chosen correctly.");
 end
 
-densSurfWater = nan(1,length(densDistribWaterH));
-densSurfWater(surfWaterBorderIndices) = densDistribWaterH( ...
+densSurfWaterH = nan(1,length(densDistribWaterH));
+densSurfWaterH(surfWaterBorderIndices) = densDistribWaterH( ...
     surfWaterBorderIndices);
 
 initializeFigure();
 plot(locations,densDistribWaterH);
-plot(locations,densSurfWater);
+plot(locations,densSurfWaterH);
 plot(locations,densDistribMembrH);
 plotVerticalLine(locations(surfWaterBorders(1)),max(densDistribWaterH));
 plotVerticalLine(locations(surfWaterBorders(2)),max(densDistribWaterH));
@@ -131,7 +129,7 @@ ylabel('density $[kg/m^3]$');
 
 r1DataFolder = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
     + "\RESULTS\wholeMyelin_relaxationRates\";
-r1DataFileName = "20230414_compartmentAndCrossR1FromSimulations";
+r1DataFileName = "20230419_solidMyelinAndMyelinWater_CompartmentAndCrossR1";
 r1Data = load(r1DataFolder + r1DataFileName + ".mat");
 fieldStrength3TeslaIndex = r1Data.fieldStrengths < 3.00001 ...
     & r1Data.fieldStrengths > 2.99999;
@@ -189,24 +187,24 @@ waterContentInMyelin = 0.4; %according to Morell1999
 
 constitutionData = load("C:\Users\maxoe\Google Drive\Promotion" ...
     + "\Simulation\RESULTS\wholeMyelin_brainConstitution" ...
-    + "\20230413_wmAndGMCompositionBasedOnLiterature.mat");
+    + "\20230419_wmAndGMCompositionBasedOnLiterature.mat");
 
 wmWaterContent = constitutionData.wmWaterContent;
-myelinWaterFraction = wmWaterContent * constitutionData.myelinWaterContent;
-solidMyelinLipidContent = constitutionData.smLipidContent;
+myelinWaterContent = constitutionData.wmWaterContent ...
+    * constitutionData.myelinWaterContent;
 
 % waterContentInMyelin = myelinWaterFraction/(myelinWaterFraction +
 %                        myelinSolidFraction)
 % -> solved for myelinSolidFraction: contains mass lipids and proteins
-solidMyelinFraction = myelinWaterFraction/waterContentInMyelin ...
-    - myelinWaterFraction;
+solidMyelinFraction = myelinWaterContent/waterContentInMyelin ...
+    - myelinWaterContent;
 fprintf("  Solid myelin fraction: %.4f\n",solidMyelinFraction);
 
 % Thus, 0.0802 myelin water fraction comes hand in hand with 0.1203 solid
-% myelin fraction
+% myelin fraction. ESIVR is then the same like 0.4/0.6
 effectiveSurfInteractionVolRatio = ...
-    myelinWaterFraction / solidMyelinFraction;
-fprintf("  ESIVR for whole myelin: %.4f\n" ...
+    myelinWaterContent / solidMyelinFraction;
+fprintf("  ESIVR for myelin: %.4f\n" ...
     ,effectiveSurfInteractionVolRatio);
 
 % -> for given solid myelin mass, known from simulation and density data,
@@ -220,12 +218,10 @@ fprintf("  histological myelin water H count based on lipid weight" ...
 histFreeWaterHCount = histMyelinWaterHCount - surfaceWaterHCount;
 fprintf("  free water H count in MD sim.: %.4f\n",histFreeWaterHCount);
 
-
 histF_free = histFreeWaterHCount/histMyelinWaterHCount;
 histF_surf = surfaceWaterHCount/histMyelinWaterHCount;
 fprintf("  histolgical f_surf = %.4f, f_free = %.4f\n"  ...
     ,histF_surf,histF_free);
-
 
 r1Data.r1Hist_MW = histF_free*r1Data.r1_free + histF_surf*r1Data.r1Surf_MW;
 fprintf("  Healthy MW R1 at 1.5T: %.4f\n" ...
@@ -236,7 +232,6 @@ fprintf("  Healthy MW R1 at 7T: %.4f\n" ...
     ,r1Data.r1Hist_MW(fieldStrength7TeslaIndex));
 
 %% plotting
-
 initializeFigure();
 
 plot(r1Data.fieldStrengths,r1Data.r1Surf_MW);
@@ -262,8 +257,6 @@ xlabel("Field strength [Tesla]");
 ylabel("R$_1^{eff}$");
 xticks(0:0.5:r1Data.fieldStrengths(end));
 
-% r1Data.compartmentR1Fig = fig;
-
 if saving
     saveFigureTo(r1DataFolder,datestr(now,'yyyymmdd') ...
         ,"solidMyelinAndMyelinWater" ...
@@ -274,7 +267,7 @@ end
 
 if saving
     save(r1DataFolder + datestr(now,"yyyymmdd") ...
-        +"_histologicalCompartmentAndCrossR1FromSimulations",'-struct' ...
+        +"_solidMyelinAndMyelinWater_histCompartmentAndCrossR1",'-struct' ...
         ,'r1Data');
 end
 %% functions in use

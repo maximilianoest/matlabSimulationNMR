@@ -95,6 +95,8 @@ data(4).myelinWaterContent = repmat(0.118,1,13*5);
 data(5).citationKey = "Laule2004";
 data(5).myelinWaterContent = repmat([0.101 0.133 0.156 0.073 0.095],1,18);
 
+% Data from Morell1999
+data(6).waterContentInMyelin = 0.4;
 %% Data analysis
 fieldNames = string(fieldnames(data))';
 data(end+1).citationKey = "Averaged";
