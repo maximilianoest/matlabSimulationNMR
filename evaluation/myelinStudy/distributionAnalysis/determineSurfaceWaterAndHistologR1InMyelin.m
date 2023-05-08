@@ -18,7 +18,7 @@ end
 windowSize = 11;
 surfWaterDensBorder = 0.95;
 borderShiftOffset = 0;
-saving = 0;
+saving = 1;
 
 
 %% density data
@@ -129,7 +129,7 @@ ylabel('density $[kg/m^3]$');
 
 r1DataFolder = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
     + "\RESULTS\wholeMyelin_relaxationRates\";
-r1DataFileName = "20230419_solidMyelinAndMyelinWater_CompartmentAndCrossR1";
+r1DataFileName = "20230508_solidMyelinAndMyelinWater_CompartmentAndCrossR1";
 r1Data = load(r1DataFolder + r1DataFileName + ".mat");
 fieldStrength3TeslaIndex = r1Data.fieldStrengths < 3.00001 ...
     & r1Data.fieldStrengths > 2.99999;

@@ -24,11 +24,11 @@ constData = load(resultsDir + constitutionFolderName ...
 r1RatesFolder = sprintf("%swholeMyelin_relaxationRates%s" ...
     ,createFilesepStringArray(2));
 r1RatesFileName  ...
-    = "20230419_solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
+    = "20230508_solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
 r1Data =  load(resultsDir + r1RatesFolder + r1RatesFileName);
 
 %% observable relaxation rates in qMRI
-tissueR1RatesFileName = "20230419_tissueR1BasedOnLiterature";
+tissueR1RatesFileName = "20230508_tissueR1BasedOnLiterature";
 tissueR1Data = load(resultsDir + r1RatesFolder + tissueR1RatesFileName);
 
 [wmFieldStrengthsInLiterature,relaxationRatesWM] = ...
