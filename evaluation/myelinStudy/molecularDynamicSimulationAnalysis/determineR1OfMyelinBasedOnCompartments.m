@@ -1,36 +1,36 @@
-clc; clear all; close all;
+clear all; close all; fclose('all');
 
-clc; clear all; close all; fclose('all');
-addpath(genpath("../../library/"));
-constants = readConstantsFile(sprintf("..%s..%stxtFiles%sconstants.txt" ...
-    ,createFilesepStringArray(3)));
+fprintf("<strong>Determine compartment and cross R1 </strong>\n");
+addpath(genpath("../../../library/"));
+constants = readConstantsFile(sprintf("..%s..%s..%stxtFiles%sconstants.txt" ...
+    ,createFilesepStringArray(4)));
 
 
 resultsDir = "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\";
 folderNames = ["solidMyelin_20230215_determineShortPaddedCorrFunc" ...
-    "myelinWater_20230206_DetermineCorrelationFunctions" ...
+    "myelinWater_20230320_continueMyelinWaterSimulation" ...
     "wholeMyelin_20230302_determineCrossRelaxationCorrFuncs"] + filesep;
-fileNames = ["20230215_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime800ns" ...
-    "20230208_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns" ...
+fileNames = ["20230328_Results_MYELINsolidMyelin_20221222_MYELIN_TIP4_Bilayer_50water_solidMyelin_H_whole_dt4ps_simTime800ns" ...
+    "20230320_Results_MYELINmyelinWater_20230202_MYELIN_TIP4_Monolayer_50water_myelinWater_H_whole_dt01ps_simTime10ns" ...
     "20230310_Results_MYELINallMonolayer_20230202_MYELIN_TIP4_Monolayer_50water_allMonolayer_H_whole_dt01ps_simTime5ns"] ...
     + ".mat";
+
 compartmentNames = ["solid" "water" "crossAuto"];
 
 filePaths = checkIfFilesExistAndCreateFilePaths(resultsDir,folderNames ...
     ,fileNames);
 dataArray = loadFiles(filePaths);
 
-savingDir = resultsDir + "myelinModelResults\";
+savingDir = resultsDir + "wholeMyelin_relaxationRates\";
 saving = 1;
 
 %% ---- configuration
 dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
     /(constants.nanoMeter^6);
-fieldStrengths = 0.1 : 0.05 : 7;
+fieldStrengths = 0.05 : 0.01 : 7.1;
 larmorFrequencies = constants.gyromagneticRatioOfHydrogenAtom ...
     *fieldStrengths;
-
 
 %% ---- solid myelin
 data = dataArray{2,[dataArray{1,:}] == "solidMyelin"};
@@ -135,10 +135,6 @@ for fieldStrengthNr = 1:length(fieldStrengths)
     r1Cross_SM(fieldStrengthNr) = calculateR1CrossWithSpecDens( ...
         specDensZerothsOrder,specDensSecondOrder,dipolDipolConstant);
     
-    
-    
-    
-    
 end
 
 % effective relaxation rates
@@ -214,7 +210,7 @@ axis([0 inf 0 10]);
 legend("R$^{eff}_{1,SM}$","R$^{eff}_{1,MW}$","R$_{1,SM}$","R$_{1,MW}$" ...
     ,"R$^{auto}_{1,SM}$","R$^{cross}_{1,SM}$","R$^{auto}_{1,MW}$" ...
     ,"R$^{cross}_{1,MW}$");
-xticks(0:0.5:7);
+xticks(0:max(fieldStrengths));
 grid on
 
 fig2 = initializeFigure();
@@ -234,23 +230,20 @@ axis([0 inf 0 10]);
 legend("R$^{eff}_{1,SM}$","R$^{eff}_{1,MW}$","R$_{1,SM}$","R$_{1,MW}$" ...
     ,"R$^{auto}_{1,SM}$","R$^{cross}_{1,SM}$","R$^{auto}_{1,MW}$" ...
     ,"R$^{cross}_{1,MW}$");
-xticks(0:0.5:7);
+xticks(0:0.5:fieldStrengths(end));
 
 
 %% ---- saving
 
 if saving
     set(0,'CurrentFigure',fig1);
-    saveFigureTo(savingDir,"wholeMyelin",datestr(now,'yyyymmdd') ...
-        ,"CompartmentAndCrossR1",true);
+    saveFigureTo(savingDir,datestr(now,'yyyymmdd') ...
+        ,"solidMyelinAndMyelinWater","CompartmentAndCrossR1",true);
 end
 
-save(resultsDir + "myelinModelResults\" + datestr(now,"yyyymmdd") ...
-    +"_compartmentAndCrossR1FromSimulations",'r1_MW','r1_SM' ...
-    ,'r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM','r1Eff_MW' ...
-    ,'r1Eff_SM','fieldStrengths');
-
-
+save(savingDir + "solidMyelinAndMyelinWater_CompartmentAndCrossR1" ...
+    ,'r1_MW','r1_SM','r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM' ...
+    ,'r1Eff_MW','r1Eff_SM','fieldStrengths');
 
 
 

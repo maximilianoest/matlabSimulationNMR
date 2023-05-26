@@ -1,14 +1,12 @@
 clc
 %% load data
-fileDirectories = ["/daten/a/Relaxation/Lipids/simulation_max/PLPC/" ...
-    "/daten/a/Relaxation/Lipids/simulation_max/PSM/"];
+fileDirectories = ["/daten/a/Relaxation/MYELIN/Monolayer/"];
 
-fileNames = ["20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt01ps_simTime50ns.mat" ...
-    "20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt01ps_simTime50ns.mat"];
+fileNames = ["20230404_MYELIN_TIP4_50Water_ShortSimDur_prd_dt0_05ps_simDur0_7046ns"];
 
 filePaths = fileDirectories + fileNames;
-timeStepSkips = [2 3 5 10];
-shortings = [1 4/5 3/5 1/2 2/5 1/5];
+timeStepSkips = [40];
+shortings = [1];
 
 %% save data as with other simulation parameters
 for fileNr = 1:length(fileNames)
@@ -24,19 +22,23 @@ for fileNr = 1:length(fileNames)
     layerFormat = splittedFileName(4);
     waterCount = splittedFileName(5);
     constituent = splittedFileName(6);
-    atom = splittedFileName(7);
-    composingMode = splittedFileName(8);
-    deltaT = replace(splittedFileName(9),{'dt','ps'},'');
-    if strcmp(deltaT{1}(1),'0')
-        afterComma = str2num(deltaT{1}(2:end));
-        deltaT = afterComma/10;
-    else
-        deltaT = str2num(deltaT);
-    end
-    simulationDuration = str2num(replace(splittedFileName(10) ...
-        ,{'simTime','ns.mat'},''));
+    atom = "allAtoms";
+    composingMode = splittedFileName(7);
     
-    fprintf("deltaT: %dps, simulationDuration: %d ns \n",deltaT,simulationDuration);
+    
+    deltaTInPs = str2num(replace(splittedFileName(8),{'dt','ps'},''));
+%     if strcmp(deltaT{1}(1),'0')
+%         afterComma = str2num(deltaT{1}(2:end));
+%         deltaT = afterComma/10;
+%     else
+%         deltaT = str2num(deltaT);
+%     end
+    simDurInNs = str2num(replace(splittedFileName(9) ...
+        ,'simDur','') + "." +  replace(splittedFileName(10) ...
+        ,'ns','')); %#ok<ST2NM>
+    
+    fprintf("deltaT: %dps, simulationDuration: %d ns \n",deltaTInPs ...
+        ,simDurInNs);
     matObject = matfile(filePath);
     configuration = matObject.configuration;
     
@@ -46,30 +48,33 @@ for fileNr = 1:length(fileNames)
     clear trajectories
     [atomsCount,dimensionsCount,timeSteps] = size(wholeTrajectory );
     simulationTimes = round(timeSteps*shortings);
-    simDurations = simulationDuration*shortings;
+    simDurations = simDurInNs*shortings;
     for simulationTimeNr = 1:length(simulationTimes)
         for timeStepSkipNr = 1:length(timeStepSkips)
             timeStepSkip = timeStepSkips(timeStepSkipNr);
             newEnd = simulationTimes(simulationTimeNr);
             fprintf("deltaT: %dps, simulationDuration: %d ns \n" ...
-                ,deltaT*timeStepSkip,simDurations(simulationTimeNr));
-%             trajectories = zeros(atomsCount,dimensionsCount,newEnd);
+                ,deltaTInPs*timeStepSkip,simDurations(simulationTimeNr));
+
             trajectories(:,1,:) = squeeze(single(wholeTrajectory(:,1,1:timeStepSkip:newEnd)));
             trajectories(:,2,:) = squeeze(single(wholeTrajectory(:,2,1:timeStepSkip:newEnd)));
             trajectories(:,3,:) = squeeze(single(wholeTrajectory(:,3,1:timeStepSkip:newEnd)));
             
-            timeStep = deltaT*timeStepSkip;
+            timeStep = deltaTInPs*timeStepSkip;
             if timeStep < 1
-                timeStep = strrep(num2str(timeStep),'.','');
+                timeStep = strrep(num2str(timeStep),'.','_');
             else 
                 timeStep = num2str(timeStep);
             end
             
+            simDurAsString = replace(num2str(simDurations( ...
+                simulationTimeNr)),'.','_');
+            
             savingName = sprintf( ...
-                '%s_%s_%s_%s_%s_%s_%s_%s_dt%sps_simTime%ins.mat' ...
+                '%s_%s_%s_%s_%s_%s_%s_%s_dt%sps_simTime%sns.mat' ...
                 ,gromacsSimulationDate,whichLipid ...
                 ,waterModel,layerFormat,waterCount,constituent,atom ...
-                ,composingMode,timeStep,simDurations(simulationTimeNr));
+                ,composingMode,timeStep,simDurAsString);
             
 
             pathToSave = sprintf('%s%s',fileDirectory,savingName);

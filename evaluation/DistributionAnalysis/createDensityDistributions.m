@@ -7,10 +7,9 @@ clc; clear all; close all; fclose('all');
 % ATTENTION: with mean positions, it is possible that more than one atom is
 % at one position. Thus the distribution and density is not right.
 % Therefore, a snapshot of the production run is used.
-
-% Beacuse the positions of the lipid molecules are above the boundaries of
-% the system when "whole" is chosen, noJump is the better choice. Not sure
-% if prd.trr data are joJump but it seems like that.
+% A dataset where periodic boundary conditions are used is the best
+% suitable dataset. There, a clear cuboid is given which allows the best
+% calculation of a density distribution.
 
 addpath(genpath(sprintf('..%s..%slibrary',filesep,filesep)));
 addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
