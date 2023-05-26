@@ -1,6 +1,6 @@
-clc; clear all; close all;
+clear all; close all; fclose('all');
 
-clc; clear all; close all; fclose('all');
+fprintf("<strong>Determine compartment and cross R1 </strong>\n");
 addpath(genpath("../../../library/"));
 constants = readConstantsFile(sprintf("..%s..%s..%stxtFiles%sconstants.txt" ...
     ,createFilesepStringArray(4)));
@@ -28,10 +28,9 @@ saving = 1;
 dipolDipolConstant = 3/4*(constants.vaccumPermeability/(4*pi) ...
     *constants.hbar*constants.gyromagneticRatioOfHydrogenAtom^2)^2 ...
     /(constants.nanoMeter^6);
-fieldStrengths = 0.1 : 0.05 : 10;
+fieldStrengths = 0.05 : 0.01 : 7.1;
 larmorFrequencies = constants.gyromagneticRatioOfHydrogenAtom ...
     *fieldStrengths;
-
 
 %% ---- solid myelin
 data = dataArray{2,[dataArray{1,:}] == "solidMyelin"};
@@ -242,10 +241,9 @@ if saving
         ,"solidMyelinAndMyelinWater","CompartmentAndCrossR1",true);
 end
 
-save(savingDir + datestr(now,"yyyymmdd") ...
-    +"_solidMyelinAndMyelinWater_CompartmentAndCrossR1",'r1_MW','r1_SM' ...
-    ,'r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM','r1Eff_MW' ...
-    ,'r1Eff_SM','fieldStrengths');
+save(savingDir + "solidMyelinAndMyelinWater_CompartmentAndCrossR1" ...
+    ,'r1_MW','r1_SM','r1Auto_MW','r1Auto_SM','r1Cross_MW','r1Cross_SM' ...
+    ,'r1Eff_MW','r1Eff_SM','fieldStrengths');
 
 
 

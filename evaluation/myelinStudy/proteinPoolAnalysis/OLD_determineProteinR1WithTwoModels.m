@@ -1,4 +1,6 @@
-clc; clear all; close all; fclose('all');
+clear all; close all; fclose('all');
+
+fprintf("<strong>Determine R1_SP with FE model</strong>\n");
 
 %% set dependencies
 addpath(genpath(sprintf('..%s..%s..%slibrary',filesep,filesep,filesep)));
@@ -16,7 +18,7 @@ resultsDir = sprintf("..%s..%s..%sRESULTS%",createFilesepStringArray(3));
 %% constitutions
 constitutionFolderName = sprintf("%swholeMyelin_brainConstitution%s" ...
     ,createFilesepStringArray(2));
-constitutionFileName = "20230426_wmAndGMCompositionBasedOnLiterature";
+constitutionFileName = "wmAndGMCompositionBasedOnLiterature";
 constData = load(resultsDir + constitutionFolderName ...
     + constitutionFileName);
 
@@ -24,11 +26,12 @@ constData = load(resultsDir + constitutionFolderName ...
 r1RatesFolder = sprintf("%swholeMyelin_relaxationRates%s" ...
     ,createFilesepStringArray(2));
 r1RatesFileName  ...
-    = "20230508_solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
+    = "solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
 r1Data =  load(resultsDir + r1RatesFolder + r1RatesFileName);
 
+
 %% observable relaxation rates in qMRI
-tissueR1RatesFileName = "20230508_tissueR1BasedOnLiterature";
+tissueR1RatesFileName = "tissueR1BasedOnLiterature";
 tissueR1Data = load(resultsDir + r1RatesFolder + tissueR1RatesFileName);
 
 [wmFieldStrengthsInLiterature,relaxationRatesWM] = ...
@@ -197,8 +200,8 @@ for fieldStrengthNr = 1:length(fieldStrengthsInLit)
 end
 
 if saving
-    save(resultsDir +r1RatesFolder + datestr(now,"yyyymmdd") ...
-        + "_SM_MW_SP_histCompartmentAndCrossR1",'-struct','r1Data');
+    save(resultsDir +r1RatesFolder ...
+        + "SM_MW_SP_histCompartmentAndCrossR1",'-struct','r1Data');
 end
 
 

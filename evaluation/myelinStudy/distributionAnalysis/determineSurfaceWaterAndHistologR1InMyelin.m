@@ -1,6 +1,6 @@
 %%
-clc; close all; clear all; fclose('all');
-
+close all; clear all; fclose('all');
+fprintf("<strong>Determine histological MW R1 and surface water </strong>\n");
 
 addpath(genpath(sprintf('..%s..%s..%slibrary',filesep,filesep,filesep)));
 addpath(genpath(sprintf('..%s..%s..%stxtFiles' ...
@@ -129,7 +129,7 @@ ylabel('density $[kg/m^3]$');
 
 r1DataFolder = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
     + "\RESULTS\wholeMyelin_relaxationRates\";
-r1DataFileName = "20230508_solidMyelinAndMyelinWater_CompartmentAndCrossR1";
+r1DataFileName = "solidMyelinAndMyelinWater_CompartmentAndCrossR1";
 r1Data = load(r1DataFolder + r1DataFileName + ".mat");
 fieldStrength3TeslaIndex = r1Data.fieldStrengths < 3.00001 ...
     & r1Data.fieldStrengths > 2.99999;
@@ -181,15 +181,17 @@ fprintf("\n<strong> Histological values based on literature: </strong> \n");
 % calculations here are based on this density.
 % water content is 40% -> 40% water, 60% non-water
 
-waterContentInMyelin = 0.4; %according to Morell1999
+waterContentInMyelin = 0.4; % according to Morell1999
+
 
 %% According to studies in brainConstitution.m
 
 constitutionData = load("C:\Users\maxoe\Google Drive\Promotion" ...
     + "\Simulation\RESULTS\wholeMyelin_brainConstitution" ...
-    + "\20230419_wmAndGMCompositionBasedOnLiterature.mat");
+    + "\wmAndGMCompositionBasedOnLiterature.mat");
+constitutionData.waterContentInMyelin = waterContentInMyelin;
+r1Data.constitutionData = constitutionData;
 
-wmWaterContent = constitutionData.wmWaterContent;
 myelinWaterContent = constitutionData.wmWaterContent ...
     * constitutionData.myelinWaterContent;
 
@@ -204,8 +206,8 @@ fprintf("  Solid myelin fraction: %.4f\n",solidMyelinFraction);
 % myelin fraction. ESIVR is then the same like 0.4/0.6
 effectiveSurfInteractionVolRatio = ...
     myelinWaterContent / solidMyelinFraction;
-fprintf("  ESIVR for myelin: %.4f\n" ...
-    ,effectiveSurfInteractionVolRatio);
+r1Data.ESIVR = effectiveSurfInteractionVolRatio;
+fprintf("  ESIVR for myelin: %.4f\n",effectiveSurfInteractionVolRatio);
 
 % -> for given solid myelin mass, known from simulation and density data,
 % the histological myelin water mass is the ESIVR multiplied by the
@@ -264,11 +266,10 @@ if saving
     
 end
 
-
 if saving
-    save(r1DataFolder + datestr(now,"yyyymmdd") ...
-        +"_solidMyelinAndMyelinWater_histCompartmentAndCrossR1",'-struct' ...
-        ,'r1Data');
+    save(r1DataFolder ...
+        +"solidMyelinAndMyelinWater_histCompartmentAndCrossR1" ...
+        ,'-struct','r1Data');
 end
 %% functions in use
 function plt = plotVerticalLine(xPos,yValue)

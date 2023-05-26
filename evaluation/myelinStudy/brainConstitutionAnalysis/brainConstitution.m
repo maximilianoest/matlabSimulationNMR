@@ -1,4 +1,4 @@
-clc; clear all; close all;
+clear all; close all;
 
 %% paths
 resultsPath = ...
@@ -126,8 +126,8 @@ boxplot(allData','Labels',fieldNames(2:end));
 xtickangle(45)
 
 
-save(resultsPath + datestr(now,"yyyymmdd") + "_" ...
-    + "wmAndGMCompositionBasedOnLiterature",'-struct','averageData');
+save(resultsPath + "wmAndGMCompositionBasedOnLiterature",'-struct' ...
+    ,'averageData');
 
 
 

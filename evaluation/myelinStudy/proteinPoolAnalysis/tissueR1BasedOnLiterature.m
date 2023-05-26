@@ -1,4 +1,4 @@
-clc; clear all; close all;
+clear all; close all;
 
 %% paths
 resultsPath = ...
@@ -26,12 +26,12 @@ for fieldStrength = fieldStrengthsInLiterature
 end
 
 % Deoni2004 - 1.5T:
-r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.608);
-r1_GM = setR1InDictionary(r1_GM,"1.5",1/1.065);
+% r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.608);
+% r1_GM = setR1InDictionary(r1_GM,"1.5",1/1.065);
 
 % Schyboll2018 - 3T
-r1_WM = setR1InDictionary(r1_WM,"3",1/0.8);
-r1_GM = setR1InDictionary(r1_GM,"3",1/1.25);
+% r1_WM = setR1InDictionary(r1_WM,"3",1/0.8);
+% r1_GM = setR1InDictionary(r1_GM,"3",1/1.25);
 
 % Wang2020 - 0.55T, 1.5T, 3T and 7T
 r1_WM = setR1InDictionary(r1_WM,"0.55",1/0.4);
@@ -47,17 +47,16 @@ r1_WM = setR1InDictionary(r1_WM,"7",1/1.25);
 r1_GM = setR1InDictionary(r1_GM,"7",1/2);
 
 % Heiko's assumptions - 0.35T, 1.5T and 3T
-r1_WM = setR1InDictionary(r1_WM,"0.35",1/0.33);
-r1_GM = setR1InDictionary(r1_GM,"0.35",1/0.5);
+% r1_WM = setR1InDictionary(r1_WM,"0.35",1/0.33);
+% r1_GM = setR1InDictionary(r1_GM,"0.35",1/0.5);
+% 
+% r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.63);
+% r1_GM = setR1InDictionary(r1_GM,"1.5",1/1.075);
+% 
+% r1_WM = setR1InDictionary(r1_WM,"3",1/0.8);
+% r1_GM = setR1InDictionary(r1_GM,"3",1/1.2);
 
-r1_WM = setR1InDictionary(r1_WM,"1.5",1/0.63);
-r1_GM = setR1InDictionary(r1_GM,"1.5",1/1.075);
-
-r1_WM = setR1InDictionary(r1_WM,"3",1/0.8);
-r1_GM = setR1InDictionary(r1_GM,"3",1/1.2);
-
-save(resultsDir + datestr(now,"yyyymmdd") ...
-    + "_tissueR1BasedOnLiterature",'r1_GM','r1_WM');
+save(resultsDir + "tissueR1BasedOnLiterature",'r1_GM','r1_WM');
 
 %% functions
 function r1Dictionary = setR1InDictionary(r1Dictionary,fieldStrength,value)

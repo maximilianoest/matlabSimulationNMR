@@ -1,4 +1,5 @@
-clc; clear all; close all; fclose('all');
+clear all; close all; fclose('all');
+
 
 %% set dependencies
 addpath(genpath(sprintf('..%s..%s..%slibrary',filesep,filesep,filesep)));
@@ -18,7 +19,7 @@ resultsDir = sprintf("..%s..%s..%sRESULTS%",createFilesepStringArray(3));
 r1RatesFolder = sprintf("%swholeMyelin_relaxationRates%s" ...
     ,createFilesepStringArray(2));
 r1RatesFileName  ...
-    = "20230508_SM_MW_SP_histCompartmentAndCrossR1";
+    = "SM_MW_SP_histCompartmentAndCrossR1";
 r1Data =  load(resultsDir + r1RatesFolder + r1RatesFileName);
 
 %% fitting field strength behavior of comparments to power function
