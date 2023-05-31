@@ -10,7 +10,7 @@ addpath(genpath("../brainConstitutionAnalysis/"));
 addpath(genpath(sprintf('..%s..%s..%stxtFiles' ...
     ,createFilesepStringArray(3))));
 
-runAllScriptsAgain = 1;
+runAllScriptsAgain = 0;
 if runAllScriptsAgain
     run("brainConstitution"); %#ok<UNRCH>
     
@@ -23,7 +23,8 @@ resultsPath = ...
 constants = readConstantsFile('constants.txt');
 saving = 1;
 dataPointsCountLowerLimit = 1;
-fieldStrengthsToIgnore = [0.05 0.15 0.2 0.5 0.7 1.0];
+fieldStrengthsToIgnoreInWM = [0.5 0.7 1.0];
+fieldStrengthsToIgnoreInGM = [0.05 0.15 0.2 0.28 0.5 0.7 1.0];
 lowFieldLimit = 0.75;
 
 % ==== relaxation rates ====
@@ -34,16 +35,16 @@ r1DataFolderName = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
     + "\RESULTS\wholeMyelin_relaxationRates\";
 r1DataFileName = "solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
 r1Data = load(r1DataFolderName + r1DataFileName);
-lowerBoundR1_SPFraction = 0.05;
-upperBoundR1_SPFraction = 1.1;
+lowerBoundR1_SPFraction = 0.01;
+upperBoundR1_SPFraction = 1.5;
 r1_SPSamplingPoints = 100;
 
 % ==== exchange rates ====
 csvExchangeRateDataFilePath = resultsPath + "ObservedExchangeRates.CSV";
 exchangeRatesTable = readtable(csvExchangeRateDataFilePath);
 
-exchangeRateIncreaseFactor = 1.15;
-exchangeRateDecreaseFactor = 0.85;
+exchangeRateIncreaseFactor = 1.10;
+exchangeRateDecreaseFactor = 0.90;
 
 % ==== constitution data ====
 wmWaterFraction = r1Data.constitutionData.wmWaterContent;
@@ -75,9 +76,13 @@ gmFreeWaterFraction = gmWaterFraction - gmLipidWaterFraction ...
     - gmProteinWaterFraction;
 
 %% investigate relaxation rates in literature
-[wmFieldStrengthArray,r1WMCollection,gmFieldStrengthArray ...
-    ,r1GMCollection] = getCollectionsFromTable(observedRelaxationTimesTable ...
-    ,dataPointsCountLowerLimit,fieldStrengthsToIgnore);
+[wmFieldStrengthArray,r1WMCollection,~,~] ...
+   = getCollectionsFromTable(observedRelaxationTimesTable ...
+    ,dataPointsCountLowerLimit,fieldStrengthsToIgnoreInWM);
+
+[~,~,gmFieldStrengthArray,r1GMCollection] ...
+    = getCollectionsFromTable(observedRelaxationTimesTable ...
+    ,dataPointsCountLowerLimit,fieldStrengthsToIgnoreInGM);
 
 showDistributionOfValues(wmFieldStrengthArray,r1WMCollection ...
     ,gmFieldStrengthArray,r1GMCollection);
@@ -404,6 +409,11 @@ r1Data.factorR1_LW = factorR1_LW;
 r1Data.exponentR1_LW = exponentR1_LW;
 r1Data.covarianceR1_LW = covarianceR1_LW;
 
+%% determine an average R1_SP based on WM and GM in IE model
+
+
+
+
 %% plotting results of differnt models
 
 % ==== plotting of literature values
@@ -416,10 +426,10 @@ xlabel("Field strengths [T]");
 ylabel("R$_{1,literature}$ [Hz]");
 title("$\textbf{a}$ Literature values");
 
-plt(1) = errorbar(wmFieldStrengthArray,r1WMAvg,r1WMSTD,'--' ...
-    ,'LineWidth',1.5);
-plt(2) = errorbar(gmFieldStrengthArray,r1GMAvg,r1GMSTD,'--' ...
-    ,'LineWidth',1.5);
+plt(1) = errorbar(wmFieldStrengthArray,r1WMAvg,r1WMSTD ...
+    ,'LineStyle','none','LineWidth',1.5);
+plt(2) = errorbar(gmFieldStrengthArray,r1GMAvg,r1GMSTD ...
+    ,'LineStyle','none','LineWidth',1.5);
 legendEntries{end+1} = "avg WM $\pm$ STD";
 legendEntries{end+1} = "avg GM $\pm$ STD";
 
@@ -457,51 +467,59 @@ title("$\textbf{b}$ MD simulation results")
 
 
 % ==== model predictions
-initializeSubplot(fig,2,2,3:4);
-title("$\textbf{c}$ Model results");
+initializeSubplot(fig,2,2,3);
+title("$\textbf{c}$ IE model results");
 ylabel("R$_{1,SP}$ [Hz]");
 xlabel("Field strength [T]");
 
 % ==== IE model ====
 plt(1) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_IE,r1_SP_WMStd_IE ...
-    ,'LineWidth',1.5);
+    ,'LineStyle','none','LineWidth',1.5);
 plt(2) = plot(fieldStrengthAxis,factorR1_SP_WM_IE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_WM_IE),'Color',plt(1).Color,'LineStyle','--');
+    - exponentR1_SP_WM_IE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE...
-    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,plt(1).Color);
-
+    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,plt(2).Color);
 
 plt(3) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_IE,r1_SP_GMStd_IE ...
-    ,'LineWidth',1.5);
+    ,'LineStyle','none','LineWidth',1.5);
 plt(4) = plot(fieldStrengthAxis,factorR1_SP_GM_IE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_GM_IE),'Color',plt(3).Color,'LineStyle','--');
+    - exponentR1_SP_GM_IE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE...
-    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,plt(3).Color);
+    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,plt(4).Color);
+
+axis([0 inf 0 25])
+legend(plt(1:4),"WM $\pm$ STD","WM fit","GM $\pm$ STD","GM fit");
 
 % ==== FE model ====
+initializeSubplot(fig,2,2,4);
+title("$\textbf{d}$ FE model results");
+ylabel("R$_{1,SP}$ [Hz]");
+xlabel("Field strength [T]");
 plt(5) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_FE,r1_SP_WMStd_FE ...
-    ,'LineWidth',1.5);
+    ,'LineStyle','none','LineWidth',1.5);
 plt(6) = plot(fieldStrengthAxis,factorR1_SP_WM_FE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_WM_FE),'Color',plt(5).Color,'LineStyle','--');
+    - exponentR1_SP_WM_FE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_WM_FE,exponentR1_SP_WM_FE...
     ,covarianceR1_SP_WM_FE,fieldStrengthAxis,plt(6).Color);
 
 plt(7) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_FE,r1_SP_GMStd_FE ...
-    ,'LineWidth',1.5);
+    ,'LineStyle','none','LineWidth',1.5);
 plt(8) = plot(fieldStrengthAxis,factorR1_SP_GM_FE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_GM_FE),'Color',plt(7).Color,'LineStyle','--');
+    - exponentR1_SP_GM_FE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_GM_FE,exponentR1_SP_GM_FE...
     ,covarianceR1_SP_GM_FE,fieldStrengthAxis,plt(8).Color);
 
-axis([0 inf 0 20])
+axis([0 inf 0 25])
+lgd = legend();
+lgd.Visible = 'off';
 
-legend(plt(1:8),"IE WM $\pm$ STD","IE WM fit","IE GM $\pm$ STD" ...
-    ,"IE GM fit","FE WM $\pm$ STD","FE WM fit","FE GM $\pm$ STD" ...
-    ,"FE GM fit");
+% legend(plt(1:4),"IE WM $\pm$ STD","IE WM fit","IE GM $\pm$ STD" ...
+%     ,"IE GM fit","FE WM $\pm$ STD","FE WM fit","FE GM $\pm$ STD" ...
+%     ,"FE GM fit");
 
 if saving
     saveFigureTo(r1DataFolderName ...
-        ,datestr(now,'yyyymmdd'),"TissueAndR1","SP");
+        ,datestr(now,'yyyymmdd'),"TissueR1_ComparmentR1_R1","SP");
 end
 
 %% Plotting results of different exchange rates
@@ -713,6 +731,7 @@ for fieldStrengthNr = 1:length(fieldStrengthArray)
     end
     
     r1_SL = r1Data.r1Eff_SM(fieldStrengthIndex);
+    fprintf(" R1_SL = %.4f \n",r1_SL);
     r1_LW = r1Data.r1Hist_MW(fieldStrengthIndex);
     r1_water = surfaceWaterFraction/waterFraction * r1_LW ...
         + (1-surfaceWaterFraction)/waterFraction*r1Data.r1_free;
@@ -763,6 +782,7 @@ for dataPointNr = 1:length(r1Collection)
     r1Counts(end+1) = length(r1); %#ok<AGROW>
     if r1Counts(end) == 1 && isempty(varargin)
         r1Avg(end+1) = mean(r1); %#ok<AGROW>
+        r1STD(end+1) = nan; %#ok<AGROW>
         continue;
     elseif r1Counts(end) == 1 && istable(varargin{1})
         fieldStrength = fieldStrengthArray(dataPointNr);
@@ -784,6 +804,8 @@ for dataPointNr = 1:length(r1Collection)
     end
     r1Avg(end+1) = mean(r1); %#ok<AGROW>
 end
+
+r1STD(isnan(r1STD)) = max(r1STD)*1.5;
 
 end
 
