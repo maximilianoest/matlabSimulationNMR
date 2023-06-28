@@ -11,13 +11,22 @@ xMinorGrid = parentFigure.CurrentAxes.XMinorGrid;
 yMinorGrid = parentFigure.CurrentAxes.YMinorGrid;
 zMinorGrid = parentFigure.CurrentAxes.ZMinorGrid;
 
+axisFontSize = get(parentFigure.CurrentAxes,'FontSize');
+titleFontSize =  get(parentFigure.CurrentAxes.Title,'FontSize');
+if ~isempty(parentFigure.CurrentAxes.Legend)
+    legendFontSize = parentFigure.CurrentAxes.Legend.FontSize;
+else
+    legendFontSize = 12;
+end
+lineWidth = get(parentFigure,'DefaultLineLineWidth');
+
 subplot(lines,columns,position)
-set(gcf,'DefaultLineLineWidth',get(parentFigure,'DefaultLineLineWidth'));
+set(gca,'DefaultLineLineWidth',lineWidth);
 ax = gca;
-set(gca,'FontSize',get(parentFigure.CurrentAxes,'FontSize'))
+set(gca,'FontSize',axisFontSize);
 set(gca,'TickLabelInterpreter','latex')
-ax.FontSize = get(parentFigure.CurrentAxes,'FontSize');
-ax.Title.FontSize = get(parentFigure.CurrentAxes.Title,'FontSize');
+ax.FontSize = axisFontSize;
+ax.Title.FontSize = titleFontSize;
 ax.Title.Interpreter = 'latex';
 ax.XLabel.Interpreter = 'latex';
 ax.YLabel.Interpreter = 'latex';
@@ -29,7 +38,7 @@ set(ax,'XMinorGrid',xMinorGrid,'YMinorGrid',yMinorGrid...
 if isprop(parentFigure.CurrentAxes,'Legend')
     lgd = legend();
     set(lgd,'Interpreter','latex')
-    lgd.FontSize = parentFigure.CurrentAxes.Legend.FontSize;
+    lgd.FontSize = legendFontSize;
 end
 currentSubFigure = gca;
 hold on

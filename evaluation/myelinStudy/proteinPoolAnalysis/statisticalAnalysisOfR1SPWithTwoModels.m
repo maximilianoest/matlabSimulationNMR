@@ -18,13 +18,24 @@ if runAllScriptsAgain
     run("determineSurfaceWaterAndHistologR1InMyelin");
 end
 
+
 resultsPath = ...
     "C:\Users\maxoe\Google Drive\Promotion\Simulation\RESULTS\wholeBrain\";
 constants = readConstantsFile('constants.txt');
 saving = 1;
+
+axisFontSize = 10;
+legendFontSize = 10;
+
 dataPointsCountLowerLimit = 1;
-fieldStrengthsToIgnoreInWM = [0.5 0.7 1.0];
-fieldStrengthsToIgnoreInGM = [0.05 0.15 0.2 0.28 0.5 0.7 1.0];
+fieldStrengthsToIgnoreInWM = 0;
+fieldStrengthsToIgnoreInGM = 0;
+
+minimumDataPointsForFitting = 2;
+fieldStrengthAxis = 0.01:0.01:7.1;
+highestR1InPlot = 20;
+lowestFieldStrengthForMdSimFit = 0.349;
+
 lowFieldLimit = 0.75;
 
 % ==== relaxation rates ====
@@ -37,7 +48,7 @@ r1DataFileName = "solidMyelinAndMyelinWater_histCompartmentAndCrossR1";
 r1Data = load(r1DataFolderName + r1DataFileName);
 lowerBoundR1_SPFraction = 0.01;
 upperBoundR1_SPFraction = 1.5;
-r1_SPSamplingPoints = 100;
+r1_SPSamplingPoints = 500;
 
 % ==== exchange rates ====
 csvExchangeRateDataFilePath = resultsPath + "ObservedExchangeRates.CSV";
@@ -79,13 +90,13 @@ gmFreeWaterFraction = gmWaterFraction - gmLipidWaterFraction ...
 [wmFieldStrengthArray,r1WMCollection,~,~] ...
    = getCollectionsFromTable(observedRelaxationTimesTable ...
     ,dataPointsCountLowerLimit,fieldStrengthsToIgnoreInWM);
-
+    
 [~,~,gmFieldStrengthArray,r1GMCollection] ...
     = getCollectionsFromTable(observedRelaxationTimesTable ...
     ,dataPointsCountLowerLimit,fieldStrengthsToIgnoreInGM);
-
 showDistributionOfValues(wmFieldStrengthArray,r1WMCollection ...
-    ,gmFieldStrengthArray,r1GMCollection);
+    ,gmFieldStrengthArray,r1GMCollection,axisFontSize,legendFontSize);
+
 if saving
     saveFigureTo(r1DataFolderName,datestr(now,'yyyymmdd') ...
         ,"distributionOfR1Values","Literature");
@@ -111,17 +122,63 @@ r1Data.r1GMAVg = r1GMAvg;
 r1Data.r1GMSTD = r1GMSTD;
 r1Data.r1GMCounts = r1GMCounts;
 
+% ==== parameter set up ====
+% -> time set up
+lowFieldDeltaT = 1e-4;
+highFieldDeltaT = 1e-3;
+lowFieldDuration = 6;
+highFieldDuration = 20;
+deltaTsForWM = ones(1,length(r1WMCollection));
+deltaTsForWM(wmFieldStrengthArray > 1.6) = highFieldDeltaT;
+deltaTsForWM(~(wmFieldStrengthArray > 1.6)) = lowFieldDeltaT;
+durationsForWM = ones(1,length(r1WMCollection));
+durationsForWM(wmFieldStrengthArray > 1.6) = highFieldDuration;
+durationsForWM(~(wmFieldStrengthArray > 1.6)) = lowFieldDuration;
+timeStepCountForWM = durationsForWM./deltaTsForWM;
 
-%% fitting of literature values
+deltaTsForGM = ones(1,length(r1GMCollection));
+deltaTsForGM(gmFieldStrengthArray > 1.6) = highFieldDeltaT;
+deltaTsForGM(~(gmFieldStrengthArray > 1.6)) = lowFieldDeltaT;
+durationsForGM = ones(1,length(r1GMCollection));
+durationsForGM(gmFieldStrengthArray > 1.6) = highFieldDuration;
+durationsForGM(~(gmFieldStrengthArray > 1.6)) = lowFieldDuration;
+timeStepCountForGM = durationsForGM./deltaTsForGM;
+
+%% fitting of literature values (only >= 0.35T)
+wmFieldStrengthArrayForFitting = wmFieldStrengthArray(r1WMCounts ...
+    >= minimumDataPointsForFitting);
+r1WMCollectionForFitting = r1WMCollection(r1WMCounts  ...
+    >= minimumDataPointsForFitting);
+
+r1Data.wmFieldStrengthArrayForFitting = wmFieldStrengthArrayForFitting;
+r1Data.r1WMCollectionForFitting = r1WMCollectionForFitting;
+
+[r1WMAvgForFitting,r1WMStdForFitting,~] ...
+    = getAveragSTDandCountsOfR1Collection(r1WMCollectionForFitting);
+    
 [wmFactor,wmExponent,wmCovariance] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    wmFieldStrengthArray,r1WMAvg,[0.5 0.5],r1WMSTD.^2);
+    wmFieldStrengthArrayForFitting,r1WMAvgForFitting,[0.5 0.5] ...
+    ,r1WMStdForFitting.^2);
 r1Data.wmFactor = wmFactor;
 r1Data.wmExponent = wmExponent;
 r1Data.wmCovariance = wmCovariance;
+
+gmFieldStrengthArrayForFitting = gmFieldStrengthArray(r1GMCounts ...
+    >= minimumDataPointsForFitting);
+r1GMCollectionForFitting = r1GMCollection(r1GMCounts ...
+    >= minimumDataPointsForFitting);
+
+r1Data.gmFieldStrengthArrayForFitting = gmFieldStrengthArrayForFitting;
+r1Data.r1GMCollectionForFitting = r1GMCollectionForFitting;
+
+[r1GMAvgForFitting,r1GMStdForFitting,~] ...
+    = getAveragSTDandCountsOfR1Collection(r1GMCollectionForFitting);
+
 [gmFactor,gmExponent,gmCovariance] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    gmFieldStrengthArray,r1GMAvg,[0.5 0.5],r1GMSTD.^2);
+    gmFieldStrengthArrayForFitting,r1GMAvgForFitting,[0.5 0.5] ...
+    ,r1GMStdForFitting.^2);
 r1Data.gmFactor = gmFactor;
 r1Data.gmExponent = gmExponent;
 r1Data.gmCovariance = gmCovariance;
@@ -134,21 +191,136 @@ fprintf("GM: %.3f B_0 ^(-%.3f) \n variance/covariance matrix:\n" ...
     ,gmFactor,gmExponent) 
 fprintf(" %.7f %.7f \n",gmCovariance);
 
+%% plotting literature values (Observed R1 in WM and GM)
+literatureFigure = initializeFigure('axisFontSize',axisFontSize ...
+    ,'legendFontSize',legendFontSize);
+literatureLegendEntries = {};
 
+wmSubplot = initializeSubplot(literatureFigure,2,1,1);
+ylabel("R$_{1,WM}$ [Hz]");
+xticks(0:0.5:7);
+
+literaturePlt(1) = errorbar(wmFieldStrengthArray,r1WMAvg,r1WMSTD ...
+    ,'LineStyle','none','LineWidth',1.5,'Color','g');
+literatureLegendEntries{end+1} = "R$_{1,WM}$ $\pm$ STD";
+literaturePlt(2) = errorbar(wmFieldStrengthArrayForFitting ...
+    ,r1WMAvgForFitting,r1WMStdForFitting,'LineStyle','none' ...
+    ,'LineWidth',1.5);
+literatureLegendEntries{end+1} = "R$_{1,WM}$ $\pm$ STD for fit";
+literaturePlt(3) = plot(fieldStrengthAxis,wmFactor*fieldStrengthAxis ...
+    .^(-wmExponent));
+literatureLegendEntries{end+1} = "fitted R$_{1,WM}$ $\pm$ STD";
+drawSTDRegionAroundPowerFunction(wmFactor,wmExponent...
+    ,wmCovariance,fieldStrengthAxis,literaturePlt(3).Color);
+
+legend(literaturePlt(1:3),literatureLegendEntries);
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+
+gmSubplot = initializeSubplot(literatureFigure,2,1,2);
+literatureLegendEntries = {};
+xlabel("Field strengths [T]");
+xticks(0:0.5:7);
+ylabel("R$_{1,GM}$ [Hz]");
+
+literaturePlt(4) = errorbar(gmFieldStrengthArray,r1GMAvg,r1GMSTD ...
+    ,'LineStyle','none','LineWidth',1.5,'Color','g');
+literatureLegendEntries{end+1} = "R$_{1,GM}$ $\pm$ STD";
+literaturePlt(5) = errorbar(gmFieldStrengthArrayForFitting ...
+    ,r1GMAvgForFitting,r1GMStdForFitting,'LineStyle','none' ...
+    ,'LineWidth',1.5);
+literatureLegendEntries{end+1} = "R$_{1,WM}$ $\pm$ STD for fit";
+literaturePlt(6) = plot(fieldStrengthAxis,gmFactor*fieldStrengthAxis ...
+    .^(-gmExponent));
+literatureLegendEntries{end+1} = "fitted R$_{1,GM}$ $\pm$ STD";
+drawSTDRegionAroundPowerFunction(gmFactor,gmExponent...
+    ,gmCovariance,fieldStrengthAxis,literaturePlt(6).Color);
+
+legend(literaturePlt(4:6),literatureLegendEntries);
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+
+%% fitting R1_SL and R1_LW to power function
+[factorR1_SL,exponentR1_SL,covarianceR1_SL] ...
+    = fitFieldStrengthBehaviorOfR1ToPowerFunctionWithoutWeights( ...
+    r1Data.fieldStrengths(r1Data.fieldStrengths ...
+    > lowestFieldStrengthForMdSimFit) ...
+    ,r1Data.r1Eff_SM(r1Data.fieldStrengths ...
+    > lowestFieldStrengthForMdSimFit),[0.5 0.5]);
+r1Data.factorR1_SL = factorR1_SL;
+r1Data.exponentR1_SL = exponentR1_SL;
+r1Data.covarianceR1_SL = covarianceR1_SL;
+
+[factorR1_LW,exponentR1_LW,covarianceR1_LW] ...
+    = fitFieldStrengthBehaviorOfR1ToPowerFunctionWithoutWeights( ...
+    r1Data.fieldStrengths(r1Data.fieldStrengths ...
+    > lowestFieldStrengthForMdSimFit),r1Data.r1Hist_MW( ...
+    r1Data.fieldStrengths > lowestFieldStrengthForMdSimFit),[0.5 0.5]);
+r1Data.factorR1_LW = factorR1_LW;
+r1Data.exponentR1_LW = exponentR1_LW;
+r1Data.covarianceR1_LW = covarianceR1_LW;
+
+%% plotting R1_SL and R1_LW to figure
+mdSimFigure = initializeFigure('axisFontSize',axisFontSize ...
+    ,'legendFontSize',legendFontSize);
+indicesOfInterest = (r1Data.fieldStrengths ...
+    >= fieldStrengthAxis(1)) & (r1Data.fieldStrengths ...
+    <= fieldStrengthAxis(end));
+
+simResultsSubplot = initializeSubplot(mdSimFigure,2,1,1);
+legendEntriesSimResultsSubplot = {};
+
+mdSimPlt(1) = plot(r1Data.fieldStrengths(indicesOfInterest) ...
+    ,r1Data.r1Eff_SM(indicesOfInterest));
+legendEntriesSimResultsSubplot{end+1} ...
+    = "R$^{eff}_{1,SL}$ MD sim.";
+mdSimPlt(2) = plot(fieldStrengthAxis ...
+    ,factorR1_SL*fieldStrengthAxis.^(-exponentR1_SL));
+drawSTDRegionAroundPowerFunction(factorR1_SL,exponentR1_SL...
+    ,covarianceR1_SL,fieldStrengthAxis,mdSimPlt(2).Color);
+legendEntriesSimResultsSubplot{end+1} ...
+    = "R$^{eff}_{1,SL}$ $\pm$ STD fit";
+
+mdSimPlt(3) = plot(r1Data.fieldStrengths(indicesOfInterest) ...
+    ,r1Data.r1Hist_MW(indicesOfInterest));
+legendEntriesSimResultsSubplot{end+1} ...
+    = "R$^{hist}_{1,LW}$ MD Sim.";
+mdSimPlt(4) = plot(fieldStrengthAxis ...
+    ,factorR1_LW*fieldStrengthAxis.^(-exponentR1_LW));
+drawSTDRegionAroundPowerFunction(factorR1_LW,exponentR1_LW...
+    ,covarianceR1_LW,fieldStrengthAxis,mdSimPlt(4).Color);
+legendEntriesSimResultsSubplot{end+1} ...
+    = "R$^{hist}_{1,LW}$ $\pm$ STD fit ";
+
+ylabel("R$_{1}$ [Hz]");
+
+legend(mdSimPlt(1:4),legendEntriesSimResultsSubplot);
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+drawnow;
 %% determine R1_SP with IE model
 fprintf("<strong> === INTERMEDIATE EXCHANGE MODEL ===</strong>\n");
-% ==== parameter set up ====
-% -> time set up
-durationForEachFieldStrength = 15; % seconds
-deltaTForEachFieldStrength = 1e-3; % seconds
-deltaT = deltaTForEachFieldStrength(1);
-duration = durationForEachFieldStrength(1);
-timeStepCount = duration/deltaT;
-timeAxis = 0:deltaT:(timeStepCount-1)*deltaT;
 
 exchangeRate = mean(exchangeRatesTable.exchangeRateWholePoolNorm(:));
 macroMolecularPoolFraction = mean(...
     exchangeRatesTable.macromolecularPoolfraction(:));
+
+if wmFieldStrengthArrayForFitting == gmFieldStrengthArrayForFitting 
+    spFieldStrengthForWMFitting = wmFieldStrengthArrayForFitting;
+    spFieldStrengthForGMFitting = gmFieldStrengthArrayForFitting;
+    spIndicesForWMFitting = false(1,length(wmFieldStrengthArray));
+    spIndicesForGMFitting = false(1,length(gmFieldStrengthArray));
+    for fieldStrengthNr = 1:length(spFieldStrengthForWMFitting)
+        spIndicesForWMFitting((wmFieldStrengthArray ...
+            >= spFieldStrengthForWMFitting(fieldStrengthNr) - 0.0001) ...
+            & (wmFieldStrengthArray <= spFieldStrengthForWMFitting( ...
+            fieldStrengthNr) + 0.0001)) = true;
+        spIndicesForGMFitting((gmFieldStrengthArray ...
+            >= spFieldStrengthForGMFitting(fieldStrengthNr) - 0.0001) ...
+            & (gmFieldStrengthArray <= spFieldStrengthForGMFitting( ...
+            fieldStrengthNr) + 0.0001)) = true;
+        
+    end
+else
+    error("Not implemented");
+end
 
 % ==== white matter ====
 fprintf("<strong>WHITE MATTER </strong>\n");
@@ -167,7 +339,7 @@ r1Data.exchange_proteinToWater_Wm = exchange_proteinToWater_WM;
     ,wmWaterFraction,wmLipidFraction,wmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_WM,exchange_lipidToWater_WM ...
-    ,exchange_proteinToWater_WM,timeStepCount,deltaT);
+    ,exchange_proteinToWater_WM,timeStepCountForWM,deltaTsForWM);
 r1Data.r1_SPWM_IEModel = bestGuessR1_SP_WM_IE;
 r1Data.bestGuessTissueR1_WM_IEModel = bestGuessTissueR1_WM_IE;
 
@@ -177,8 +349,9 @@ r1Data.r1_SP_WMAvg_IEModel = r1_SP_WMAvg_IE;
 r1Data.r1_SP_WMStd_IEModel = r1_SP_WMStd_IE;
 
 [factorR1_SP_WM_IE,exponentR1_SP_WM_IE,covarianceR1_SP_WM_IE] = ...
-    fitFieldStrengthBehaviorOfR1ToPowerFunction(wmFieldStrengthArray ...
-    ,r1_SP_WMAvg_IE,[0.5 0.5],r1_SP_WMStd_IE);
+    fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
+    spFieldStrengthForWMFitting,r1_SP_WMAvg_IE(spIndicesForWMFitting) ...
+    ,[0.5 0.5],r1_SP_WMStd_IE(spIndicesForWMFitting));
 r1Data.factorR1_SPWM_IEModel = factorR1_SP_WM_IE;
 r1Data.exponentR1_SPWM_IEModel = exponentR1_SP_WM_IE;
 r1Data.covarianceR1_SPWM_IEModel = covarianceR1_SP_WM_IE;
@@ -201,7 +374,7 @@ r1Data.exchange_proteinToWater_GM = exchange_proteinToWater_GM;
     ,gmWaterFraction,gmLipidFraction,gmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_GM,exchange_lipidToWater_GM ...
-    ,exchange_proteinToWater_GM,timeStepCount,deltaT);
+    ,exchange_proteinToWater_GM,timeStepCountForGM,deltaTsForGM);
 r1Data.r1_SPGM_IEModel = bestGuessR1_SP_GM_IE;
 r1Data.bestGuessTissueR1_GM_IEModel = bestGuessTissueR1_GM_IE;
 
@@ -211,13 +384,180 @@ r1Data.r1_SP_GMAvg_IEModel = r1_SP_GMAvg_IE;
 r1Data.r1_SP_GMStd_IEModel = r1_SP_GMStd_IE;
 
 [factorR1_SP_GM_IE,exponentR1_SP_GM_IE,covarianceR1_SP_GM_IE] = ...
-    fitFieldStrengthBehaviorOfR1ToPowerFunction(gmFieldStrengthArray ...
-    ,r1_SP_GMAvg_IE,[0.5 0.5],r1_SP_GMStd_IE);
+    fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
+    spFieldStrengthForGMFitting,r1_SP_GMAvg_IE(spIndicesForGMFitting) ...
+    ,[0.5 0.5],r1_SP_GMStd_IE(spIndicesForGMFitting));
 r1Data.factorR1_SPGM_IEModel = factorR1_SP_GM_IE;
 r1Data.exponentR1_SPGM_IEModel = exponentR1_SP_GM_IE;
 r1Data.covarianceR1_SPGM_IEModel = covarianceR1_SP_GM_IE;
 
-%% determine R1SP with larger exchange rates
+%% plotting R1_SP dependent on WM and GM tissue
+set(0,'CurrentFigure', mdSimFigure); 
+ieModelResultsSubPlt = initializeSubplot(mdSimFigure,2,1,2);
+cla(ieModelResultsSubPlt);
+
+ieModelResultsPlt(1) = plot(fieldStrengthAxis,factorR1_SP_WM_IE ...
+    *fieldStrengthAxis.^(-exponentR1_SP_WM_IE));
+drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE ...
+    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,ieModelResultsPlt(1).Color);
+ieModelResultsPlt(2) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_IE ...
+    ,r1_SP_WMStd_IE,'LineStyle','none','LineWidth',1.5);
+ieModelResultsPlt(3) = errorbar(wmFieldStrengthArray( ...
+    spIndicesForWMFitting),r1_SP_WMAvg_IE(spIndicesForWMFitting) ...
+    ,r1_SP_WMStd_IE(spIndicesForWMFitting),'LineStyle','none' ...
+    ,'LineWidth',1.5);
+
+ieModelResultsPlt(4) = plot(fieldStrengthAxis,factorR1_SP_GM_IE ...
+    *fieldStrengthAxis.^(-exponentR1_SP_GM_IE),'r');
+drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE ...
+    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,ieModelResultsPlt(2).Color);
+ieModelResultsPlt(5) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_IE ...
+    ,r1_SP_GMStd_IE,'LineStyle','none','LineWidth',1.5);
+ieModelResultsPlt(6) = errorbar(gmFieldStrengthArray( ...
+    spIndicesForGMFitting),r1_SP_GMAvg_IE(spIndicesForGMFitting) ...
+    ,r1_SP_GMStd_IE(spIndicesForGMFitting),'LineStyle','none' ...
+    ,'LineWidth',1.5,'Color','g');
+
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+xlabel("Field strength [T]");
+ylabel("R$_{1,SP}$");
+legend(ieModelResultsPlt(1:6),"Fit for WM","For all B$_0$ in WM" ...
+    ,"B$_0$ for fitting in WM","Fit for GM" ...
+    ,"For all B$_0$ in GM","B$_0$ for fitting in GM");
+drawnow;
+
+%% Averaging
+
+% First average R1_SP and then perform the fit
+onlyWMDataPoints = zeros(1,length(wmFieldStrengthArray));
+r1_SP_AvgTissue_IE = zeros(1,length(wmFieldStrengthArray));
+r1_SP_StatisticalError = zeros(1,length(wmFieldStrengthArray));
+for fieldStrengthNr = 1:length(wmFieldStrengthArray)
+    gmFieldStrengthIndex = find((wmFieldStrengthArray(fieldStrengthNr) ...
+        - 0.0001 <= gmFieldStrengthArray) .* (wmFieldStrengthArray( ...
+        fieldStrengthNr) + 0.0001 >= gmFieldStrengthArray));
+    if isempty(gmFieldStrengthIndex)
+        r1_SP_AvgTissue_IE(fieldStrengthNr) = r1_SP_GMAvg_IE( ...
+            fieldStrengthNr);
+        r1_SP_StatisticalError(fieldStrengthNr) = ...
+            r1_SP_WMStd_IE(fieldStrengthNr);
+        onlyWMDataPoints(fieldStrengthNr) = wmFieldStrengthArray( ...
+            fieldStrengthNr);
+    else
+        r1_SP_AvgTissue_IE(fieldStrengthNr) = (r1_SP_GMAvg_IE( ...
+            gmFieldStrengthIndex) + r1_SP_WMAvg_IE(fieldStrengthNr))/2;
+        r1_SP_StatisticalError(fieldStrengthNr) = sqrt(1/( ...
+            1/(r1_SP_WMStd_IE(fieldStrengthNr)^2) ...
+            + 1/(r1_SP_GMStd_IE(gmFieldStrengthIndex)^2)));
+    end
+end
+
+r1Data.r1_SP_AvgTissue_IEModel = r1_SP_AvgTissue_IE;
+r1Data.r1_SP_StatisticalError = r1_SP_StatisticalError;
+
+if wmFieldStrengthArray(~logical(onlyWMDataPoints)) ~= gmFieldStrengthArray
+    error("There is GM data point that isn't found in WM. " ...
+        + "This case is not implemented yet");
+end
+
+if spFieldStrengthForWMFitting == spFieldStrengthForGMFitting
+    [factorR1_SPAvg_IE,exponentR1_SPAvg_IE,covarianceR1_SPAvg_IE] ...
+        = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
+        spFieldStrengthForWMFitting,r1_SP_AvgTissue_IE( ...
+        spIndicesForWMFitting),[0.5 0.5],r1_SP_StatisticalError( ...
+        spIndicesForWMFitting).^2);
+    
+    r1Data.factorR1_SPAvg_IEModel = factorR1_SPAvg_IE;
+    r1Data.exponentR1_SPAvg_IEModel = exponentR1_SPAvg_IE;
+    r1Data.covarianceR1_SPAvg_IEModel = covarianceR1_SPAvg_IE;
+else
+    error("Case not implemented yet.");
+end
+
+averageSpPowerFunction = (factorR1_SP_WM_IE*fieldStrengthAxis.^( ...
+    -exponentR1_SP_WM_IE) + factorR1_SP_GM_IE*fieldStrengthAxis.^( ...
+    -exponentR1_SP_GM_IE))/2;
+
+r1_SP_systematicTissueBasedError = ones(1,length(r1_SP_AvgTissue_IE));
+r1_SP_systematicTissueBasedError(logical(onlyWMDataPoints)) = abs( ...
+    r1_SP_WMAvg_IE(logical(onlyWMDataPoints)) ...
+    - r1_SP_AvgTissue_IE(logical(onlyWMDataPoints)));
+r1Data.r1_SP_systematicTissueBasedError = r1_SP_systematicTissueBasedError;
+
+r1_SP_systematicTissueBasedError(~logical(onlyWMDataPoints)) = (abs( ...
+    r1_SP_WMAvg_IE(~logical(onlyWMDataPoints)) ...
+    - r1_SP_AvgTissue_IE(~logical(onlyWMDataPoints))) ...
+    + abs(r1_SP_GMAvg_IE - r1_SP_AvgTissue_IE(~logical( ...
+    onlyWMDataPoints))))/2;
+r1Data.r1_SP_systematicTissueBasedError = r1_SP_systematicTissueBasedError;
+
+%% plotting comparison of fit avg. and avg. fit
+initializeFigure('axisFontSize',14,'legendFontSize',12);
+title("Comparison of avg. power functions of SP");
+plot(fieldStrengthAxis,averageSpPowerFunction);
+plot(fieldStrengthAxis,factorR1_SPAvg_IE*fieldStrengthAxis.^( ...
+    -exponentR1_SPAvg_IE));
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+xlabel("Field strength [T]");
+ylabel("R$_{1,SP}^{Avg.}$ [Hz]");
+legend("Avg. power function","Fit to avg. data points $>$ 0.35T");
+drawnow;
+if saving
+    saveFigureTo(r1DataFolderName ...
+        ,datestr(now,'yyyymmdd'),"AvgPowerFuncVsFitToAvgDataPointsForR1" ...
+        ,"SP");
+end
+
+%% plotting average results
+set(0, 'CurrentFigure', mdSimFigure); 
+mdSimFigure.CurrentAxes = simResultsSubplot;
+
+mdSimPlt(5) = plot(fieldStrengthAxis,factorR1_SPAvg_IE ...
+    *fieldStrengthAxis.^(-exponentR1_SPAvg_IE));
+drawSTDRegionAroundPowerFunction(factorR1_SPAvg_IE,exponentR1_SPAvg_IE ...
+    ,covarianceR1_SPAvg_IE,fieldStrengthAxis,mdSimPlt(5).Color);
+legendEntriesSimResultsSubplot{end+1} = "R$_{1,SP}^{Avg} \pm$ STD fit";
+legend(mdSimPlt(1:5),legendEntriesSimResultsSubplot);
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+drawnow;
+
+%% plotting STD at WM and GM to show overlap
+additionalFigure = initializeFigure('axisFontSize',axisFontSize ...
+    ,'legendFontSize',legendFontSize);
+r1SPStdSubplot = initializeSubplot(additionalFigure,2,2,1);
+cla(r1SPStdSubplot);
+r1SPStdLegendEntries = {};
+drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE ...
+    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,mdSimPlt(1).Color,0.5);
+r1SPStdLegendEntries{end+1} = "STD WM";
+
+drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE ...
+    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,mdSimPlt(2).Color,0.5);
+r1SPStdLegendEntries{end+1} = "STD GM";
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+
+legend(r1SPStdLegendEntries);
+xlabel("Field Strength [T]");
+ylabel("R$_{1,SP}$ [Hz]");
+drawnow;
+
+%% plotting ratio of R1_SP and R1_SL
+
+set(0,'CurrentFigure',additionalFigure);
+r1SPSLRatioSubPlot = initializeSubplot(additionalFigure,2,2,3);
+cla(r1SPSLRatioSubPlot);
+lgd = legend();
+lgd.Visible = 'off';
+
+plot(fieldStrengthAxis,(factorR1_SL*fieldStrengthAxis.^(-exponentR1_SL)) ...
+    ./(factorR1_SPAvg_IE*fieldStrengthAxis.^(-exponentR1_SPAvg_IE)));
+
+xlabel("Field strength [T]");
+ylabel("${}^{R_{1,SL}}{\mskip -5mu/\mskip -3mu}_{R_{1,SP}}$ [a.u.]");
+drawnow;
+
+
+%% determine R1_SP with larger exchange rates
 fprintf("<strong>WHITE MATTER WITH INCREASED EXCHANGE RATES</strong>\n");
 exchangeRate_incr = exchangeRate * exchangeRateIncreaseFactor;
 [exchange_waterToSolid_WMincr,exchange_lipidToWater_WMincr ...
@@ -234,7 +574,7 @@ r1Data.exchange_proteinToWater_WMincr = exchange_proteinToWater_WMincr;
     ,wmWaterFraction,wmLipidFraction,wmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_WMincr,exchange_lipidToWater_WMincr ...
-    ,exchange_proteinToWater_WMincr,timeStepCount,deltaT);
+    ,exchange_proteinToWater_WMincr,timeStepCountForWM,deltaTsForWM);
 r1Data.r1_SPWM_IEModel_incr = bestGuessR1_SP_WM_IE_incr;
 r1Data.bestGuessTissueR1_WM_IEModel_incr = bestGuessTissueR1_WM_IE_incr;
 
@@ -246,8 +586,9 @@ r1Data.r1_SP_WMStd_IEModel_incr = r1_SP_WMStd_IE_incr;
 [factorR1_SP_WM_IE_incr,exponentR1_SP_WM_IE_incr ...
     ,covarianceR1_SP_WM_IE_incr] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    wmFieldStrengthArray,r1_SP_WMAvg_IE_incr,[0.5 0.5] ...
-    ,r1_SP_WMStd_IE_incr);
+    spFieldStrengthForWMFitting,r1_SP_WMAvg_IE_incr( ...
+    spIndicesForWMFitting),[0.5 0.5],r1_SP_WMStd_IE_incr( ...
+    spIndicesForWMFitting));
 r1Data.factorR1_SPWM_IEModel_incr = factorR1_SP_WM_IE_incr;
 r1Data.exponentR1_SPWM_IEModel_incr = exponentR1_SP_WM_IE_incr;
 r1Data.covarianceR1_SPWM_IEModel_incr = covarianceR1_SP_WM_IE_incr;
@@ -268,7 +609,7 @@ r1Data.exchange_proteinToWater_WMdecr = exchange_proteinToWater_WMdecr;
     ,wmWaterFraction,wmLipidFraction,wmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_WMdecr,exchange_lipidToWater_WMdecr ...
-    ,exchange_proteinToWater_WMdecr,timeStepCount,deltaT);
+    ,exchange_proteinToWater_WMdecr,timeStepCountForWM,deltaTsForWM);
 r1Data.r1_SPWM_IEModel_decr = bestGuessR1_SP_WM_IE_decr;
 r1Data.bestGuessTissueR1_WM_IEModel_decr = bestGuessTissueR1_WM_IE_decr;
 
@@ -280,8 +621,9 @@ r1Data.r1_SP_WMStd_IEModel_decr = r1_SP_WMStd_IE_decr;
 [factorR1_SP_WM_IE_decr,exponentR1_SP_WM_IE_decr ...
     ,covarianceR1_SP_WM_IE_decr] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    wmFieldStrengthArray,r1_SP_WMAvg_IE_decr,[0.5 0.5] ...
-    ,r1_SP_WMStd_IE_decr);
+    spFieldStrengthForWMFitting,r1_SP_WMAvg_IE_decr( ...
+    spIndicesForWMFitting),[0.5 0.5],r1_SP_WMStd_IE_decr( ...
+    spIndicesForWMFitting));
 r1Data.factorR1_SPWM_IEModel_decr = factorR1_SP_WM_IE_decr;
 r1Data.exponentR1_SPWM_IEModel_decr = exponentR1_SP_WM_IE_decr;
 r1Data.covarianceR1_SPWM_IEModel_decr = covarianceR1_SP_WM_IE_decr;
@@ -301,7 +643,7 @@ r1Data.exchange_proteinToWater_GMincr = exchange_proteinToWater_GMincr;
     ,gmWaterFraction,gmLipidFraction,gmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_GMincr,exchange_lipidToWater_GMincr ...
-    ,exchange_proteinToWater_GMincr,timeStepCount,deltaT);
+    ,exchange_proteinToWater_GMincr,timeStepCountForGM,deltaTsForGM);
 r1Data.r1_SPGM_IEModel_incr = bestGuessR1_SP_GM_IE_incr;
 r1Data.bestGuessTissueR1_GM_IEModel_incr = bestGuessTissueR1_GM_IE_incr;
 
@@ -313,8 +655,9 @@ r1Data.r1_SP_GMStd_IEModel_incr = r1_SP_GMStd_IE_incr;
 [factorR1_SP_GM_IE_incr,exponentR1_SP_GM_IE_incr ...
     ,covarianceR1_SP_GM_IE_incr] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    gmFieldStrengthArray,r1_SP_GMAvg_IE_incr,[0.5 0.5] ...
-    ,r1_SP_GMStd_IE_incr);
+    spFieldStrengthForGMFitting,r1_SP_GMAvg_IE_incr( ...
+    spIndicesForGMFitting),[0.5 0.5],r1_SP_GMStd_IE_incr( ...
+    spIndicesForGMFitting));
 r1Data.factorR1_SPGM_IEModel_incr = factorR1_SP_GM_IE_incr;
 r1Data.exponentR1_SPGM_IEModel_incr = exponentR1_SP_GM_IE_incr;
 r1Data.covarianceR1_SPGM_IEModel_incr = covarianceR1_SP_GM_IE_incr;
@@ -334,7 +677,7 @@ r1Data.exchange_proteinToWater_GMdecr = exchange_proteinToWater_GMdecr;
     ,gmWaterFraction,gmLipidFraction,gmProteinFraction ...
     ,lowerBoundR1_SPFraction,upperBoundR1_SPFraction,r1_SPSamplingPoints ...
     ,exchange_waterToSolid_GMdecr,exchange_lipidToWater_GMdecr ...
-    ,exchange_proteinToWater_GMdecr,timeStepCount,deltaT);
+    ,exchange_proteinToWater_GMdecr,timeStepCountForGM,deltaTsForGM);
 r1Data.r1_SPGM_IEModel_decr = bestGuessR1_SP_GM_IE_decr;
 r1Data.bestGuessTissueR1_GM_IEModel_decr = bestGuessTissueR1_GM_IE_decr;
 
@@ -346,13 +689,109 @@ r1Data.r1_SP_GMStd_IEModel_decr = r1_SP_GMStd_IE_decr;
 [factorR1_SP_GM_IE_decr,exponentR1_SP_GM_IE_decr ...
     ,covarianceR1_SP_GM_IE_decr] ...
     = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
-    gmFieldStrengthArray,r1_SP_GMAvg_IE_decr,[0.5 0.5] ...
-    ,r1_SP_GMStd_IE_decr);
+    spFieldStrengthForGMFitting,r1_SP_GMAvg_IE_decr( ...
+    spIndicesForGMFitting),[0.5 0.5],r1_SP_GMStd_IE_decr( ...
+    spIndicesForGMFitting));
 r1Data.factorR1_SPGM_IEModel_decr = factorR1_SP_GM_IE_decr;
 r1Data.exponentR1_SPGM_IEModel_decr = exponentR1_SP_GM_IE_decr;
 r1Data.covarianceR1_SPGM_IEModel_decr = covarianceR1_SP_GM_IE_decr;
 
+%% Find systematic exchange rate based error
 
+r1_SP_systematicPositiveExchangeRateBasedError = abs( ...
+    r1_SP_AvgTissue_IE - r1_SP_WMAvg_IE_decr);
+r1Data.r1_SP_systematicPositiveExchangeRateBasedError ...
+    = r1_SP_systematicPositiveExchangeRateBasedError;
+
+lowerR1SPValues = ones(1,length(r1_SP_AvgTissue_IE));
+lowerR1SPValues(~logical(onlyWMDataPoints)) = r1_SP_GMAvg_IE_incr;
+lowerR1SPValues(logical(onlyWMDataPoints)) = r1_SP_WMAvg_IE_incr( ...
+    logical(onlyWMDataPoints));
+r1_SP_systematicNegativeExchangeRateBasedError ...
+    = ones(1,length(r1_SP_AvgTissue_IE));
+r1_SP_systematicNegativeExchangeRateBasedError( ...
+    logical(onlyWMDataPoints)) = abs( ...
+    r1_SP_AvgTissue_IE(logical(onlyWMDataPoints)) ...
+    - r1_SP_AvgTissue_IE(logical(onlyWMDataPoints)));
+r1_SP_systematicNegativeExchangeRateBasedError( ...
+    ~logical(onlyWMDataPoints)) = (abs( ...
+    r1_SP_AvgTissue_IE(~logical(onlyWMDataPoints)) ...
+    - r1_SP_AvgTissue_IE(~logical(onlyWMDataPoints))) ...
+    + abs(r1_SP_AvgTissue_IE(~logical(onlyWMDataPoints)) ...
+    - r1_SP_GMAvg_IE_incr))/2;
+r1Data.r1_SP_systematicNegativeExchangeRateBasedError ... 
+    = r1_SP_systematicNegativeExchangeRateBasedError;
+
+
+fprintf("<strong>Error Analyis</strong>\n");
+for index = find(spIndicesForWMFitting)
+   fprintf("%.4fT: %.4f +/- %.4f + %.4f - %.4f Hz \n" ...
+       ,wmFieldStrengthArray(index) ...
+       ,r1_SP_AvgTissue_IE(index) ...
+       ,r1_SP_StatisticalError(index) ...
+       ,r1_SP_systematicTissueBasedError(index) ...
+       + r1_SP_systematicPositiveExchangeRateBasedError(index) ...
+       ,r1_SP_systematicTissueBasedError(index) ...
+       + r1_SP_systematicNegativeExchangeRateBasedError(index));
+   
+    
+end
+
+%% Plotting results of different exchange rates
+set(0,'CurrentFigure',additionalFigure);
+r1WmChangedExchangeRaterSubPlt = initializeSubplot(additionalFigure,2,2,2);
+cla(r1WmChangedExchangeRaterSubPlt);
+ylabel("R$_{1,SP}$ based on WM");
+xlabel("Field strength [T]");
+r1WmChangedExchangeRaterSubPlt(1) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_WM_IE*fieldStrengthAxis.^(-exponentR1_SP_WM_IE));
+drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE ...
+    ,covarianceR1_SP_WM_IE,fieldStrengthAxis ...
+    ,r1WmChangedExchangeRaterSubPlt(1).Color);
+
+r1WmChangedExchangeRaterSubPlt(2) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_WM_IE_incr*fieldStrengthAxis.^(-exponentR1_SP_WM_IE_incr));
+drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE_incr ...
+    ,exponentR1_SP_WM_IE_incr,covarianceR1_SP_WM_IE_incr ...
+    ,fieldStrengthAxis,r1WmChangedExchangeRaterSubPlt(2).Color);
+
+r1WmChangedExchangeRaterSubPlt(3) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_WM_IE_decr*fieldStrengthAxis.^(-exponentR1_SP_WM_IE_decr));
+drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE_decr ...
+    ,exponentR1_SP_WM_IE_decr,covarianceR1_SP_WM_IE_decr ...
+    ,fieldStrengthAxis,r1WmChangedExchangeRaterSubPlt(3).Color);
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+
+legend(r1WmChangedExchangeRaterSubPlt(1:3) ...
+    ,"unchanged","increased","decreased");
+drawnow;
+
+r1GmChangedExchangeRaterSubPlt = initializeSubplot(additionalFigure,2,2,4);
+cla(r1GmChangedExchangeRaterSubPlt);
+ylabel("R$_{1,SP}$ based on GM");
+xlabel("Field strength [T]");
+r1GmChangedExchangeRaterSubPlt(1) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_GM_IE*fieldStrengthAxis.^(-exponentR1_SP_GM_IE));
+drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE ...
+    ,covarianceR1_SP_GM_IE,fieldStrengthAxis ...
+    ,r1GmChangedExchangeRaterSubPlt(1).Color);
+
+r1GmChangedExchangeRaterSubPlt(2) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_GM_IE_incr*fieldStrengthAxis.^(-exponentR1_SP_GM_IE_incr));
+drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE_incr ...
+    ,exponentR1_SP_GM_IE_incr,covarianceR1_SP_GM_IE_incr ...
+    ,fieldStrengthAxis,r1GmChangedExchangeRaterSubPlt(2).Color);
+
+r1GmChangedExchangeRaterSubPlt(3) = plot(fieldStrengthAxis ...
+    ,factorR1_SP_GM_IE_decr*fieldStrengthAxis.^(-exponentR1_SP_GM_IE_decr));
+drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE_decr ...
+    ,exponentR1_SP_GM_IE_decr,covarianceR1_SP_GM_IE_decr ...
+    ,fieldStrengthAxis,r1GmChangedExchangeRaterSubPlt(3).Color);
+
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot]);
+lgd = legend();
+lgd.Visible = 'off';
+drawnow;
 %% determine R1_SP with FE model
 fprintf("<strong> === FAST EXCHANGE MODEL ===</strong>\n");
 
@@ -369,8 +808,9 @@ r1Data.r1_SP_WMAvg_FEModel = r1_SP_WMAvg_FE;
 r1Data.r1_SP_WMStd_FEModel = r1_SP_WMStd_FE;
 
 [factorR1_SP_WM_FE,exponentR1_SP_WM_FE,covarianceR1_SP_WM_FE] = ...
-    fitFieldStrengthBehaviorOfR1ToPowerFunction(wmFieldStrengthArray(1:end) ...
-    ,r1_SP_WMAvg_FE(1:end),[0.5 0.5],r1_SP_WMStd_FE(1:end));
+    fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
+    spFieldStrengthForWMFitting,r1_SP_WMAvg_FE(spIndicesForWMFitting) ...
+    ,[0.5 0.5],r1_SP_WMStd_FE(spIndicesForWMFitting));
 r1Data.factorR1_SPWM_FEModel = factorR1_SP_WM_FE;
 r1Data.exponentR1_SPWM_FEModel = exponentR1_SP_WM_FE;
 r1Data.covarianceR1_SPWM_FEModel = covarianceR1_SP_WM_FE;
@@ -388,199 +828,40 @@ r1Data.r1_SP_GMAvg_FEModel = r1_SP_GMAvg_FE;
 r1Data.r1_SP_GMStd_FEModel = r1_SP_GMStd_FE;
 
 [factorR1_SP_GM_FE,exponentR1_SP_GM_FE,covarianceR1_SP_GM_FE] ...
-    = fitFieldStrengthBehaviorOfR1ToPowerFunction(gmFieldStrengthArray(1:end) ...
-    ,r1_SP_GMAvg_FE(1:end),[0.5 0.5],r1_SP_GMStd_FE(1:end));
+    = fitFieldStrengthBehaviorOfR1ToPowerFunction( ...
+    spFieldStrengthForGMFitting,r1_SP_GMAvg_FE(spIndicesForGMFitting) ...
+    ,[0.5 0.5],r1_SP_GMStd_FE(spIndicesForGMFitting));
 r1Data.factorR1_SPGM_FEModel = factorR1_SP_GM_FE;
 r1Data.exponentR1_SPGM_FEModel = exponentR1_SP_GM_FE;
 r1Data.covarianceR1_SPGM_FEModel = covarianceR1_SP_GM_FE;
 
-%% fitting R1_SL and R1_LW to power function
-[factorR1_SL,exponentR1_SL,covarianceR1_SL] ...
-    = fitFieldStrengthBehaviorOfR1ToPowerFunctionWithoutWeights( ...
-    r1Data.fieldStrengths,r1Data.r1Eff_SM,[0.5 0.5]);
-r1Data.factorR1_SL = factorR1_SL;
-r1Data.exponentR1_LW = exponentR1_SL;
-r1Data.convarianceR1_SL = covarianceR1_SL;
-
-[factorR1_LW,exponentR1_LW,covarianceR1_LW] ...
-    = fitFieldStrengthBehaviorOfR1ToPowerFunctionWithoutWeights( ...
-    r1Data.fieldStrengths,r1Data.r1Hist_MW,[0.5 0.5]);
-r1Data.factorR1_LW = factorR1_LW;
-r1Data.exponentR1_LW = exponentR1_LW;
-r1Data.covarianceR1_LW = covarianceR1_LW;
-
-%% determine an average R1_SP based on WM and GM in IE model
-
-
-
-
-%% plotting results of differnt models
-
-% ==== plotting of literature values
-legendEntries = {};
-fieldStrengthAxis = 0.01:0.01:7.1;
-
-fig = initializeFigure();
-initializeSubplot(fig,2,2,1);
-xlabel("Field strengths [T]");
-ylabel("R$_{1,literature}$ [Hz]");
-title("$\textbf{a}$ Literature values");
-
-plt(1) = errorbar(wmFieldStrengthArray,r1WMAvg,r1WMSTD ...
-    ,'LineStyle','none','LineWidth',1.5);
-plt(2) = errorbar(gmFieldStrengthArray,r1GMAvg,r1GMSTD ...
-    ,'LineStyle','none','LineWidth',1.5);
-legendEntries{end+1} = "avg WM $\pm$ STD";
-legendEntries{end+1} = "avg GM $\pm$ STD";
-
-plt(3) = plot(fieldStrengthAxis,wmFactor*fieldStrengthAxis.^( ...
-    -wmExponent));
-drawSTDRegionAroundPowerFunction(wmFactor,wmExponent...
-    ,wmCovariance,fieldStrengthAxis,plt(3).Color);
-
-plt(4) = plot(fieldStrengthAxis,gmFactor*fieldStrengthAxis.^(-gmExponent));
-drawSTDRegionAroundPowerFunction(gmFactor,gmExponent...
-    ,gmCovariance,fieldStrengthAxis,plt(4).Color);
-legendEntries{end+1} = "fit WM";
-legendEntries{end+1} = "fit GM";
-
-legend(plt(1:4),legendEntries);
-
-% ==== molecular dynamics simulation results ====
-
-initializeSubplot(fig,2,2,2);
-skip = 10;
-plt(1) = plot(r1Data.fieldStrengths(1:skip:end) ...
-    ,r1Data.r1Eff_SM(1:skip:end),'*');
-plt(2) = plot(r1Data.fieldStrengths, factorR1_SL  ...
-    * r1Data.fieldStrengths .^(-exponentR1_SL),'Color', plt(1).Color);
-plt(3) = plot(r1Data.fieldStrengths(1:skip:end) ...
-    ,r1Data.r1Hist_MW(1:skip:end),'*');
-plt(4) = plot(r1Data.fieldStrengths, factorR1_LW ...
-    * r1Data.fieldStrengths .^(-exponentR1_LW),'Color',plt(3).Color);
-axis([0 inf 0 20]);
-
-legend(plt(1:4),"SL MD Sim","SL fit","LW MD sim","LW fit");
-xlabel("Field strength [T]");
-ylabel("R$_{1,simulation}$ [Hz]");
-title("$\textbf{b}$ MD simulation results")
-
-
-% ==== model predictions
-initializeSubplot(fig,2,2,3);
-title("$\textbf{c}$ IE model results");
+%% plotting FE model results
+FEModelResultsPlt = initializeFigure( ...
+    'axisFontSize',axisFontSize,'legendFontSize',legendFontSize);
+title("FE model results");
 ylabel("R$_{1,SP}$ [Hz]");
 xlabel("Field strength [T]");
-
-% ==== IE model ====
-plt(1) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_IE,r1_SP_WMStd_IE ...
-    ,'LineStyle','none','LineWidth',1.5);
-plt(2) = plot(fieldStrengthAxis,factorR1_SP_WM_IE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_WM_IE));
-drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE...
-    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,plt(2).Color);
-
-plt(3) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_IE,r1_SP_GMStd_IE ...
-    ,'LineStyle','none','LineWidth',1.5);
-plt(4) = plot(fieldStrengthAxis,factorR1_SP_GM_IE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_GM_IE));
-drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE...
-    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,plt(4).Color);
-
-axis([0 inf 0 25])
-legend(plt(1:4),"WM $\pm$ STD","WM fit","GM $\pm$ STD","GM fit");
-
-% ==== FE model ====
-initializeSubplot(fig,2,2,4);
-title("$\textbf{d}$ FE model results");
-ylabel("R$_{1,SP}$ [Hz]");
-xlabel("Field strength [T]");
-plt(5) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_FE,r1_SP_WMStd_FE ...
-    ,'LineStyle','none','LineWidth',1.5);
-plt(6) = plot(fieldStrengthAxis,factorR1_SP_WM_FE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_WM_FE));
+feModelPlt(1) = errorbar(wmFieldStrengthArray,r1_SP_WMAvg_FE ...
+    ,r1_SP_WMStd_FE,'LineStyle','none','LineWidth',1.5);
+feModelPlt(2) = plot(fieldStrengthAxis,factorR1_SP_WM_FE* ...
+    fieldStrengthAxis.^(- exponentR1_SP_WM_FE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_WM_FE,exponentR1_SP_WM_FE...
-    ,covarianceR1_SP_WM_FE,fieldStrengthAxis,plt(6).Color);
+    ,covarianceR1_SP_WM_FE,fieldStrengthAxis,feModelPlt(2).Color);
 
-plt(7) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_FE,r1_SP_GMStd_FE ...
-    ,'LineStyle','none','LineWidth',1.5);
-plt(8) = plot(fieldStrengthAxis,factorR1_SP_GM_FE*fieldStrengthAxis.^( ...
-    - exponentR1_SP_GM_FE));
+feModelPlt(3) = errorbar(gmFieldStrengthArray,r1_SP_GMAvg_FE ...
+    ,r1_SP_GMStd_FE,'LineStyle','none','LineWidth',1.5,'Color','g');
+feModelPlt(4) = plot(fieldStrengthAxis,factorR1_SP_GM_FE ...
+    *fieldStrengthAxis.^(- exponentR1_SP_GM_FE));
 drawSTDRegionAroundPowerFunction(factorR1_SP_GM_FE,exponentR1_SP_GM_FE...
-    ,covarianceR1_SP_GM_FE,fieldStrengthAxis,plt(8).Color);
+    ,covarianceR1_SP_GM_FE,fieldStrengthAxis,feModelPlt(4).Color);
 
-axis([0 inf 0 25])
+axis([0 fieldStrengthAxis(end) 0 highestR1InPlot])
 lgd = legend();
 lgd.Visible = 'off';
 
-% legend(plt(1:4),"IE WM $\pm$ STD","IE WM fit","IE GM $\pm$ STD" ...
-%     ,"IE GM fit","FE WM $\pm$ STD","FE WM fit","FE GM $\pm$ STD" ...
-%     ,"FE GM fit");
-
-if saving
-    saveFigureTo(r1DataFolderName ...
-        ,datestr(now,'yyyymmdd'),"TissueR1_ComparmentR1_R1","SP");
-end
-
-%% Plotting results of different exchange rates
-
-fig = initializeFigure();
-initializeSubplot(fig,2,1,1);
-title("WM");
-ylabel("R$_{1,SP}$");
-xlabel("Field strength [T]");
-plt(1) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_WM_IE*fieldStrengthAxis.^(-exponentR1_SP_WM_IE));
-drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE,exponentR1_SP_WM_IE ...
-    ,covarianceR1_SP_WM_IE,fieldStrengthAxis,plt(1).Color);
-
-plt(2) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_WM_IE_incr*fieldStrengthAxis.^(-exponentR1_SP_WM_IE_incr));
-drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE_incr ...
-    ,exponentR1_SP_WM_IE_incr,covarianceR1_SP_WM_IE_incr ...
-    ,fieldStrengthAxis,plt(2).Color);
-
-plt(3) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_WM_IE_decr*fieldStrengthAxis.^(-exponentR1_SP_WM_IE_decr));
-drawSTDRegionAroundPowerFunction(factorR1_SP_WM_IE_decr ...
-    ,exponentR1_SP_WM_IE_decr,covarianceR1_SP_WM_IE_decr ...
-    ,fieldStrengthAxis,plt(3).Color);
-axis([0 inf 0 25]);
-
-legend(plt(1:3),"unchanged","increased","decreased");
-
-initializeSubplot(fig,2,1,2);
-title("GM");
-ylabel("R$_{1,SP}$");
-xlabel("Field strength [T]");
-plt(4) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_GM_IE*fieldStrengthAxis.^(-exponentR1_SP_GM_IE));
-drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE,exponentR1_SP_GM_IE ...
-    ,covarianceR1_SP_GM_IE,fieldStrengthAxis,plt(4).Color);
-
-plt(5) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_GM_IE_incr*fieldStrengthAxis.^(-exponentR1_SP_GM_IE_incr));
-drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE_incr ...
-    ,exponentR1_SP_GM_IE_incr,covarianceR1_SP_GM_IE_incr ...
-    ,fieldStrengthAxis,plt(5).Color);
-
-plt(6) = plot(fieldStrengthAxis ...
-    ,factorR1_SP_GM_IE_decr*fieldStrengthAxis.^(-exponentR1_SP_GM_IE_decr));
-drawSTDRegionAroundPowerFunction(factorR1_SP_GM_IE_decr ...
-    ,exponentR1_SP_GM_IE_decr,covarianceR1_SP_GM_IE_decr ...
-    ,fieldStrengthAxis,plt(6).Color);
-
-
-axis([0 inf 0 25]);
-lgd = legend();
-lgd.Visible = 'off';
-
-if saving
-    saveFigureTo(r1DataFolderName ...
-        ,datestr(now,'yyyymmdd'),"ComparingIncreasedAndDecreasedExchOn" ...
-        ,"R1_SP");
-end
-
+legend(feModelPlt(1:4),"FE WM $\pm$ STD","FE WM fit $\pm$ STD" ...
+    ,"FE GM $\pm$ STD","FE GM fit $\pm$ STD");
+drawnow;
 
 %% Writing results to console
 fprintf("\n \n \n");
@@ -608,15 +889,10 @@ fprintf("\n\n");
 
 fprintf("3. Model predictions \n");
 fprintf(" Based on WM: \n");
-fprintf("  IE: R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SP_WM_IE ...
+fprintf("  R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SP_WM_IE ...
     ,exponentR1_SP_WM_IE);
 fprintf("  variance/covariance matrix:\n")
 fprintf("  %.7f %.7f \n",covarianceR1_SP_WM_IE);
-
-fprintf("  FE: R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SP_WM_FE ...
-    ,exponentR1_SP_WM_FE);
-fprintf("  variance/covariance matrix:\n")
-fprintf("  %.7f %.7f \n",covarianceR1_SP_WM_FE);
 fprintf("\n");
 
 fprintf(" Based on GM: \n");
@@ -624,23 +900,40 @@ fprintf("  IE: R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SP_GM_IE ...
     ,exponentR1_SP_GM_IE);
 fprintf("  variance/covariance matrix:\n")
 fprintf("  %.7f %.7f \n",covarianceR1_SP_GM_IE);
+fprintf("\n");
 
-fprintf("  FE: R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SP_GM_FE ...
-    ,exponentR1_SP_GM_FE);
+fprintf(" On average \n");
+fprintf("  IE: R1_SP(B_0) = %.4f * B_0 ^(-%.4f) \n",factorR1_SPAvg_IE ...
+    ,exponentR1_SPAvg_IE);
 fprintf("  variance/covariance matrix:\n")
-fprintf("  %.7f %.7f \n",covarianceR1_SP_GM_FE);
-
-
+fprintf("  %.7f %.7f \n",covarianceR1_SP_GM_IE);
+fprintf("\n");
 
 
 %% saving
 
 if saving
     save(r1DataFolderName + "SM_MW_SP_histCompartmentAndCrossR1" ...
-        ,'-struct','r1Data'); %#ok<UNRCH>
+        ,'-struct','r1Data');
+    
+    set(0, 'CurrentFigure', literatureFigure);
+    saveFigureTo(r1DataFolderName ...
+        ,datestr(now,'yyyymmdd'),"ObservedR1ValuesFit","WMandGM");
+    
+    set(0, 'CurrentFigure', FEModelResultsPlt); 
+    saveFigureTo(r1DataFolderName ...
+        ,datestr(now,'yyyymmdd'),"FEModelResultsForR1","SP");
+    
+    set(0, 'CurrentFigure', mdSimFigure); 
+    saveFigureTo(r1DataFolderName ...
+        ,datestr(now,'yyyymmdd'),"SL_LW_SP" ...
+        ,"PredictedValuesAndFieldStrengthBehvior");
+    
+    set(0,'CurrentFigure',additionalFigure);
+    saveFigureTo(r1DataFolderName ...
+        ,datestr(now,'yyyymmdd'),"Overlap_Ration_IncrAndDecrExchRats" ...
+        ,"ofR1_SP");
 end
-
-
 
 %% functions
 
@@ -714,7 +1007,7 @@ function [bestGuessTissueR1,bestGuessR1_SP] ...
     ,r1Collection,r1Data,surfaceWaterFraction,waterFraction,lipidFraction ...
     ,proteinFraction,lowerBoundR1_SPFraction,upperBoundR1_SPFraction ...
     ,r1_SPSamplingPoints,exchange_waterToSolid,exchange_lipidToWater ...
-    ,exchange_proteinToWater,timeStepCount,deltaT)
+    ,exchange_proteinToWater,timeStepCounts,deltaTArray)
 
 bestGuessTissueR1 = cell(1,length(fieldStrengthArray));
 bestGuessR1_SP = cell(1,length(fieldStrengthArray));
@@ -722,6 +1015,10 @@ bestGuessR1_SP = cell(1,length(fieldStrengthArray));
 for fieldStrengthNr = 1:length(fieldStrengthArray)
     fieldStrength = fieldStrengthArray(fieldStrengthNr);
     fprintf(" == %.2f Tesla ==  \n",fieldStrength);
+    deltaT = deltaTArray(fieldStrengthNr);
+    fprintf("     dT = %.4d \n",deltaT);
+    timeStepCount = timeStepCounts(fieldStrengthNr);
+    fprintf("     time step count = %.2d \n",timeStepCount);
     
     fieldStrengthIndex = ...
         r1Data.fieldStrengths > fieldStrength - 0.0001 ...
@@ -855,7 +1152,7 @@ exponent = parameters(2);
 end
 
 function showDistributionOfValues(wmFieldStrengthArray,r1WMCollection ...
-    ,gmFieldStrengthArray,r1GMCollection)
+    ,gmFieldStrengthArray,r1GMCollection,axisFontSize,legendFontSize)
 
 r1WMData = createMatrixOfDataPoints(r1WMCollection);
 r1GMData = createMatrixOfDataPoints(r1GMCollection);
@@ -865,14 +1162,14 @@ r1GMData = createMatrixOfDataPoints(r1GMCollection);
 [r1AvgGMData,~,gmCounts] ...
     = getAveragSTDandCountsOfR1Collection(r1GMCollection);
 
-fig = initializeFigure('legend',false);
+fig = initializeFigure('legend',false,'axisFontSize',axisFontSize ...
+    ,'legendFontSize',legendFontSize);
 initializeSubplot(fig,2,1,1);
 labels = strsplit(sprintf("%.3f (#%i) \n" ...
     ,[wmFieldStrengthArray;wmCounts]),'\n');
-title("WM");
 boxplot(r1WMData','Labels',labels(1:end-1));
 plot(r1AvgWMData,'g*');
-xlabel("Field strength [T]");
+xtickangle(45);
 ylabel("R$_{1,WM}$ [Hz]");
 lgd = legend();
 lgd.Visible = 'off';
@@ -880,10 +1177,10 @@ lgd.Visible = 'off';
 initializeSubplot(fig,2,1,2);
 labels = strsplit(sprintf("%.3f (#%i) \n" ...
     ,[gmFieldStrengthArray;gmCounts]),'\n');
-title("GM");
 boxplot(r1GMData','Labels',labels(1:end-1));
 plot(r1AvgGMData,'g*');
 xlabel("Field strength [T]");
+xtickangle(45);
 ylabel("R$_{1,GM}$ [Hz]");
 lgd = legend();
 lgd.Visible = 'off';
@@ -921,7 +1218,4 @@ for fieldStrengthNr = 1:length(r1Collection)
 end
 
 end
-
-
-
 

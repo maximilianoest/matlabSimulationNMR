@@ -1,5 +1,11 @@
 function drawSTDRegionAroundPowerFunction(factor,exponent ...
-    ,covarianceMatrix,fieldStrengthAxis,rgbColorArray)
+    ,covarianceMatrix,fieldStrengthAxis,rgbColorArray,varargin)
+
+if ~isempty(varargin)
+    alpha = varargin{1};
+else
+    alpha = 0.3;
+end
 
 stdMatrix = sqrt(covarianceMatrix);
 factor_plusSTD = factor + stdMatrix(1,1);
@@ -13,6 +19,6 @@ powerFunction_minusSTD = factor_minusSTD*fieldStrengthAxis.^( ...
     -exponent_minusSTD);
 fill([fieldStrengthAxis fliplr(fieldStrengthAxis)] ...
     ,[powerFunction_plusSTD fliplr(powerFunction_minusSTD)] ...
-    ,rgbColorArray,'FaceAlpha',0.3,'EdgeColor','none'); 
+    ,rgbColorArray,'FaceAlpha',alpha,'EdgeColor','none'); 
 
 end
