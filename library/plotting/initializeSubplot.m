@@ -6,10 +6,19 @@ function currentSubFigure = initializeSubplot( ...
 %  properties given by the parent figure are used to initialize the subplot
 
 
+% if ~isempty(varargin)
+%     if mod(length(varargin),2) ~= 0
+%         error("Wrong key value pair");
+%     end
+%     for elementNr = 1:length(varargin)
+%         
+%     end
+% end
 
 xMinorGrid = parentFigure.CurrentAxes.XMinorGrid;
 yMinorGrid = parentFigure.CurrentAxes.YMinorGrid;
 zMinorGrid = parentFigure.CurrentAxes.ZMinorGrid;
+
 
 axisFontSize = get(parentFigure.CurrentAxes,'FontSize');
 titleFontSize =  get(parentFigure.CurrentAxes.Title,'FontSize');

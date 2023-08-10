@@ -73,7 +73,8 @@ gmProteinFraction = gmNonWaterFraction ...
     * r1Data.constitutionData.gmProteinContent;
 
 % ==== concluded data ====
-ESIVR = r1Data.ESIVR;
+ESIVR = r1Data.ESIVR ...
+    * r1Data.fractionOfSurfaceWaterRelativeToHistMyelinWaterAmount;
 wmSurfaceWaterFraction = wmNonWaterFraction * ESIVR;
 wmLipidWaterFraction = wmLipidFraction * ESIVR;
 wmProteinWaterFraction = wmProteinFraction * ESIVR;
@@ -1029,7 +1030,7 @@ for fieldStrengthNr = 1:length(fieldStrengthArray)
     
     r1_SL = r1Data.r1Eff_SM(fieldStrengthIndex);
     fprintf(" R1_SL = %.4f \n",r1_SL);
-    r1_LW = r1Data.r1Hist_MW(fieldStrengthIndex);
+    r1_LW = r1Data.r1Surf_MW(fieldStrengthIndex);
     r1_water = surfaceWaterFraction/waterFraction * r1_LW ...
         + (1-surfaceWaterFraction)/waterFraction*r1Data.r1_free;
     

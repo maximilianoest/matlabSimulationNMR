@@ -7,6 +7,7 @@ saving = 1;
 fieldStrength = 3; % Tesla
 gyromagneticRatio = constants.gyromagneticRatioOfHydrogenAtom;
 omega0 = fieldStrength * gyromagneticRatio;
+densityBorderFraction = 0.95;
 
 % based on Tsukiashi2018
 % T1 vs. temperature: y = 0.058071*x + 1.7623 with x = Temperature in °C
@@ -15,7 +16,7 @@ freeWaterR1 =  1/(0.058071 * temperature + 1.7623);
 fprintf("Free water R1: %.4f \n", freeWaterR1);
 
 densityDirectory = "C:\Users\maxoe\Google Drive\Promotion\Simulation" ...
-    + "\RESULTS\densityDistributions\Plots\";
+    + "\RESULTS\densityDistributions\";
 lipids = ["DOPS" "PLPC" "PSM"];
 
 correlationDirectory = "C:\Users\maxoe\Google Drive\Promotion" ...
@@ -25,35 +26,52 @@ resultsFiles = [ ...
     "20221025_Results_PLPCwater_20220804_PLPC_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns" ... 
     "20221028_Results_PSMwater_20220804_PSM_TIP4_Monolayer_50water_water_H_whole_dt02ps_simTime25ns" ] ...
     + ".mat";
-fileNames = "20221122densityDistribution_" + lipids ...
-    + "_withInteractionFractions" + ".mat";
+fileNames = "20230309densityDistribution_" + lipids  + ".mat";
 
 fourthSubplotText = "";
 
 for lipidNr = 1:length(lipids)
     load(densityDirectory + fileNames(lipidNr));
-    hydrogenAtomsInSurfaceRegion = numberOfHsInWaterPool ...
-        .* (numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
-    hydrogenAtomsInFreeWaterRegion = numberOfHsInWaterPool ...
-        .* ~(numberOfHsInLipidPool > 0 & numberOfHsInWaterPool > 0);
+    dVolume = mean(dVolumeForTimeStep);
+    avgDensityDistributionOfHAtoms = squeeze(mean( ...
+        densityDistributionOnlyHdydrogen,1));
+    waterHDensity = avgDensityDistributionOfHAtoms(2,:);
+    filteredWaterHDensity = meanFilter(waterHDensity,21);
     
-%     fig = initializeFigure();
-%     ax = initializeSubplot(fig,2,2,1);
-%     plot(avgLocations,hydrogenAtomsInSurfaceRegion);
-%     plot(avgLocations,hydrogenAtomsInFreeWaterRegion);
-%     xticks([-5e-9 : 1e-9 : 5e-9]); %#ok<NBRAK>
-%     xticklabels([-5 : 1 : 5]);
-%     xlabel("Postions [nm]")
-%     legend("Surface region", "Free water region");
-%     title("Number of H atoms");
+    bulkWaterDensity = mean(waterHDensity(round(end/2-10) ...
+        :round(end/2+10)));
+    densityBorder = densityBorderFraction * bulkWaterDensity;
+    freeWaterIndices = waterHDensity >= densityBorder;
+    freeWaterDensity = nan(1,length(waterHDensity));
+    freeWaterDensity(freeWaterIndices) = waterHDensity(freeWaterIndices);
     
-    numberOfHAtomsInSurfaceRegion = sum(hydrogenAtomsInSurfaceRegion);
-    numberOfHAtomsInFreeWaterRegion = sum(hydrogenAtomsInFreeWaterRegion);
+    surfaceWaterIndices = ~freeWaterIndices;
+    surfaceWaterDensity = nan(1,length(waterHDensity));
+    surfaceWaterDensity(surfaceWaterIndices) ...
+        = waterHDensity(surfaceWaterIndices);
     
-    surfaceWaterFraction = numberOfHAtomsInSurfaceRegion ...
-        / sum(numberOfHsInWaterPool);
-    freeWaterFraction = numberOfHAtomsInFreeWaterRegion ...
-        / sum(numberOfHsInWaterPool);
+    fig = initializeFigure();
+    ax = initializeSubplot(fig,2,2,1);
+    plot(avgLocations,surfaceWaterDensity);
+    plot(avgLocations,freeWaterDensity);
+    xticks([-5e-9 : 1e-9 : 5e-9]); %#ok<NBRAK>
+    xticklabels([-5 : 1 : 5]);
+    xlabel("Postions [nm]")
+    legend("surf $H_2O$", "free $H_2O$",'Location','south');
+    title("Number of H atoms");
+    
+    freeWaterDensity(isnan(freeWaterDensity)) = 0;
+    freeWaterMass = sum(freeWaterDensity * dVolume);
+    
+    surfaceWaterDensity(isnan(surfaceWaterDensity)) = 0;
+    surfaceWaterMass = sum(surfaceWaterDensity * dVolume);
+    
+
+    
+    surfaceWaterFraction = surfaceWaterMass ...
+        / (surfaceWaterMass + freeWaterMass);
+    freeWaterFraction = freeWaterMass ...
+        / (surfaceWaterMass + freeWaterMass);
     
     fprintf("Lipid %s: \n   f_SW = %.4f ; f_FW = %.4f \n" ...
         ,lipids(lipidNr),surfaceWaterFraction,freeWaterFraction);
@@ -113,7 +131,6 @@ for lipidNr = 1:length(lipids)
     end
     
 end
-
 
 
 

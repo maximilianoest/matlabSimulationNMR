@@ -197,7 +197,7 @@ myelinWaterContent = constitutionData.wmWaterContent ...
 
 % waterContentInMyelin = myelinWaterFraction/(myelinWaterFraction +
 %                        myelinSolidFraction)
-% -> solved for myelinSolidFraction: contains mass lipids and proteins
+% -> solved for myelinSolidFraction: contains mass of lipids and proteins
 solidMyelinFraction = myelinWaterContent/waterContentInMyelin ...
     - myelinWaterContent;
 fprintf("  Solid myelin fraction: %.4f\n",solidMyelinFraction);
@@ -214,14 +214,22 @@ fprintf("  ESIVR for myelin: %.4f\n",effectiveSurfInteractionVolRatio);
 % given solid myelin mass of the lipids.
 histMyelinWaterMass = modelMembrMass * effectiveSurfInteractionVolRatio;
 histMyelinWaterHCount = histMyelinWaterMass / waterMoleculeWeight * 2;
+
+% overwriting r1Auto_MW to describe the histological findings
+r1Data.r1Auto_MW = r1Data.r1Auto_MW * overallWaterHCount ...
+    /histMyelinWaterHCount;
+r1Data.r1Eff_MW = r1Data.r1_MW + r1Data.r1Auto_MW;
+r1Data.r1Cross_MW = r1Data.r1Cross_MW * overallWaterHCount ...
+    /histMyelinWaterHCount;
+% overwriting 
 fprintf("  histological myelin water H count based on lipid weight" ...
     + " in MD sim.: %.4f\n",histMyelinWaterHCount);
 
 histFreeWaterHCount = histMyelinWaterHCount - surfaceWaterHCount;
 fprintf("  free water H count in MD sim.: %.4f\n",histFreeWaterHCount);
-
 histF_free = histFreeWaterHCount/histMyelinWaterHCount;
 histF_surf = surfaceWaterHCount/histMyelinWaterHCount;
+r1Data.fractionOfSurfaceWaterRelativeToHistWaterAmount = histF_surf; 
 fprintf("  histolgical f_surf = %.4f, f_free = %.4f\n"  ...
     ,histF_surf,histF_free);
 

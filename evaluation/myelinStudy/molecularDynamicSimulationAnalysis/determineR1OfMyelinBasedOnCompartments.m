@@ -140,6 +140,8 @@ end
 % effective relaxation rates
 r1Eff_SM = r1_SM + r1Auto_SM;
 
+% r1Auto_MW/r1Eff_MW is overwritten in determineSurfaceWaterAndHistologR1InMyelin.m
+% to correctly describe the r1Auto_MW with histological findings
 r1Auto_MW = hCountInMembrane/hCountInWater * r1Auto_SM;
 r1Eff_MW = r1_MW + r1Auto_MW;
 r1Cross_MW = hCountInMembrane/hCountInWater * r1Cross_SM;
@@ -211,6 +213,7 @@ legend("R$^{eff}_{1,SM}$","R$^{eff}_{1,MW}$","R$_{1,SM}$","R$_{1,MW}$" ...
     ,"R$^{auto}_{1,SM}$","R$^{cross}_{1,SM}$","R$^{auto}_{1,MW}$" ...
     ,"R$^{cross}_{1,MW}$");
 xticks(0:max(fieldStrengths));
+title("R1_auto will change a bit due to different membr/water ratio");
 grid on
 
 fig2 = initializeFigure();

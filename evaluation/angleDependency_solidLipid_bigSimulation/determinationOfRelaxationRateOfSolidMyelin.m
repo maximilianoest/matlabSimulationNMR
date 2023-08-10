@@ -1,6 +1,8 @@
 %% initialize
 clc; clear all; close all;
 
+% Datasets are randomly rotated around theta and phi -> R1 is then averaged
+
 addpath(genpath(sprintf('..%s..%slibrary',filesep,filesep)));
 addpath(genpath(sprintf('..%s..%stxtFiles',createFilesepStringArray(2))));
 constants = readConstantsFile("constants.txt");
