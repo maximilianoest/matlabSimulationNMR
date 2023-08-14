@@ -9,7 +9,9 @@ addpath(genpath(sprintf('..%s..%s..%stxtFiles' ...
     ,createFilesepStringArray(3))));
 
 saving = true;
+savingForSubmission = true;
 scriptImagesFolderName = "C:\Users\maxoe\Google Drive\Promotion\Literatur\Lipid and Protein R1 Relaxation Dispersion in the Human Brain\images\";
+imagesForSubmissionFolderPath = scriptImagesFolderName + "forSubmission\";
 dataForPaperFolderName = "C:\Users\maxoe\Google Drive\Promotion\Literatur\Lipid and Protein R1 Relaxation Dispersion in the Human Brain\data\";
 
 
@@ -149,7 +151,7 @@ legend(literaturePlt2_0([1 4]),"WM","GM");
 %% plotting literature values (Observed R1 in WM and GM) 2.1 -> ylog
 literatureFigure2_1 = initializeFigure('axisFontSize',axisFontSize ...
     ,'legendFontSize',legendFontSize);
-literatureLegendEntries = {};
+% literatureLegendEntries = {};
 
 ylabel("R$_{1}$ [Hz]");
 set(gca,'YScale','log');
@@ -616,46 +618,78 @@ axis([ 0 inf 0 0.13])
 %% saving
 
 if saving
-    
-    set(0, 'CurrentFigure', literatureFigure);
+    set(0, 'CurrentFigure', densityFigure);
     saveFigureTo(scriptImagesFolderName ...
-        ,"ObservedR1Values","WithFit","WMandGM");
-    
-    set(0, 'CurrentFigure', literatureFigure2_0);
-    saveFigureTo(scriptImagesFolderName ...
-        ,"ObservedR1Values","WithFit","WMandGM_loglog");
+        ,"DensityDistribution","H","Atoms");
     
     set(0, 'CurrentFigure', literatureFigure2_1);
     saveFigureTo(scriptImagesFolderName ...
         ,"ObservedR1Values","WithFit","WMandGM_ylog");
     
-    set(0, 'CurrentFigure', literatureFigure2_2);
-    saveFigureTo(scriptImagesFolderName ...
-        ,"ObservedR1Values","WithFit","WMandGM_xlog");
-    
-    set(0, 'CurrentFigure', FEModelResultsPlt);
-    saveFigureTo(scriptImagesFolderName ...
-        ,"FEModelResultsForR1","SP","withFit");
-    
     set(0, 'CurrentFigure', mdSimFigure);
     saveFigureTo(scriptImagesFolderName ...
-        ,"SL","LW_SP","PredictedValuesAndFieldStrengthBehvior");
+        ,"SL","SP","PredictedValuesAndFieldStrengthBehvior");
     
     set(0,'CurrentFigure',appendixFigure);
     saveFigureTo(scriptImagesFolderName ...
         ,"AppendixS1","LWR1","IncreasedAndDecreasedExchRates");
     
-    set(0,'CurrentFigure',densFigure);
+    set(0, 'CurrentFigure', FEModelResultsPlt);
     saveFigureTo(scriptImagesFolderName ...
-        ,"DensityDistribution","HAtoms","Monolayer");
-    
-    set(0, 'CurrentFigure', densityFigure);
-    saveFigureTo(scriptImagesFolderName ...
-        ,"DensityDistribution","H","Atoms");
+        ,"FEModelResultsForR1","SP","withFit");
     
     set(0, 'CurrentFigure', crossFig);
     saveFigureTo(scriptImagesFolderName ...
         ,"CrossAndAutoRelaxation","SL","LW");
+    
+%    set(0, 'CurrentFigure', literatureFigure);
+%     saveFigureTo(scriptImagesFolderName ...
+%         ,"ObservedR1Values","WithFit","WMandGM");
+    
+% set(0, 'CurrentFigure', literatureFigure2_0);
+% saveFigureTo(scriptImagesFolderName ...
+%     ,"ObservedR1Values","WithFit","WMandGM_loglog");
+
+%         set(0, 'CurrentFigure', literatureFigure2_2);
+%     saveFigureTo(scriptImagesFolderName ...
+%         ,"ObservedR1Values","WithFit","WMandGM_xlog");
+
+%     set(0,'CurrentFigure',densFigure);
+%     saveFigureTo(scriptImagesFolderName ...
+%         ,"DensityDistribution","HAtoms","Monolayer");
+    
+% set(0,'CurrentFigure',densFigure);
+% saveFigureTo(scriptImagesFolderName ...
+%     ,"DensityDistribution","HAtoms","Monolayer");
+
+
+
+    if savingForSubmission
+        set(0, 'CurrentFigure', densityFigure);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"DensityDistribution","H","Atoms");
+        
+        set(0, 'CurrentFigure', literatureFigure2_1);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"ObservedR1Values","WithFit","WMandGM_ylog");
+        
+        set(0, 'CurrentFigure', mdSimFigure);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"SL","SP","PredictedValuesAndFieldStrengthBehvior");
+        
+        set(0,'CurrentFigure',appendixFigure);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"AppendixS1","LWR1","IncreasedAndDecreasedExchRates");
+        
+        set(0, 'CurrentFigure', FEModelResultsPlt);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"FEModelResultsForR1","SP","withFit");
+        
+        set(0, 'CurrentFigure', crossFig);
+        saveFigureAsTiffTo(imagesForSubmissionFolderPath ...
+            ,"CrossAndAutoRelaxation","SL","LW");
+        
+    end
     
 end
 
